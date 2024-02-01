@@ -1,0 +1,1 @@
+// store methods to battle. 
