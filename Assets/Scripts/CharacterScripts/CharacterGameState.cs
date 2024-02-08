@@ -14,17 +14,17 @@ public class CharacterGameState : MonoBehaviour
     public Board board; 
     public int charId;  
 
-    public Boolean player;  // True = your team; False = opponent team
+    public Boolean isYourTeam;  // True = your team; False = opponent team
     public Boolean hasMoved; 
     public int curHp; 
     // Other methods as needed
 
 
-    public void Initialize(GameManager gameManager, Board board, int charId, Boolean player){
+    public void Initialize(GameManager gameManager, Board board, int charId, Boolean isYourTeam){
         this.gameManager = gameManager; 
         this.board = board;
         this.charId = charId;  
-        this.player = player; 
+        this.isYourTeam = isYourTeam; 
         this.hasMoved = false; 
         this.curHp = gameManager.GetCharacter(charId).GetComponent<CharacterStats>().GetHp();
     }

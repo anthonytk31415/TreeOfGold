@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // this changes the position of items on a grid; 
 // need to "gatekeep"
@@ -15,15 +16,19 @@ public class ArrowMove : MonoBehaviour
 
     public Coordinate arrowCoordinate;
 
+    public string m_Text;
+
     // Start is called before the first frame update
     void Start()
     {
+        // TouchSimulation.Enable;
     }
 
     // Update is called once per frame
     void Update()
     {
         UpdatePosition();
+        UpdateTouchExample();
     }
 
     public void Initialize(Board board, GameManager instance){
@@ -33,7 +38,7 @@ public class ArrowMove : MonoBehaviour
 
     }
 
-    void UpdatePosition()
+    private void UpdatePosition()
     {
         float newHoriz = transform.position.x; 
         float newVert = transform.position.y; 
@@ -61,5 +66,23 @@ public class ArrowMove : MonoBehaviour
         if (w.GetX() != -1 && w.GetY() != -1 && board.IsValidEntry(w)){
             transform.position = new Vector2(newHoriz, newVert);
         }   
+    }
+
+
+    // test for returning the position of the 
+    // touch that can be tested on the device; todo's: 
+    // how to reduce the scale of the canvas of the scene to fit the phone
+    
+    void UpdateTouchExample() 
+    {
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+
+            // Update the Text on the screen depending on current position of the touch each frame
+            m_Text = "Touch Position : " + touch.position;
+            Debug.Log(m_Text);
+        }
+
     }
 }
