@@ -26,13 +26,13 @@ public class CharactersObject : MonoBehaviour
         
     }
     // manage Componenets to Char here. 
-    public static void AddComponentsToChar(GameManager Instance, Board board, GameObject[] charArray, int id, int hp, int attack, int moves, Boolean isYourTeam)
+    public static void AddComponentsToChar(GameManager Instance, Board board, GameObject[] charArray, int id, string charName, int hp, int attack, int moves, Boolean isYourTeam)
     {
 
         GameObject charInstance = charArray[id];        
         // Add components (scripts) to the char instance
         charInstance.AddComponent<CharacterStats>();
-        charInstance.GetComponent<CharacterStats>().Initialize(hp, attack, moves); 
+        charInstance.GetComponent<CharacterStats>().Initialize(charName, hp, attack, moves); 
         charInstance.AddComponent<CharacterMove>();
         charInstance.GetComponent<CharacterMove>().Initialize(charInstance, board, id);
         charInstance.AddComponent<CharacterGameState>(); 
@@ -49,23 +49,23 @@ public class CharactersObject : MonoBehaviour
         // temporarily we'll provide the chars we want to instantiate for testing; 
         // later we'll build some mechanism to do this; perhaps move this class outside the game manager. 
         (String, int, int, int, int, int, Boolean)[] chars = {
-            ("glenn", 9, 5, 3, 0, 0, true), 
-            ("greenMage", 6, 11, 3, 0, 1, true), 
-            ("knight", 12, 4, 3, 0, 5, false), 
-            ("purpleMage", 5, 4, 3, 5, 0, false)};
+            ("glenn",       9, 5, 3, 0, 0, true), 
+            ("greenMage",   6, 11, 3, 0, 1, true), 
+            ("knight",      12, 4, 3, 0, 5, false), 
+            ("purpleMage",  5, 4, 3, 5, 0, false)};
         
         // GameObject[] charArray = new GameObject[chars.Length]; 
         for (int id = 0; id < chars.Length; id ++)
         {
             // first, instantiate the char
-            (String name, int hp, int atk, int moves, int x, int y, Boolean isYourTeam) = chars[id];
+            (String charName, int hp, int atk, int moves, int x, int y, Boolean isYourTeam) = chars[id];
             Coordinate w = new Coordinate(x, y);
-            GameObject curChar = InstantiateChar(board, name, w);            
+            GameObject curChar = InstantiateChar(board, charName, w);            
             board.Put(w, id);
             charArray[id] = curChar;
 
             // then, add components; anything requiring id needs to be called after the board/charArray is built
-            AddComponentsToChar(Instance, board, charArray, id, hp, atk, moves, isYourTeam);
+            AddComponentsToChar(Instance, board, charArray, id, charName, hp, atk, moves, isYourTeam);
         }
         return charArray; 
 

@@ -10,25 +10,30 @@ using UnityEngine.UI;
 
 public class ArrowMove : MonoBehaviour
 {
+
+
+    [SerializeField] StatMenuManager statMenuManager; 
+
     public Board board; 
     public GameManager instance; 
     // get middle row, middleCol from board
-
     public Coordinate arrowCoordinate;
 
+    private Camera mainCamera;
     public string m_Text;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         // TouchSimulation.Enable;
+        mainCamera = Camera.main;
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         UpdatePosition();
-        UpdateTouchExample();
+        UpdateMouseClicks();
     }
 
     public void Initialize(Board board, GameManager instance){
@@ -38,6 +43,7 @@ public class ArrowMove : MonoBehaviour
 
     }
 
+    // arrows version of moving cursor
     private void UpdatePosition()
     {
         float newHoriz = transform.position.x; 
@@ -68,11 +74,17 @@ public class ArrowMove : MonoBehaviour
         }   
     }
 
+    private void UpdatePositionMouse (){
+        // get mouse 
+    }
+
+
 
     // test for returning the position of the 
     // touch that can be tested on the device; todo's: 
     // how to reduce the scale of the canvas of the scene to fit the phone
     
+    // call this when you're ready to add gesture effects; for now just use mouse. 
     void UpdateTouchExample() 
     {
         if (Input.touchCount > 0)
@@ -82,6 +94,34 @@ public class ArrowMove : MonoBehaviour
             // Update the Text on the screen depending on current position of the touch each frame
             m_Text = "Touch Position : " + touch.position;
             Debug.Log(m_Text);
+
+        }
+
+    }
+
+
+    private void UpdateMouseClicks()
+    {
+        // Check for mouse click
+        if (Input.GetMouseButtonDown(0))
+        {
+            // Get the mouse position in screen coordinates
+            Vector3 mousePosition = Input.mousePosition;
+
+            // Convert mouse position to world coordinates
+            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(mousePosition);
+            worldPosition.z = 0; // Set the z-coordinate to 0 to ensure it's on the same plane as the board
+
+            // add 0.5 to both x and y and take the floor to adjust to the center of the tile, which isa t0.0 for the bottom lefet corner
+            Coordinate w = board.ConvertSceneToMatCoords((double) Math.Floor(worldPosition.x +0.5), (double) Math.Floor(worldPosition.y + 0.5));
+
+            // Now you have the position of the click on the board
+            // Debug.Log("Mouse Clicked at: " + worldPosition + "; Coordinate: " + w);
+
+            // ichange the selected, stored in gameManager
+            if (board.IsValidEntry(w) && board.Get(w) != instance.SelectedId){                    
+                instance.SelectedId = board.Get(w); 
+            }    
         }
 
     }

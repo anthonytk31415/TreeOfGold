@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
+    public string charName; 
     public int attack;
     public int hp;
     public int moves; 
@@ -13,8 +14,9 @@ public class CharacterStats : MonoBehaviour
         return "HP: " + hp + "; Attack: " + attack + "Moves: " + moves;
     }
 
-    public void Initialize(int hp, int attack, int moves)
+    public void Initialize(string charName, int hp, int attack, int moves)
     {
+        this.charName = charName; 
         this.hp = hp; 
         this.attack = attack;
         this.moves = moves;

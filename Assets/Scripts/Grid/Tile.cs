@@ -24,6 +24,9 @@ public class Tile : MonoBehaviour {
         }
     }
 
+
+
+
     public void TogglePlayerPath(){
         _renderer.color = _playerPathColor; 
     }

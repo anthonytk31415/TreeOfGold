@@ -52,8 +52,9 @@ public class GameManager : MonoBehaviour
         cursorStateMachine.Update();
     }
 
-    private void InitializeCore() {         
-        this._width = 6; 
+    private void InitializeCore() {       
+        SelectedId = -1;                // charId   
+        this._width = 6;                // dims of board
         this._height = 8;
         this._totalHeight = _height + 3; 
         board = new Board(_width, _height);
@@ -80,7 +81,8 @@ public class GameManager : MonoBehaviour
         return charArray[id]; 
     }
 
-    // printing all possibles moves for audit purposes
+
+    // Audit Helper functions
     public void AuditPossibleMoves() {
         foreach(GameObject charObj in charArray)
         {
@@ -93,5 +95,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+
+    //// Logic for selected changes; should this go into cursor?
+
+    public delegate void SelectedCharIdChangedEventHandler(int newCharId);
+    
+    // Define the event based on the delegate
+    public static event SelectedCharIdChangedEventHandler OnSelectedCharIdChanged;
+
+    private int selectedId;
+
+    public int SelectedId {
+        get { return selectedId; }
+        set{
+            if (selectedId != value){
+                selectedId = value;
+                // Invoke the event whenever score changes
+                OnSelectedCharIdChanged?.Invoke(selectedId);
+                // Debug.Log("Using the alert system from GManager: " + selectedId);
+            }
+        }
+    }
+ 
 }
 

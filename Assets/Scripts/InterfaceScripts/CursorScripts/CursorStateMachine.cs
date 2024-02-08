@@ -12,6 +12,8 @@ public class CursorStateMachine {
 
     private GameObject cursor;
 
+
+
     // reference to state objects
     public ChooseState chooseState; 
     // public ProfileState profileState; 
