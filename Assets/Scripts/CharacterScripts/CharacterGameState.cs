@@ -15,7 +15,12 @@ public class CharacterGameState : MonoBehaviour
     public int charId;  
 
     public Boolean isYourTeam;  // True = your team; False = opponent team
-    public Boolean hasMoved; 
+    private Boolean hasMoved; 
+    public Boolean HasMoved {
+        get {return hasMoved;}
+        set {hasMoved = value;} 
+    }
+    
     public int curHp; 
     // Other methods as needed
 
@@ -28,18 +33,7 @@ public class CharacterGameState : MonoBehaviour
         this.hasMoved = false; 
         this.curHp = gameManager.GetCharacter(charId).GetComponent<CharacterStats>().GetHp();
     }
-
-    public void Moved(){
-        hasMoved = true; 
-    }
-    public void NotMoved()
-    {
-        hasMoved = false; 
-    }
-    public Boolean HasMoved(){
-        return hasMoved; 
-    }
-
+    
     public void DecreaseHp(int dmg)
     {
         curHp = Math.Max(0, curHp - dmg); 
@@ -54,5 +48,6 @@ public class CharacterGameState : MonoBehaviour
     {
         
     }
+
 
 }

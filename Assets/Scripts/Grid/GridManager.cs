@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // this is an array of the references to the tiles on the screen. 
-
+// Tile[x, y] = reference of tile
 public class GridManager : MonoBehaviour {
         
     public static Tile[,] Initialize(int width, int height){
@@ -22,5 +22,11 @@ public class GridManager : MonoBehaviour {
         }
 
         return tiles; 
+    }
+
+    // currently assumes the bottom row is the status bar so we just add 1 to the x coordinate
+    // will probably need to refactor later 
+    public static Tile FindTile(Tile[,] tiles, Coordinate w){
+        return tiles[w.GetX(), w.GetY() + 1];
     }
 }

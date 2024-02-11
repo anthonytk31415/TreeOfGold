@@ -12,12 +12,13 @@ public class CharacterMove: MonoBehaviour
     public GameObject character; 
     public GameManager gameManager; 
     // Other methods as needed
-    public void Initialize(GameObject charInstance, Board board, int id) 
+    public void Initialize(GameObject charInstance, Board board, int id, GameManager gameManager) 
     {
         this.moves = charInstance.GetComponent<CharacterStats>().moves; 
         this.board = board; 
         this.charId = id;
         this.character = charInstance; 
+        this.gameManager = gameManager; 
     }
 
     // return a set of possible moves; we will apply BFS to return 
@@ -25,10 +26,11 @@ public class CharacterMove: MonoBehaviour
 
     public HashSet<Coordinate> PossibleMoves()
     {
-        Debug.Log("moves set at: " + moves + " before calling CharInt");
-        HashSet<Coordinate> res = CharInteraction.SetOfMoves(board, board.FindCharId(charId), moves);
-        Debug.Log("count of moves: " + res.Count);
+        HashSet<Coordinate> res = CharInteraction.PlayerMoveOptions(board, board.FindCharId(charId), moves, gameManager);
         return res; 
     }
 
+    // public void MoveChar
+    // if playerSelected and mouse clicked on entry in its path/ move 
+    
 }

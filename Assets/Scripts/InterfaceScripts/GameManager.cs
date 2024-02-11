@@ -58,12 +58,11 @@ public class GameManager : MonoBehaviour
         this._height = 8;
         this._totalHeight = _height + 3; 
         board = new Board(_width, _height);
-        tiles = GridManager.Initialize(_width, _totalHeight); 
+        tiles = GridManager.Initialize(_width, _totalHeight); // this is instantiated with the board + menus
         charArray = new GameObject[4];
         CharactersObject.Initialize(Instance, board, charArray);
         cursorStateMachine = new CursorStateMachine(Instance, board); 
         cursorStateMachine.Initialize(cursorStateMachine.chooseState);
-
         // adjusts camera to centered position 
         Camera.main.transform.position = new Vector3((float)_width/2 -0.5f, (float)_totalHeight / 2 - 0.5f, -10);
     }
@@ -99,6 +98,7 @@ public class GameManager : MonoBehaviour
 
     //// Logic for selected changes; should this go into cursor?
 
+    // when selected, ensure the infomenu is delegated
     public delegate void SelectedCharIdChangedEventHandler(int newCharId);
     
     // Define the event based on the delegate
@@ -113,7 +113,6 @@ public class GameManager : MonoBehaviour
                 selectedId = value;
                 // Invoke the event whenever score changes
                 OnSelectedCharIdChanged?.Invoke(selectedId);
-                // Debug.Log("Using the alert system from GManager: " + selectedId);
             }
         }
     }

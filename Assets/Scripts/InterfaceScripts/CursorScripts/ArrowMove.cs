@@ -40,36 +40,30 @@ public class ArrowMove : MonoBehaviour
         this.board = board; 
         this.arrowCoordinate = board.MiddleBoardCoordinate();     
         this.instance = instance; 
-
     }
 
     // arrows version of moving cursor
-    private void UpdatePosition()
-    {
+    private void UpdatePosition(){
         float newHoriz = transform.position.x; 
         float newVert = transform.position.y; 
         
-        if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
+        if (Input.GetKeyDown(KeyCode.RightArrow)){
             newHoriz += 1.0f;
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
+        else if (Input.GetKeyDown(KeyCode.LeftArrow)){
             newHoriz -= 1.0f;
         }
         // Check for vertical movement
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
+        if (Input.GetKeyDown(KeyCode.UpArrow)){
             newVert += 1.0f;
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
+        else if (Input.GetKeyDown(KeyCode.DownArrow)){
             newVert -= 1.0f;
         }
         // Update character position
 
         Coordinate w = board.ConvertSceneToMatCoords((Double)newHoriz, (Double)newVert); 
-        if (w.GetX() != -1 && w.GetY() != -1 && board.IsValidEntry(w)){
+        if (w.GetX() != -1 && w.GetY() != -1 && board.IsWithinBoard(w)){
             transform.position = new Vector2(newHoriz, newVert);
         }   
     }
@@ -85,26 +79,18 @@ public class ArrowMove : MonoBehaviour
     // how to reduce the scale of the canvas of the scene to fit the phone
     
     // call this when you're ready to add gesture effects; for now just use mouse. 
-    void UpdateTouchExample() 
-    {
-        if (Input.touchCount > 0)
-        {
+    void UpdateTouchExample() {
+        if (Input.touchCount > 0){
             Touch touch = Input.GetTouch(0);
-
             // Update the Text on the screen depending on current position of the touch each frame
             m_Text = "Touch Position : " + touch.position;
-            Debug.Log(m_Text);
-
         }
-
     }
 
 
-    private void UpdateMouseClicks()
-    {
+    private void UpdateMouseClicks(){
         // Check for mouse click
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (Input.GetMouseButtonDown(0)){
             // Get the mouse position in screen coordinates
             Vector3 mousePosition = Input.mousePosition;
 
@@ -116,10 +102,9 @@ public class ArrowMove : MonoBehaviour
             Coordinate w = board.ConvertSceneToMatCoords((double) Math.Floor(worldPosition.x +0.5), (double) Math.Floor(worldPosition.y + 0.5));
 
             // Now you have the position of the click on the board
-            // Debug.Log("Mouse Clicked at: " + worldPosition + "; Coordinate: " + w);
 
             // ichange the selected, stored in gameManager
-            if (board.IsValidEntry(w) && board.Get(w) != instance.SelectedId){                    
+            if (board.IsWithinBoard(w) && board.Get(w) != instance.SelectedId){                    
                 instance.SelectedId = board.Get(w); 
             }    
         }

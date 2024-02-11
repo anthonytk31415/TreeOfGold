@@ -34,7 +34,7 @@ public class CharactersObject : MonoBehaviour
         charInstance.AddComponent<CharacterStats>();
         charInstance.GetComponent<CharacterStats>().Initialize(charName, hp, attack, moves); 
         charInstance.AddComponent<CharacterMove>();
-        charInstance.GetComponent<CharacterMove>().Initialize(charInstance, board, id);
+        charInstance.GetComponent<CharacterMove>().Initialize(charInstance, board, id, Instance);
         charInstance.AddComponent<CharacterGameState>(); 
         charInstance.GetComponent<CharacterGameState>().Initialize(Instance, board, id, isYourTeam); 
 
@@ -49,10 +49,10 @@ public class CharactersObject : MonoBehaviour
         // temporarily we'll provide the chars we want to instantiate for testing; 
         // later we'll build some mechanism to do this; perhaps move this class outside the game manager. 
         (String, int, int, int, int, int, Boolean)[] chars = {
-            ("glenn",       9, 5, 3, 0, 0, true), 
+            ("glenn",       9, 5, 7, 0, 0, true), 
             ("greenMage",   6, 11, 3, 0, 1, true), 
-            ("knight",      12, 4, 3, 0, 5, false), 
-            ("purpleMage",  5, 4, 3, 5, 0, false)};
+            ("knight",      12, 4, 3, 0, 2, false), 
+            ("purpleMage",  5, 4, 3, 1, 0, false)};
         
         // GameObject[] charArray = new GameObject[chars.Length]; 
         for (int id = 0; id < chars.Length; id ++)

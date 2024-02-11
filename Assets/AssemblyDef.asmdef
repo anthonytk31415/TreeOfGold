@@ -1,7 +1,7 @@
 {
     "name": "AssemblyDef",
     "rootNamespace": "",
-    "references": [],
+    "references": [ "Unity.TextMeshPro" ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

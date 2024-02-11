@@ -183,12 +183,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 412c7e6b9328d468892ba13a67d4b36b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseColor: {r: 0.82381743, g: 1, b: 0.4481132, a: 1}
-  _offsetColor: {r: 0.6811091, g: 1, b: 0, a: 1}
-  _menuColor: {r: 1, g: 0.7204201, b: 0, a: 1}
+  _baseColor: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 1}
+  _offsetColor: {r: 0.8207547, g: 0.8207547, b: 0.8207547, a: 1}
+  _menuColor: {r: 0.20062898, g: 0.5188679, b: 0, a: 1}
+  _playerAllPathColor: {r: 0, g: 0.85010386, b: 1, a: 0.2901961}
+  _playerPathColor: {r: 0, g: 0.1257987, b: 1, a: 0.6862745}
+  _playerColor: {r: 0.99526274, g: 1, b: 0, a: 1}
+  _enemyAllPathColor: {r: 1, g: 0.26274514, b: 0.37845728, a: 0.3529412}
+  _enemyPathColor: {r: 0.88700324, g: 0.6839622, b: 1, a: 0}
+  _enemyColor: {r: 0.8415842, g: 0, b: 1, a: 1}
   _renderer: {fileID: 7972792320582366251}
   _highlight: {fileID: 3938715739325148107}
-  _playerPathColor: {r: 0, g: 0.96764183, b: 1, a: 1}
 --- !u!61 &3159376063323984480
 BoxCollider2D:
   m_ObjectHideFlags: 0

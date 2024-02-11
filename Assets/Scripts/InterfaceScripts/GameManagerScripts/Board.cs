@@ -23,7 +23,7 @@ public class Board
     private int rows; 
     private int columns;  
 
-    // create the board 
+    // create the board; stores charId's (from the charArray in GameManager)
     
     public Board(int rows, int columns)
     {
@@ -43,7 +43,7 @@ public class Board
     }
 
     public Boolean Put(Coordinate w, int id) {
-        if (IsValidEntry(w) && IsEmpty(w)) {   
+        if (IsWithinBoard(w) && IsEmpty(w)) {   
             board[w.GetX(), w.GetY()] = id; 
             return true; 
         }
@@ -51,7 +51,7 @@ public class Board
     }
 
     // checks whether x, y is within the bounds of the board and whether currently, board[x,y] == 0
-    public Boolean IsValidEntry (Coordinate w) {
+    public Boolean IsWithinBoard (Coordinate w) {
         int x = w.GetX();
         int y = w.GetY();
         return 0 <= x &&  x < rows && 0 <= y && y < columns;  
@@ -106,7 +106,7 @@ public class Board
     // given matrix entries, converts to coordinates on the scene for position to use with Vector3
     public (Double, Double) ConvertMatToSceneCoords(Coordinate w) {
         try {
-            if (IsValidEntry(w) && IsEmpty(w)) {
+            if (IsWithinBoard(w) && IsEmpty(w)) {
                 return (w.GetX(), w.GetY() + 1); 
             }
         } 
