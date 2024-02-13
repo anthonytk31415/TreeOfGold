@@ -32,5 +32,16 @@ public class CharacterMove: MonoBehaviour
 
     // public void MoveChar
     // if playerSelected and mouse clicked on entry in its path/ move 
-    
+    public void MoveChar(Coordinate w){
+        // move on board
+        Coordinate u = board.FindCharId(charId);        // old pos
+        board.PutEmpty(u);
+        board.Put(w, charId);                           // new pos
+        // // move visually; need coordinate to scene function here
+        var (x, y) = board.ConvertMatToSceneCoords(w);
+        transform.position = new Vector2((float) x, (float) y);
+
+
+
+    }
 }

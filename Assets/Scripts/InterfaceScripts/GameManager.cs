@@ -65,6 +65,9 @@ public class GameManager : MonoBehaviour
         cursorStateMachine.Initialize(cursorStateMachine.chooseState);
         // adjusts camera to centered position 
         Camera.main.transform.position = new Vector3((float)_width/2 -0.5f, (float)_totalHeight / 2 - 0.5f, -10);
+
+        // selected
+        this.selectedId = -1;
     }
 
     // Other game management methods can go here
@@ -112,8 +115,10 @@ public class GameManager : MonoBehaviour
             if (selectedId != value){
                 selectedId = value;
                 // Invoke the event whenever score changes
-                OnSelectedCharIdChanged?.Invoke(selectedId);
+            } else {
+                selectedId = -1;  
             }
+            OnSelectedCharIdChanged?.Invoke(selectedId);
         }
     }
  

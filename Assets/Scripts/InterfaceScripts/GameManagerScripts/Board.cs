@@ -42,13 +42,16 @@ public class Board
         return board[w.GetX(), w.GetY()];
     }
 
-    public Boolean Put(Coordinate w, int id) {
-        if (IsWithinBoard(w) && IsEmpty(w)) {   
-            board[w.GetX(), w.GetY()] = id; 
-            return true; 
-        }
-        return false; 
+    public void Put(Coordinate w, int id) {
+        // if (IsWithinBoard(w) && IsEmpty(w)) {   
+        board[w.GetX(), w.GetY()] = id; 
+            // return true; 
+        // }
+        // return false; 
     }
+
+
+    
 
     // checks whether x, y is within the bounds of the board and whether currently, board[x,y] == 0
     public Boolean IsWithinBoard (Coordinate w) {
@@ -63,7 +66,9 @@ public class Board
     }
 
     public void PutEmpty(Coordinate w){
-        Put(w, -1);
+        Put(w, -1); 
+        // Debug.Log("put triggered for " + w + "; get w: " + Get(w));
+    
     }
 
     // is this matrix spot empty?
@@ -106,9 +111,7 @@ public class Board
     // given matrix entries, converts to coordinates on the scene for position to use with Vector3
     public (Double, Double) ConvertMatToSceneCoords(Coordinate w) {
         try {
-            if (IsWithinBoard(w) && IsEmpty(w)) {
-                return (w.GetX(), w.GetY() + 1); 
-            }
+            return (w.GetX(), w.GetY() + 1); 
         } 
         catch (Exception ex) {
             Debug.Log("Exception: " + ex);

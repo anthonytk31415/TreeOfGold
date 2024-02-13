@@ -53,16 +53,16 @@ public class Tile : MonoBehaviour {
 
 
     // Mouse Hover Properties
-    // void OnMouseEnter() {
-    //     if (isOnBoard) {
-    //         _highlight.SetActive(true);
-    //     }
+    void OnMouseEnter() {
+        if (isOnBoard) {
+            _highlight.SetActive(true);
+        }
 
-    // }
+    }
  
-    // void OnMouseExit(){
-    //     if (isOnBoard) {
-    //     _highlight.SetActive(false);
-    //     }
-    // }
+    void OnMouseExit(){
+        if (isOnBoard) {
+        _highlight.SetActive(false);
+        }
+    }
 }

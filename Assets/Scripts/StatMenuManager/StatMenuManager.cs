@@ -10,12 +10,17 @@ public class StatMenuManager : MonoBehaviour
 
     [SerializeField] GameManager Instance; 
     [SerializeField] Board board; 
-    [SerializeField] TextMeshProUGUI textName; 
-
+    // [SerializeField] TextMeshProUGUI textName; 
+    // [SerializeField] TextMeshProUGUI textHp; 
+    // [SerializeField] TextMeshProUGUI textAttack; 
     // call this when a unit is selected 
+    [SerializeField] TextMeshProUGUI[] textComponents; 
+
+
 
     void Start() {
         GameManager.OnSelectedCharIdChanged += HandleCharIdChanged;
+        BlankTextBoxes();
         // HandleScoreChanged
         // HandleCharIdChanged
         
@@ -24,15 +29,25 @@ public class StatMenuManager : MonoBehaviour
     // subscribed handleChanges
     private void HandleCharIdChanged(int charId){
         if (charId == -1){
-            textName.text = "Name: "; 
+            BlankTextBoxes(); 
         } else if (charId >= 0 && charId < Instance.charArray.Length){
-            GameObject charUnit = Instance.charArray[charId]; 
-            string charName = charUnit.GetComponent<CharacterStats>().charName; 
-            textName.text = charName; 
+            var charUnitStats = Instance.charArray[charId].GetComponent<CharacterStats>(); 
+            textComponents[0].text = charUnitStats.charName;
+            textComponents[1].text = "HP: " + charUnitStats.hp.ToString(); 
+            textComponents[2].text = "Attack: " + charUnitStats.attack.ToString();
+
         } else {
-            textName.text = "Name: ";
+            BlankTextBoxes();
         }
     }
+
+    private void BlankTextBoxes(){
+        foreach (TextMeshProUGUI textObj in textComponents){
+            textObj.text = "";
+        }
+    }
+
+
 
     private void OnDestroy()
     {

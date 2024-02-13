@@ -10,10 +10,7 @@ using UnityEngine.UI;
 
 public class ArrowMove : MonoBehaviour
 {
-
-
     [SerializeField] StatMenuManager statMenuManager; 
-
     public Board board; 
     public GameManager instance; 
     // get middle row, middleCol from board
@@ -33,7 +30,7 @@ public class ArrowMove : MonoBehaviour
     private void Update()
     {
         UpdatePosition();
-        UpdateMouseClicks();
+        UpdateMouseClickManager();
     }
 
     public void Initialize(Board board, GameManager instance){
@@ -88,26 +85,59 @@ public class ArrowMove : MonoBehaviour
     }
 
 
-    private void UpdateMouseClicks(){
-        // Check for mouse click
+    private void UpdateMouseClickManager(){
         if (Input.GetMouseButtonDown(0)){
-            // Get the mouse position in screen coordinates
             Vector3 mousePosition = Input.mousePosition;
+            Coordinate w = GetMouseClickCoordinate(mousePosition);
 
-            // Convert mouse position to world coordinates
-            Vector3 worldPosition = mainCamera.ScreenToWorldPoint(mousePosition);
-            worldPosition.z = 0; // Set the z-coordinate to 0 to ensure it's on the same plane as the board
+            int sId = instance.SelectedId; 
 
-            // add 0.5 to both x and y and take the floor to adjust to the center of the tile, which isa t0.0 for the bottom lefet corner
-            Coordinate w = board.ConvertSceneToMatCoords((double) Math.Floor(worldPosition.x +0.5), (double) Math.Floor(worldPosition.y + 0.5));
 
-            // Now you have the position of the click on the board
+            // if unselected: select unit
+            if (sId == -1){
+                SelectUnit(w);
+            } else if (sId != -1){
+                // unselect condition
+                if (board.IsWithinBoard(w) && board.Get(w) == sId){
+                    // Debug.Log("time to unselect");
+                    UnselectUnit(w);
+                } 
+                // moving condition 
+                else if (instance.charArray[sId].GetComponent<CharacterMove>().PossibleMoves().Contains(w)){
+                    Debug.Log("arrow move trigger: time to move char");
+                    // move player
+                    instance.charArray[sId].GetComponent<CharacterMove>().MoveChar(w);
+                }
 
-            // ichange the selected, stored in gameManager
-            if (board.IsWithinBoard(w) && board.Get(w) != instance.SelectedId){                    
-                instance.SelectedId = board.Get(w); 
-            }    
+                // adjacent already; now attack
+                else if (true) {
+                    Debug.Log("placehodler");
+                }
+            }
+            
         }
+    }
+    private Coordinate GetMouseClickCoordinate(Vector3 mousePosition){
+        // Convert mouse position to world coordinates
+        Vector3 worldPosition = mainCamera.ScreenToWorldPoint(mousePosition);
+        worldPosition.z = 0; // Set the z-coordinate to 0 to ensure it's on the same plane as the board
 
+        // add 0.5 to both x and y and take the floor to adjust to the center of the tile, which isa t0.0 for the bottom lefet corner
+        Coordinate w = board.ConvertSceneToMatCoords(
+            (double) Math.Floor(worldPosition.x +0.5), 
+            (double) Math.Floor(worldPosition.y + 0.5));
+        return w;
+    }
+
+    
+    private void SelectUnit(Coordinate w){
+        // ichange the selected, stored in gameManager
+        if (board.IsWithinBoard(w) && board.Get(w) != instance.SelectedId){                    
+            instance.SelectedId = board.Get(w); 
+        }   
+    }
+
+    private void UnselectUnit(Coordinate w){
+        instance.SelectedId = -1;
     }
 }
