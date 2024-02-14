@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI; 
-// using TextMeshPro; 
+
 using TMPro; 
 public class StatMenuManager : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class StatMenuManager : MonoBehaviour
 
 
     void Start() {
-        GameManager.OnSelectedCharIdChanged += HandleCharIdChanged;
+        MoveController.OnSelectedCharIdChanged += HandleCharIdChanged;
         BlankTextBoxes();
         // HandleScoreChanged
         // HandleCharIdChanged
@@ -52,7 +52,7 @@ public class StatMenuManager : MonoBehaviour
     private void OnDestroy()
     {
         // Unsubscribe from the event when this object is destroyed
-        GameManager.OnSelectedCharIdChanged -= HandleCharIdChanged;
+        MoveController.OnSelectedCharIdChanged -= HandleCharIdChanged;
     }
 
 

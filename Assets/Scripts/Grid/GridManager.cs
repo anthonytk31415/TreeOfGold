@@ -20,7 +20,6 @@ public class GridManager : MonoBehaviour {
                 tiles[x,y] = spawnedTile; 
             }
         }
-
         return tiles; 
     }
 
@@ -29,4 +28,9 @@ public class GridManager : MonoBehaviour {
     public static Tile FindTile(Tile[,] tiles, Coordinate w){
         return tiles[w.GetX(), w.GetY() + 1];
     }
+
+    // 
+
+
+
 }

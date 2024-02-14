@@ -21,6 +21,13 @@ public class CharacterGameState : MonoBehaviour
         set {hasMoved = value;} 
     }
     
+    private Boolean performedAction; 
+    public Boolean PerformedAction {
+        get {return performedAction;}
+        set {performedAction = value;} 
+    }
+
+
     public int curHp; 
     // Other methods as needed
 
@@ -31,6 +38,7 @@ public class CharacterGameState : MonoBehaviour
         this.charId = charId;  
         this.isYourTeam = isYourTeam; 
         this.hasMoved = false; 
+        this.performedAction = false;
         this.curHp = gameManager.GetCharacter(charId).GetComponent<CharacterStats>().GetHp();
     }
     

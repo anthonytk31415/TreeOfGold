@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Unity;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,9 +32,11 @@ public class GameManager : MonoBehaviour
     private int _totalHeight; 
 
     // Useful GameObjects
-    public GameObject cursor; // cursor object
+    // public GameObject cursor; // cursor object
     public GameObject[] charArray;      // need to update later to dynamically change
     public CursorStateMachine cursorStateMachine; 
+
+    public GameObject moveControllerObject; 
 
     private void Awake() {
         // Singleton pattern implementation
@@ -50,24 +53,25 @@ public class GameManager : MonoBehaviour
 
     private void Update(){
         cursorStateMachine.Update();
+        // moveController.Update();
     }
 
     private void InitializeCore() {       
-        SelectedId = -1;                // charId   
+
         this._width = 6;                // dims of board
         this._height = 8;
         this._totalHeight = _height + 3; 
-        board = new Board(_width, _height);
-        tiles = GridManager.Initialize(_width, _totalHeight); // this is instantiated with the board + menus
-        charArray = new GameObject[4];
+        this.board = new Board(_width, _height);
+        this.tiles = GridManager.Initialize(_width, _totalHeight); // this is instantiated with the board + menus
+        this.charArray = new GameObject[4];
         CharactersObject.Initialize(Instance, board, charArray);
-        cursorStateMachine = new CursorStateMachine(Instance, board); 
-        cursorStateMachine.Initialize(cursorStateMachine.chooseState);
+        this.cursorStateMachine = new CursorStateMachine(Instance, board); 
+        this.cursorStateMachine.Initialize(cursorStateMachine.chooseState);
+        this.moveControllerObject = MoveControllerObject.Initialize(board, Instance);
+
         // adjusts camera to centered position 
         Camera.main.transform.position = new Vector3((float)_width/2 -0.5f, (float)_totalHeight / 2 - 0.5f, -10);
 
-        // selected
-        this.selectedId = -1;
     }
 
     // Other game management methods can go here
@@ -99,28 +103,11 @@ public class GameManager : MonoBehaviour
 
 
 
-    //// Logic for selected changes; should this go into cursor?
 
-    // when selected, ensure the infomenu is delegated
-    public delegate void SelectedCharIdChangedEventHandler(int newCharId);
-    
-    // Define the event based on the delegate
-    public static event SelectedCharIdChangedEventHandler OnSelectedCharIdChanged;
 
-    private int selectedId;
 
-    public int SelectedId {
-        get { return selectedId; }
-        set{
-            if (selectedId != value){
-                selectedId = value;
-                // Invoke the event whenever score changes
-            } else {
-                selectedId = -1;  
-            }
-            OnSelectedCharIdChanged?.Invoke(selectedId);
-        }
-    }
+
+
  
 }
 

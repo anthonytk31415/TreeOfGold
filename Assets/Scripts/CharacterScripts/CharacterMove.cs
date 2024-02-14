@@ -26,8 +26,12 @@ public class CharacterMove: MonoBehaviour
 
     public HashSet<Coordinate> PossibleMoves()
     {
-        HashSet<Coordinate> res = CharInteraction.PlayerMoveOptions(board, board.FindCharId(charId), moves, gameManager);
-        return res; 
+        if (!character.GetComponent<CharacterGameState>().HasMoved){
+            return CharInteraction.PlayerMoveOptions(board, board.FindCharId(charId), moves, gameManager);
+
+        } else {
+            return new HashSet<Coordinate>();
+        }
     }
 
     // public void MoveChar
@@ -40,8 +44,12 @@ public class CharacterMove: MonoBehaviour
         // // move visually; need coordinate to scene function here
         var (x, y) = board.ConvertMatToSceneCoords(w);
         transform.position = new Vector2((float) x, (float) y);
+        character.GetComponent<CharacterGameState>().HasMoved = true;
 
+    }
 
-
+    public void UndoMoveChar(Coordinate w){
+        MoveChar(w);
+        character.GetComponent<CharacterGameState>().HasMoved = false;
     }
 }

@@ -9,8 +9,7 @@ public class CursorStateMachine {
 
     private GameManager gameManager; 
     private Board board; 
-
-    private GameObject cursor;
+    public GameObject cursor;
 
 
 
@@ -26,7 +25,8 @@ public class CursorStateMachine {
     // need to build a CursorController
     // to manipulate this in between phases
     public CursorStateMachine(GameManager gameManager, Board board) {
-        this.cursor = CursorObject.Initialize(board, gameManager);
+        // this.cursor = CursorObject.Initialize(board, gameManager);
+        // this.cursor = MoveControllerObject.Initialize(board, gameManager);
         this.chooseState = new ChooseState(this.cursor, gameManager, board);
         // this.profileState = new ProfileState(cursor);
         // this.moveState = new MoveState(cursor);

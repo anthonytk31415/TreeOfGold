@@ -9,12 +9,11 @@ using UnityEngine;
 
 public class ChooseState : ICursorState
 {
-    private GameObject cursor; 
-    private GameManager gameManager; 
-    private Board board; 
+    public GameObject cursor; 
+    public GameManager gameManager; 
+    public Board board; 
 
     // some properties that determine what the cursor does
-
 
     public ChooseState(GameObject cursor, GameManager gameManager, Board board) {
         this.cursor = cursor;
@@ -26,36 +25,35 @@ public class ChooseState : ICursorState
     // trigger all the things you want to do when you enter
     public void Enter(){
         HighlightAllPlayerMoves();
-        GameManager.OnSelectedCharIdChanged += HandleCharIdChanged;
+        MoveController.OnSelectedCharIdChanged += HandleCharIdChanged; 
     }
 
     public void Update(){
     }
 
     public void Exit(){
-        GameManager.OnSelectedCharIdChanged -= HandleCharIdChanged;
+        MoveController.OnSelectedCharIdChanged -= HandleCharIdChanged;
     }
-
-
 
     // lots of move choices below; do we reorganize later into its own move class?
 
     public void HandleCharIdChanged(int charId){
-        ResetTiles();
-        HighlightAllPlayerMoves();
+        ResetBoard();
         if (charId != -1 ){
             HighlightUnit(charId);
         }
         if (charId != -1 && gameManager.charArray[charId].GetComponent<CharacterGameState>().isYourTeam){
             HighlightPlayerUnitMoves(charId);            
         }
-
     }
 
+    public void ResetBoard(){
+        ResetTiles();
+        HighlightAllPlayerMoves();
+    }
 
     // call this when you begin and after you've donea move(probably a switch in state so no need to redo call)
     public void HighlightAllPlayerMoves(){
-        
         // Get all moves for those chars on your team and has not moved
         HashSet<Coordinate> allPlayerMoves = new(); 
         foreach (GameObject character in gameManager.charArray) {
@@ -98,7 +96,6 @@ public class ChooseState : ICursorState
         else {
             tile.ToggleEnemy(); 
         }
-        
     }
 
     public void ResetTiles(){
