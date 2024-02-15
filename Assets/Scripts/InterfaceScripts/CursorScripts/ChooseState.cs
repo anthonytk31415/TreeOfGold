@@ -10,14 +10,14 @@ using UnityEngine;
 public class ChooseState : ICursorState
 {
     public GameObject cursor; 
-    public GameManager gameManager; 
+    public GameManager instance; 
     public Board board; 
 
     // some properties that determine what the cursor does
 
-    public ChooseState(GameObject cursor, GameManager gameManager, Board board) {
+    public ChooseState(GameObject cursor, GameManager instance, Board board) {
         this.cursor = cursor;
-        this.gameManager = gameManager;
+        this.instance = instance;
         this.board = board;  
     }
 
@@ -38,19 +38,29 @@ public class ChooseState : ICursorState
     // lots of move choices below; do we reorganize later into its own move class?
 
     public void HandleCharIdChanged(int charId){
-        TriggerSelectedHighlights(charId);
+        TriggerSelectedHighlights();
     }
 
-    public void TriggerSelectedHighlights(int charId){
-        ResetBoard();
-        if (charId != -1 ){
-            HighlightUnit(charId);
+
+    // highlights are defined by selected units. 
+    // if selectedId != -1 then 
+    // selectedId == -1 and enemyId != 01
+
+    public void TriggerSelectedHighlights(){
+        int selectedId = instance.moveControllerObject.GetComponent<MoveController>().SelectedId;
+        int enemyId =  instance.moveControllerObject.GetComponent<MoveController>().SelectedEnemyId;        
+        ResetBoard();        
+        if (selectedId != -1 ){
+            HighlightUnit(selectedId);
+            HighlightPlayerUnitMoves(selectedId);    
+            HighlightValidTargets(selectedId);
+            
+        } else if (selectedId == -1 && enemyId != -1) {
+            HighlightUnit(enemyId); 
         }
-        if (charId != -1 && gameManager.charArray[charId].GetComponent<CharacterGameState>().isYourTeam){
-            HighlightPlayerUnitMoves(charId);    
-            HighlightValidTargets(charId);        
-        }
+
     }
+    
 
 
     public void ResetBoard(){
@@ -62,7 +72,7 @@ public class ChooseState : ICursorState
     public void HighlightAllPlayerMoves(){
         // Get all moves for those chars on your team and has not moved
         HashSet<Coordinate> allPlayerMoves = new(); 
-        foreach (GameObject character in gameManager.charArray) {
+        foreach (GameObject character in instance.charArray) {
             if (character.GetComponent<CharacterGameState>().isYourTeam && !character.GetComponent<CharacterGameState>().HasMoved){
                 HashSet<Coordinate> curMoves = character.GetComponent<CharacterMove>().PossibleMoves();
                 allPlayerMoves.UnionWith(curMoves);
@@ -70,14 +80,14 @@ public class ChooseState : ICursorState
         }
 
         // highlight those moves on the grid
-        foreach (Tile tile in gameManager.tiles){            
+        foreach (Tile tile in instance.tiles){            
             HighlightTile(tile, allPlayerMoves, tile.TogglePlayerAllPath);
         }
     }
     public void HighlightPlayerUnitMoves(int charId){
-        GameObject unit = gameManager.charArray[charId]; 
+        GameObject unit = instance.charArray[charId]; 
         HashSet<Coordinate> curMoves = unit.GetComponent<CharacterMove>().PossibleMoves();
-        foreach (Tile tile in gameManager.tiles){            
+        foreach (Tile tile in instance.tiles){            
             HighlightTile(tile, curMoves, tile.TogglePlayerPath);
         }
     }
@@ -94,8 +104,8 @@ public class ChooseState : ICursorState
 
     public void HighlightUnit(int charId){
         Coordinate w = board.FindCharId(charId);
-        Boolean yourTeam = gameManager.charArray[charId].GetComponent<CharacterGameState>().isYourTeam; 
-        Tile tile = GridManager.FindTile(gameManager.tiles, w); 
+        Boolean yourTeam = instance.charArray[charId].GetComponent<CharacterGameState>().isYourTeam; 
+        Tile tile = GridManager.FindTile(instance.tiles, w); 
         if (yourTeam){
             tile.TogglePlayer();
         }
@@ -110,18 +120,18 @@ public class ChooseState : ICursorState
 
     public void HighlightValidTargets(int selectedUnitId){
         // Coordinate w = board.FindCharId(charId);
-        GameObject selectedUnit = gameManager.charArray[selectedUnitId]; 
+        GameObject selectedUnit = instance.charArray[selectedUnitId]; 
         HashSet<Coordinate> curEnemyTargets = selectedUnit.GetComponent<CharacterMove>().PossibleAttackTargets();
 
         // highlight those moves on the grid
-        foreach (Tile tile in gameManager.tiles){            
+        foreach (Tile tile in instance.tiles){            
             HighlightTile(tile, curEnemyTargets, tile.ToggleEnemyTarget);
         }
     }
 
 
     public void ResetTiles(){
-        foreach (Tile tile in gameManager.tiles){            
+        foreach (Tile tile in instance.tiles){            
             if (tile.isOnBoard){
                 tile.PaintOffsetColor(); 
             }

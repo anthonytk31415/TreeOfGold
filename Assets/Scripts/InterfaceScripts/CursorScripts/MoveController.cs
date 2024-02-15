@@ -52,33 +52,14 @@ public class MoveController : MonoBehaviour
         }
     }
 
-
-
-
-    // public delegate void SelectedAttackTargetIdChangedEventHandler(int attackTargetId);
-    // // Define the event based on the delegate
-    // public static event SelectedAttackTargetIdChangedEventHandler OnAttackTargetIdChanged;
-    // private int attackTargetId;
-    // public int AttackTargetId {
-    //     get { return attackTargetId; }
-    //     set {
-    //         if (attackTargetId != value){
-    //             attackTargetId = value;
-    //             // Invoke the event whenever score changes
-    //         } else {
-    //             attackTargetId = -1;  
-    //         }
-    //         OnAttackTargetIdChanged?.Invoke(attackTargetId);
-    //     }
-    // }
-
-
-
-
     private Stack<Coordinate> moveStack;
 
     public Boolean IsSelected(){
         return selectedId != -1; 
+    }
+
+    public Boolean IsEnemySelected(){
+        return SelectedEnemyId != -1; 
     }
 
 
@@ -107,60 +88,49 @@ public class MoveController : MonoBehaviour
         if (Input.GetMouseButtonDown(0)){
             Vector3 mousePosition = Input.mousePosition;
             Coordinate w = GetMouseClickCoordinate(mousePosition);
+            int charIdLookup = board.Get(w); 
+            (Boolean, Boolean) curState = GetSelectedState();
+            Debug.Log("current state: " + curState);
+            if ((curState == (false, false) && IsTargetOnTeam(w)) || 
+                (curState == (true, false) && IsTargetOnTeam(w) && SelectedId != charIdLookup) ||
+                (curState == (false, true) && IsTargetOnTeam(w) )||
+                (curState == (true, true) && IsTargetOnTeam(w) && SelectedId != charIdLookup)){
+                SelectedId = charIdLookup;
+                UnselectEnemyUnit();
 
-            int sId = SelectedId; 
-            // if unselected: select unit 
-            if (!IsSelected()){
-                SelectUnit(w);
-                UnselectAttackTargetUnit();
-                // ToggleMoveOption()
-                return;
-                // toggle appropriate things on the screen 
-
-            } 
-            // if currently selected something
-            else if (IsSelected()){
-                // same unit -> unselect
-                if (board.IsWithinBoard(w) && board.Get(w) == sId){
-                    UnselectUnit();
-                    // UnToggleMoveOption
-                    return; 
-                }
-                // diff unit: -> select
-
-                // moving condition 
-                // GameObject unit = instance.charArray[sId]; 
-
-
-                // if selected and click is on available target, then get ready for attack
-                else if (board.IsWithinBoard(w) && board.Get(w) != -1 && 
-                            instance.charArray[sId].GetComponent<CharacterMove>().PossibleAttackTargets().Contains(w)){
-                    SelectAttackTargetUnit(w);
-                    Debug.Log("char coordinate: " + w + ", selectedEnemyId: " + selectedEnemyId);
-                    return;
-                }
-
-                // if selected has not moved, and click is in possible moves, then "temp" move to later be confirmed
-                else if (!instance.charArray[sId].GetComponent<CharacterGameState>().HasMoved && 
-                            instance.charArray[sId].GetComponent<CharacterGameState>().isYourTeam && 
-                            instance.charArray[sId].GetComponent<CharacterMove>().PossibleMoves().Contains(w)){
-                    Debug.Log("Attempting move");
-                    // move player
-                    // enableMoveButton
-
-                    moveStack.Push(board.FindCharId(sId)); 
-                    moveStack.Push(w);
-                    instance.charArray[sId].GetComponent<CharacterMove>().MoveChar(w);
-                    instance.cursorStateMachine.chooseState.TriggerSelectedHighlights(sId); 
-                    return;
-                }
-
-                else if (board.IsWithinBoard(w) && board.Get(w) != sId){
-                    UnselectAttackTargetUnit();
-                    SelectUnit(w);
-                    return;
-                }
             }
+            else if ((curState == (false, false) && IsTargetAnEnemy(w)) || 
+                (curState == (true, false) && IsTargetAnEnemy(w) && !IsTargetAttackableEnemy(w)) ||
+                (curState == (false, true) && IsTargetAnEnemy(w))){
+                SelectedEnemyId = board.Get(w);
+                UnselectUnit();
+
+            }
+
+            else if ((curState == (true, false) && SelectedId == charIdLookup) || 
+                (curState == (false, true) && SelectedEnemyId == charIdLookup) ||
+                (curState == (true, true) && SelectedId == charIdLookup)){
+                UnselectUnit();
+                UnselectEnemyUnit();
+
+            }
+
+            else if ((curState == (true, false) && IsTargetAnEnemy(w) && IsTargetAttackableEnemy(w)) || 
+                (curState == (true, true) && IsTargetAnEnemy(w) && IsTargetAttackableEnemy(w))){
+                SelectEnemyUnit(w);
+            }
+
+            else if ((curState == (true, false) || curState == (true, true)) &&
+                      instance.charArray[SelectedId].GetComponent<CharacterMove>().PossibleMoves().Contains(w)){
+                moveStack.Push(board.FindCharId(SelectedId)); 
+                moveStack.Push(w);
+                instance.charArray[SelectedId].GetComponent<CharacterMove>().MoveChar(w);
+                instance.cursorStateMachine.chooseState.TriggerSelectedHighlights(); 
+            }
+
+            // deal with attack here
+
+
         }
     }
 
@@ -171,14 +141,15 @@ public class MoveController : MonoBehaviour
             int unitId = board.Get(curPos); 
             instance.charArray[unitId].GetComponent<CharacterMove>().UndoMoveChar(prevPos);
             instance.cursorStateMachine.chooseState.ResetBoard(); 
+            instance.cursorStateMachine.chooseState.TriggerSelectedHighlights();
         }
     }
 
+    // once you attack the stack gets reset
     public void ClearMoveStack(){
         this.moveStack = new Stack<Coordinate>();
     }
 
-    // once you attack the stack gets reset
 
     private Coordinate GetMouseClickCoordinate(Vector3 mousePosition){
         // Convert mouse position to world coordinates
@@ -208,27 +179,80 @@ public class MoveController : MonoBehaviour
         Debug.Log("printing successful.");
     }
 
-    private void SelectAttackTargetUnit(Coordinate w){
+    private void SelectEnemyUnit(Coordinate w){
         int charId = board.Get(w);
-        Debug.Log("initiating SelectAttackTargetUnit");
+        // Debug.Log("initiating SelectAttackTargetUnit");
         if (board.IsWithinBoard(w) && charId != SelectedId && charId != -1 &&
             !instance.charArray[charId].GetComponent<CharacterGameState>().isYourTeam){     
-            Debug.Log("criteria successful. now setting ");               
+            // Debug.Log("criteria successful. now setting ");               
             SelectedEnemyId = charId; 
-            Debug.Log("selectedEnemyId: " + selectedEnemyId);
+            // Debug.Log("selectedEnemyId: " + selectedEnemyId);
         }   
     }
-    private void UnselectAttackTargetUnit(){
+    private void UnselectEnemyUnit(){
         SelectedEnemyId = -1;
     }
+
+
+
+
+    private (Boolean, Boolean) GetSelectedState(){
+        return (IsSelected(), IsEnemySelected());
+    }
+
+    private Boolean IsTargetSelectedPlayer(Coordinate w){
+        return board.Get(w) == SelectedId; 
+    }
+
+    private Boolean IsTargetSelectedEnemy(Coordinate w){
+        return board.Get(w) == SelectedEnemyId; 
+    }
+
+    private Boolean IsTargetAttackableEnemy(Coordinate w){
+        if (SelectedId == -1){
+            return false; 
+        }
+        if (IsTargetAnEnemy(w)){
+            HashSet<Coordinate> attackTargets = instance.charArray[SelectedId].GetComponent<CharacterMove>().PossibleAttackTargets();
+            return attackTargets.Contains(w);
+        }
+        return false; 
+    }
+
+
+    private Boolean IsTargetOnTeam(Coordinate w){
+        if (board.Get(w) == -1){
+            return false; 
+        }
+        return instance.charArray[board.Get(w)].GetComponent<CharacterGameState>().isYourTeam; 
+    }
+
+    private Boolean IsTargetAnEnemy(Coordinate w){
+        if (board.Get(w) == -1){
+            return false; 
+        }
+        return !instance.charArray[board.Get(w)].GetComponent<CharacterGameState>().isYourTeam; 
+    }
+
+
 
 
     // need a selected and a target;
     // if selected and is on your team, and a target is in site, attack is enabled. 
     // attack enemy.  will be used on button click. 
+
+    // logic for attack: player attacks first. reduce hp based on attack and modifiers (TBD later). 
+    // then if opponent is alive, then opponent attacks player. 
     public void Attack(){
         // if ()
     }
+
+
+
+
+
+
+
     // will need a confirm (action) /back button
 
 
@@ -276,3 +300,83 @@ public class MoveController : MonoBehaviour
     //     }
     // }
 }
+
+
+
+
+// old function now i am going to refactor it. 
+// private void UpdateMouseClickManager(){
+//         if (Input.GetMouseButtonDown(0)){
+//             Vector3 mousePosition = Input.mousePosition;
+//             Coordinate w = GetMouseClickCoordinate(mousePosition);
+//             // int targetId = board.Get(w);
+
+//             // if unselected: select unit 
+//             if (!IsSelected()){
+
+//                 if (IsEnemySelected() && board.Get(w) != -1 && SelectedEnemyId == board.Get(w)){
+//                     UnselectEnemyUnit();                             
+//                 } else if (IsEnemySelected() && board.Get(w) != -1 && SelectedEnemyId != board.Get(w)) {
+
+//                 }
+
+//                 else {
+//                     UnselectEnemyUnit();
+//                     if (board.Get(w) != -1){
+//                         if (instance.charArray[board.Get(w)].GetComponent<CharacterGameState>().isYourTeam){
+//                             SelectUnit(w);
+//                             UnselectEnemyUnit();
+//                         } else {
+//                             SelectEnemyUnit(w); 
+//                         }
+//                     }
+//                     return;
+//                 }
+
+
+//             } 
+//             // if currently selected something
+//             else if (IsSelected()){
+//                 // same unit -> unselect
+//                 if (board.IsWithinBoard(w) && board.Get(w) == SelectedId){
+//                     UnselectUnit();
+//                     UnselectEnemyUnit();
+//                     return; 
+//                 }
+
+
+
+//                 // moving condition: if selected and click is on available target, 
+//                 // then get ready for attack
+//                 else if (board.IsWithinBoard(w) && board.Get(w) != -1 && 
+//                             instance.charArray[SelectedId].GetComponent<CharacterMove>().PossibleAttackTargets().Contains(w)){
+//                     SelectEnemyUnit(w);
+//                     return;
+//                 }
+//                 // if selected has not moved, and click is in possible moves, then 
+//                 // "temp" move to later be confirmed
+//                 else if (!instance.charArray[SelectedId].GetComponent<CharacterGameState>().HasMoved && 
+//                             instance.charArray[SelectedId].GetComponent<CharacterGameState>().isYourTeam && 
+//                             instance.charArray[SelectedId].GetComponent<CharacterMove>().PossibleMoves().Contains(w)){
+//                     UnselectEnemyUnit();
+//                     moveStack.Push(board.FindCharId(SelectedId)); 
+//                     moveStack.Push(w);
+//                     instance.charArray[SelectedId].GetComponent<CharacterMove>().MoveChar(w);
+//                     instance.cursorStateMachine.chooseState.TriggerSelectedHighlights(); 
+//                     return;
+//                 }
+
+//                 // 
+//                 else if (board.IsWithinBoard(w) && board.Get(w) != SelectedId){
+//                     UnselectEnemyUnit();
+//                     UnselectUnit(); 
+//                     if (board.Get(w) != 1 && instance.charArray[board.Get(w)].GetComponent<CharacterGameState>().isYourTeam){
+//                         SelectUnit(w);
+//                     } else if (board.Get(w) != 1 && !instance.charArray[board.Get(w)].GetComponent<CharacterGameState>().isYourTeam){
+//                         SelectEnemyUnit(w); 
+//                     }
+//                     return;
+//                 }
+//             }
+//         }
+//     }

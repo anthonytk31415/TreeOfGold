@@ -28,6 +28,8 @@ public class CharacterGameState : MonoBehaviour
     }
 
 
+    public Boolean hasAttacked; // update later; placeholder
+
     public int curHp; 
     // Other methods as needed
 
