@@ -24,8 +24,7 @@ public class CharacterMove: MonoBehaviour
     // return a set of possible moves; we will apply BFS to return 
     // a hash set of the id's possible moves. 
 
-    public HashSet<Coordinate> PossibleMoves()
-    {
+    public HashSet<Coordinate> PossibleMoves() {
         if (!character.GetComponent<CharacterGameState>().HasMoved){
             return CharInteraction.PlayerMoveOptions(board, board.FindCharId(charId), moves, gameManager);
 
@@ -47,6 +46,15 @@ public class CharacterMove: MonoBehaviour
         character.GetComponent<CharacterGameState>().HasMoved = true;
 
     }
+
+    public HashSet<Coordinate> PossibleAttackTargets(){
+        int range = character.GetComponent<CharacterStats>().attackRange;  
+        Coordinate initialPos = board.FindCharId(charId);
+        HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(gameManager, board, initialPos, range); 
+        CharInteraction.TestEnemiesRange(possibleAttackTargets);  
+        return possibleAttackTargets;      
+    }
+
 
     public void UndoMoveChar(Coordinate w){
         MoveChar(w);

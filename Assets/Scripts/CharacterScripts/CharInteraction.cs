@@ -66,4 +66,37 @@ public static class CharInteraction
         return res; 
     } 
 
+
+    public static HashSet<Coordinate> EnemiesWithinAttackRange(GameManager gameManager, Board board, Coordinate initialPos, int range){
+        HashSet<Coordinate> res = new();           
+        Queue<(Coordinate, int)> queue = new();
+        queue.Enqueue((initialPos, range));
+        // res.Add(w);
+
+        while (queue.Count > 0){
+            (Coordinate curPos, int curMove) = queue.Dequeue(); 
+            (int, int)[] positions = {(1,0), (-1, 0), (0, 1), (0, -1)}; 
+            if (curMove > 0) {
+                foreach ((int dx, int dy) in positions) 
+                {
+                    Coordinate w = new(curPos.GetX() + dx, curPos.GetY() + dy);
+                    if (!res.Contains(w) && board.IsWithinBoard(w) && board.Get(w) != -1 
+                        && !gameManager.charArray[board.Get(w)].GetComponent<CharacterGameState>().isYourTeam )
+                    {
+                        res.Add(w);
+                        queue.Enqueue((w, curMove - 1)); 
+                    }
+                }
+            }
+        }
+        return res; 
+    }
+
+    public static void TestEnemiesRange(HashSet<Coordinate> enemiesInRange){
+        Debug.Log("testing allenemies within range: ");
+        foreach(Coordinate w in enemiesInRange){
+            Debug.Log(w);
+        }
+    }
+
 }

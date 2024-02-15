@@ -14,35 +14,56 @@ public class StatMenuManager : MonoBehaviour
     // [SerializeField] TextMeshProUGUI textHp; 
     // [SerializeField] TextMeshProUGUI textAttack; 
     // call this when a unit is selected 
-    [SerializeField] TextMeshProUGUI[] textComponents; 
-
+    [SerializeField] TextMeshProUGUI[] playerUnitTextComponents; 
+    [SerializeField] TextMeshProUGUI[] enemyUnitTextComponents; 
 
 
     void Start() {
         MoveController.OnSelectedCharIdChanged += HandleCharIdChanged;
-        BlankTextBoxes();
+        MoveController.OnSelectedEnemyIdChanged += HandleEnemyIdChanged;
+        BlankPlayerTextBoxes();
+        BlankEnemyTextBoxes();
         // HandleScoreChanged
         // HandleCharIdChanged
-        
+
     }
 
     // subscribed handleChanges
     private void HandleCharIdChanged(int charId){
         if (charId == -1){
-            BlankTextBoxes(); 
+            BlankPlayerTextBoxes(); 
         } else if (charId >= 0 && charId < Instance.charArray.Length){
             var charUnitStats = Instance.charArray[charId].GetComponent<CharacterStats>(); 
-            textComponents[0].text = charUnitStats.charName;
-            textComponents[1].text = "HP: " + charUnitStats.hp.ToString(); 
-            textComponents[2].text = "Attack: " + charUnitStats.attack.ToString();
-
+            playerUnitTextComponents[0].text = charUnitStats.charName;
+            playerUnitTextComponents[1].text = "HP: " + charUnitStats.hp.ToString(); 
+            playerUnitTextComponents[2].text = "Attack: " + charUnitStats.attack.ToString();
         } else {
-            BlankTextBoxes();
+            BlankPlayerTextBoxes();
         }
     }
 
-    private void BlankTextBoxes(){
-        foreach (TextMeshProUGUI textObj in textComponents){
+    private void HandleEnemyIdChanged(int enemyId){
+        Debug.Log("initiating handleEnemyIdChnaged");
+        if (enemyId == -1){
+            BlankEnemyTextBoxes(); 
+        } else if (enemyId >= 0 && enemyId < Instance.charArray.Length){
+            var charUnitStats = Instance.charArray[enemyId].GetComponent<CharacterStats>(); 
+            enemyUnitTextComponents[0].text = charUnitStats.charName;
+            enemyUnitTextComponents[1].text = "HP: " + charUnitStats.hp.ToString(); 
+            enemyUnitTextComponents[2].text = "Attack: " + charUnitStats.attack.ToString();
+        } else {
+            BlankEnemyTextBoxes();
+        }
+    }
+
+    private void BlankPlayerTextBoxes(){
+        foreach (TextMeshProUGUI textObj in playerUnitTextComponents){
+            textObj.text = "";
+        }
+    }
+
+    private void BlankEnemyTextBoxes(){
+        foreach (TextMeshProUGUI textObj in enemyUnitTextComponents){
             textObj.text = "";
         }
     }
@@ -53,6 +74,7 @@ public class StatMenuManager : MonoBehaviour
     {
         // Unsubscribe from the event when this object is destroyed
         MoveController.OnSelectedCharIdChanged -= HandleCharIdChanged;
+        MoveController.OnSelectedEnemyIdChanged -= HandleEnemyIdChanged;
     }
 
 

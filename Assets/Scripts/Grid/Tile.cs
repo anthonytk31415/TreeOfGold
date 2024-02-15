@@ -9,7 +9,7 @@ using UnityEngine;
 public class Tile : MonoBehaviour {
     [SerializeField] private Color _baseColor, _offsetColor, _menuColor; 
     [SerializeField] private Color _playerAllPathColor, _playerPathColor, _playerColor;
-    [SerializeField] private Color _enemyAllPathColor, _enemyPathColor, _enemyColor;
+    [SerializeField] private Color _enemyAllPathColor, _enemyPathColor, _enemyColor, _enemyTarget;
     [SerializeField] private SpriteRenderer _renderer;
 
     [SerializeField] private GameObject _highlight;
@@ -49,6 +49,10 @@ public class Tile : MonoBehaviour {
 
     public void ToggleEnemy(){
         _renderer.color = _enemyColor; 
+    }
+
+    public void ToggleEnemyTarget(){
+        _renderer.color = _enemyTarget; 
     }
 
 

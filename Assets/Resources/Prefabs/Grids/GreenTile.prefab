@@ -192,6 +192,7 @@ MonoBehaviour:
   _enemyAllPathColor: {r: 1, g: 0.26274514, b: 0.37845728, a: 0.3529412}
   _enemyPathColor: {r: 0.88700324, g: 0.6839622, b: 1, a: 0}
   _enemyColor: {r: 0.8415842, g: 0, b: 1, a: 1}
+  _enemyTarget: {r: 1, g: 0, b: 0, a: 1}
   _renderer: {fileID: 7972792320582366251}
   _highlight: {fileID: 3938715739325148107}
 --- !u!61 &3159376063323984480

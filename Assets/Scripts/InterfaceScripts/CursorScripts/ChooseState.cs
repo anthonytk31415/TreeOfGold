@@ -38,14 +38,20 @@ public class ChooseState : ICursorState
     // lots of move choices below; do we reorganize later into its own move class?
 
     public void HandleCharIdChanged(int charId){
+        TriggerSelectedHighlights(charId);
+    }
+
+    public void TriggerSelectedHighlights(int charId){
         ResetBoard();
         if (charId != -1 ){
             HighlightUnit(charId);
         }
         if (charId != -1 && gameManager.charArray[charId].GetComponent<CharacterGameState>().isYourTeam){
-            HighlightPlayerUnitMoves(charId);            
+            HighlightPlayerUnitMoves(charId);    
+            HighlightValidTargets(charId);        
         }
     }
+
 
     public void ResetBoard(){
         ResetTiles();
@@ -97,6 +103,22 @@ public class ChooseState : ICursorState
             tile.ToggleEnemy(); 
         }
     }
+
+
+    // given a charId, get the available attacks, then for each thing in the hash set, highlight
+    // dont forget to include whatever you need in the reset tiles
+
+    public void HighlightValidTargets(int selectedUnitId){
+        // Coordinate w = board.FindCharId(charId);
+        GameObject selectedUnit = gameManager.charArray[selectedUnitId]; 
+        HashSet<Coordinate> curEnemyTargets = selectedUnit.GetComponent<CharacterMove>().PossibleAttackTargets();
+
+        // highlight those moves on the grid
+        foreach (Tile tile in gameManager.tiles){            
+            HighlightTile(tile, curEnemyTargets, tile.ToggleEnemyTarget);
+        }
+    }
+
 
     public void ResetTiles(){
         foreach (Tile tile in gameManager.tiles){            

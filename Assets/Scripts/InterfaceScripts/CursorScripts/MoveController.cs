@@ -34,6 +34,45 @@ public class MoveController : MonoBehaviour
             OnSelectedCharIdChanged?.Invoke(selectedId);
         }
     }
+    // Enemy Target 
+    public delegate void SelectedEnemyIdChangedEventHandler(int selectedEnemyId);
+    // Define the event based on the delegate
+    public static event SelectedEnemyIdChangedEventHandler OnSelectedEnemyIdChanged;
+    private int selectedEnemyId;
+    public int SelectedEnemyId {
+        get { return selectedEnemyId; }
+        set {
+            if (selectedEnemyId != value){
+                selectedEnemyId = value;
+                // Invoke the event whenever score changes
+            } else {
+                selectedEnemyId = -1;  
+            }
+            OnSelectedEnemyIdChanged?.Invoke(selectedEnemyId);
+        }
+    }
+
+
+
+
+    // public delegate void SelectedAttackTargetIdChangedEventHandler(int attackTargetId);
+    // // Define the event based on the delegate
+    // public static event SelectedAttackTargetIdChangedEventHandler OnAttackTargetIdChanged;
+    // private int attackTargetId;
+    // public int AttackTargetId {
+    //     get { return attackTargetId; }
+    //     set {
+    //         if (attackTargetId != value){
+    //             attackTargetId = value;
+    //             // Invoke the event whenever score changes
+    //         } else {
+    //             attackTargetId = -1;  
+    //         }
+    //         OnAttackTargetIdChanged?.Invoke(attackTargetId);
+    //     }
+    // }
+
+
 
 
     private Stack<Coordinate> moveStack;
@@ -48,6 +87,7 @@ public class MoveController : MonoBehaviour
         // TouchSimulation.Enable;
         mainCamera = Camera.main;
         selectedId = -1;
+        selectedEnemyId = -1;
     }
 
     // Update is called once per frame
@@ -72,6 +112,7 @@ public class MoveController : MonoBehaviour
             // if unselected: select unit 
             if (!IsSelected()){
                 SelectUnit(w);
+                UnselectAttackTargetUnit();
                 // ToggleMoveOption()
                 return;
                 // toggle appropriate things on the screen 
@@ -81,7 +122,7 @@ public class MoveController : MonoBehaviour
             else if (IsSelected()){
                 // same unit -> unselect
                 if (board.IsWithinBoard(w) && board.Get(w) == sId){
-                    UnselectUnit(w);
+                    UnselectUnit();
                     // UnToggleMoveOption
                     return; 
                 }
@@ -90,23 +131,32 @@ public class MoveController : MonoBehaviour
                 // moving condition 
                 // GameObject unit = instance.charArray[sId]; 
 
-                // if selcted has not moved, and click is in possible moves, then "temp" move to later be confirmed
-                // 
-                else if (!instance.charArray[sId].GetComponent<CharacterGameState>().HasMoved && instance.charArray[sId].GetComponent<CharacterMove>().PossibleMoves().Contains(w)){
+
+                // if selected and click is on available target, then get ready for attack
+                else if (board.IsWithinBoard(w) && board.Get(w) != -1 && 
+                            instance.charArray[sId].GetComponent<CharacterMove>().PossibleAttackTargets().Contains(w)){
+                    SelectAttackTargetUnit(w);
+                    Debug.Log("char coordinate: " + w + ", selectedEnemyId: " + selectedEnemyId);
+                    return;
+                }
+
+                // if selected has not moved, and click is in possible moves, then "temp" move to later be confirmed
+                else if (!instance.charArray[sId].GetComponent<CharacterGameState>().HasMoved && 
+                            instance.charArray[sId].GetComponent<CharacterGameState>().isYourTeam && 
+                            instance.charArray[sId].GetComponent<CharacterMove>().PossibleMoves().Contains(w)){
                     Debug.Log("Attempting move");
                     // move player
                     // enableMoveButton
 
-                    // ToggleMoveSelected() // NEW UPDATE
                     moveStack.Push(board.FindCharId(sId)); 
                     moveStack.Push(w);
                     instance.charArray[sId].GetComponent<CharacterMove>().MoveChar(w);
-                    // instance.charArray[sId].GetComponent<CharacterGameState>().HasMoved = true; 
-                    instance.cursorStateMachine.chooseState.ResetBoard(); 
+                    instance.cursorStateMachine.chooseState.TriggerSelectedHighlights(sId); 
                     return;
                 }
 
                 else if (board.IsWithinBoard(w) && board.Get(w) != sId){
+                    UnselectAttackTargetUnit();
                     SelectUnit(w);
                     return;
                 }
@@ -120,6 +170,7 @@ public class MoveController : MonoBehaviour
             Coordinate prevPos = moveStack.Pop();
             int unitId = board.Get(curPos); 
             instance.charArray[unitId].GetComponent<CharacterMove>().UndoMoveChar(prevPos);
+            instance.cursorStateMachine.chooseState.ResetBoard(); 
         }
     }
 
@@ -149,9 +200,36 @@ public class MoveController : MonoBehaviour
         }   
     }
 
-    private void UnselectUnit(Coordinate w){
+    private void UnselectUnit(){
         SelectedId = -1;
     }
+
+    public void PrintTest(){
+        Debug.Log("printing successful.");
+    }
+
+    private void SelectAttackTargetUnit(Coordinate w){
+        int charId = board.Get(w);
+        Debug.Log("initiating SelectAttackTargetUnit");
+        if (board.IsWithinBoard(w) && charId != SelectedId && charId != -1 &&
+            !instance.charArray[charId].GetComponent<CharacterGameState>().isYourTeam){     
+            Debug.Log("criteria successful. now setting ");               
+            SelectedEnemyId = charId; 
+            Debug.Log("selectedEnemyId: " + selectedEnemyId);
+        }   
+    }
+    private void UnselectAttackTargetUnit(){
+        SelectedEnemyId = -1;
+    }
+
+
+    // need a selected and a target;
+    // if selected and is on your team, and a target is in site, attack is enabled. 
+    // attack enemy.  will be used on button click. 
+    public void Attack(){
+        // if ()
+    }
+    // will need a confirm (action) /back button
 
 
 
