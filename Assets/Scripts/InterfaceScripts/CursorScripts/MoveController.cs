@@ -98,7 +98,7 @@ public class MoveController : MonoBehaviour
                 if (IsSelected() && SelectedIdHasMoved() && !IsTargetAttackableEnemy(w)){
                     UndoMove(); 
                     UnselectUnit(); 
-                    if (IsTargetOnTeam(w)){
+                    if (IsTargetOnTeam(w) && selectedId != charIdLookup){
                         SelectUnit(w);
                     }
                 }
@@ -195,7 +195,7 @@ public class MoveController : MonoBehaviour
 
     // once you attack the stack gets reset
     public void ClearMoveStack(){
-        this.moveStack = new Stack<Coordinate>();
+        moveStack.Clear();
     }
 
     public void ResetSelected(){

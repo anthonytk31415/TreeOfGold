@@ -37,6 +37,7 @@ public class GameManager : MonoBehaviour
     public CursorStateMachine cursorStateMachine; 
     public GameObject moveControllerObject; 
 
+    public GameScore gameScore; 
 
     [SerializeField] public GameObject statMenuController; 
 
@@ -70,6 +71,7 @@ public class GameManager : MonoBehaviour
         this.cursorStateMachine = new CursorStateMachine(Instance, board); 
         this.cursorStateMachine.Initialize(cursorStateMachine.chooseState);
         this.moveControllerObject = MoveControllerObject.Initialize(board, Instance);
+        this.gameScore = new GameScore(charArray);
 
         // adjusts camera to centered position 
         Camera.main.transform.position = new Vector3((float)_width/2 -0.5f, (float)_totalHeight / 2 - 0.5f, -10);

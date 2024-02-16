@@ -67,14 +67,18 @@ public class Board
 
     public void PutEmpty(Coordinate w){
         Put(w, -1); 
-        // Debug.Log("put triggered for " + w + "; get w: " + Get(w));
-    
+        // Debug.Log("put triggered for " + w + "; get w: " + Get(w));    
     }
 
     // is this matrix spot empty?
     public bool IsEmpty(Coordinate w){
         return Get(w) == -1;
     }
+
+    public bool IsNull(Coordinate w) {
+        return w.GetX() == -1 && w.GetY() == -1;
+    }
+
 
     // given an id, return the position of it, or return (-1, -1) if it fails. 
     public Coordinate FindCharId (int id){
