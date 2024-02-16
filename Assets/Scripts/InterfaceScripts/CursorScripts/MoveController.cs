@@ -61,11 +61,12 @@ public class MoveController : MonoBehaviour
     public Boolean IsEnemySelected(){
         return SelectedEnemyId != -1; 
     }
-
+    private (Boolean, Boolean) GetSelectedState(){
+        return (IsSelected(), IsEnemySelected());
+    }
 
     // Start is called before the first frame update
     private void Start() {
-        // TouchSimulation.Enable;
         mainCamera = Camera.main;
         selectedId = -1;
         selectedEnemyId = -1;
@@ -73,7 +74,6 @@ public class MoveController : MonoBehaviour
 
     // Update is called once per frame
     public void Update() {
-        // CursorUpdatePosition();
         UpdateMouseClickManager();
     }
 
@@ -88,49 +88,95 @@ public class MoveController : MonoBehaviour
         if (Input.GetMouseButtonDown(0)){
             Vector3 mousePosition = Input.mousePosition;
             Coordinate w = GetMouseClickCoordinate(mousePosition);
-            int charIdLookup = board.Get(w); 
-            (Boolean, Boolean) curState = GetSelectedState();
-            Debug.Log("current state: " + curState);
-            if ((curState == (false, false) && IsTargetOnTeam(w)) || 
-                (curState == (true, false) && IsTargetOnTeam(w) && SelectedId != charIdLookup) ||
-                (curState == (false, true) && IsTargetOnTeam(w) )||
-                (curState == (true, true) && IsTargetOnTeam(w) && SelectedId != charIdLookup)){
-                SelectedId = charIdLookup;
-                UnselectEnemyUnit();
+            if (board.IsWithinBoard(w)){
+                int charIdLookup = board.Get(w); 
+                (Boolean, Boolean) curState = GetSelectedState();
+                Debug.Log("current state: " + curState);
 
-            }
-            else if ((curState == (false, false) && IsTargetAnEnemy(w)) || 
-                (curState == (true, false) && IsTargetAnEnemy(w) && !IsTargetAttackableEnemy(w)) ||
-                (curState == (false, true) && IsTargetAnEnemy(w))){
-                SelectedEnemyId = board.Get(w);
-                UnselectUnit();
 
-            }
+                // you move, click elsewhere
+                if (IsSelected() && SelectedIdHasMoved() && !IsTargetAttackableEnemy(w)){
+                    UndoMove(); 
+                    UnselectUnit(); 
+                    if (IsTargetOnTeam(w)){
+                        SelectUnit(w);
+                    }
+                }
 
-            else if ((curState == (true, false) && SelectedId == charIdLookup) || 
-                (curState == (false, true) && SelectedEnemyId == charIdLookup) ||
-                (curState == (true, true) && SelectedId == charIdLookup)){
-                UnselectUnit();
-                UnselectEnemyUnit();
+                else if (IsSelected() && charIdLookup == -1 && !IsPossibleMove(w)){
+                    UnselectEnemyUnit();
+                    UnselectUnit();
+                }
 
-            }
+                else if (curState == (false, true) && charIdLookup == -1){
+                    UnselectEnemyUnit();
+                }
 
-            else if ((curState == (true, false) && IsTargetAnEnemy(w) && IsTargetAttackableEnemy(w)) || 
-                (curState == (true, true) && IsTargetAnEnemy(w) && IsTargetAttackableEnemy(w))){
-                SelectEnemyUnit(w);
-            }
+                // select player unit; target unit is blank
+                else if ((curState == (false, false) && IsTargetOnTeam(w)) || 
+                    (curState == (true, false) && IsTargetOnTeam(w) && SelectedId != charIdLookup) ||
+                    (curState == (false, true) && IsTargetOnTeam(w) )||
+                    (curState == (true, true) && IsTargetOnTeam(w) && SelectedId != charIdLookup))
+                {
+                    // if (IsSelected() && SelectedIdHasMoved() && !IsTargetAttackableEnemy(w)){
+                    //     UndoMove(); 
+                    // }
 
-            else if ((curState == (true, false) || curState == (true, true)) &&
-                      instance.charArray[SelectedId].GetComponent<CharacterMove>().PossibleMoves().Contains(w)){
-                moveStack.Push(board.FindCharId(SelectedId)); 
-                moveStack.Push(w);
-                instance.charArray[SelectedId].GetComponent<CharacterMove>().MoveChar(w);
+                    SelectedId = charIdLookup;
+                    UnselectEnemyUnit();
+                }
+
+                // if selected, you move, and you click on something else other than a target, call undo move
+
+
+                // select enemy unit for stats
+                else if ((curState == (false, false) && IsTargetAnEnemy(w)) || 
+                    (curState == (true, false) && IsTargetAnEnemy(w) && !IsTargetAttackableEnemy(w)) ||
+                    (curState == (false, true) && IsTargetAnEnemy(w)))
+                {
+                    SelectedEnemyId = board.Get(w);
+                    UnselectUnit();
+
+                }
+
+
+                // unselect all 
+                else if ((curState == (true, false) && SelectedId == charIdLookup) || 
+                    (curState == (false, true) && SelectedEnemyId == charIdLookup) ||
+                    (curState == (true, true) && SelectedId == charIdLookup) ||
+                    (IsSelected() && SelectedIdPerformedAction() && charIdLookup == -1))
+                {
+                    UnselectUnit();
+                    UnselectEnemyUnit();
+                }
+
+                else if (IsSelected() && SelectedIdPerformedAction() && IsTargetAnEnemy(w)){
+                    UnselectUnit();
+                    SelectEnemyUnit(w);
+                }
+
+                // select enemy unit as a target
+                else if ((curState == (true, false) || curState == (true, true)) &&
+                    IsTargetAnEnemy(w) && IsTargetAttackableEnemy(w))
+                {
+                    SelectEnemyUnit(w);
+                }
+
+                // select enemy if current target has moved
+
+
+                // move unit condition
+                else if ((curState == (true, false) || curState == (true, true)) && IsPossibleMove(w)){
+                    moveStack.Push(board.FindCharId(SelectedId)); 
+                    moveStack.Push(w);
+                    instance.charArray[SelectedId].GetComponent<CharacterMove>().MoveChar(w);
+                    // instance.cursorStateMachine.chooseState.TriggerSelectedHighlights(); 
+                    UnselectEnemyUnit();
+                }
+
+
                 instance.cursorStateMachine.chooseState.TriggerSelectedHighlights(); 
             }
-
-            // deal with attack here
-
-
         }
     }
 
@@ -140,14 +186,42 @@ public class MoveController : MonoBehaviour
             Coordinate prevPos = moveStack.Pop();
             int unitId = board.Get(curPos); 
             instance.charArray[unitId].GetComponent<CharacterMove>().UndoMoveChar(prevPos);
-            instance.cursorStateMachine.chooseState.ResetBoard(); 
+            instance.cursorStateMachine.chooseState.ResetTiles(); 
             instance.cursorStateMachine.chooseState.TriggerSelectedHighlights();
+            UnselectEnemyUnit();
+
         }
     }
 
     // once you attack the stack gets reset
     public void ClearMoveStack(){
         this.moveStack = new Stack<Coordinate>();
+    }
+
+    public void ResetSelected(){
+        UnselectUnit();
+        UnselectEnemyUnit(); 
+    }
+
+    public void PostActionCleanup(){
+        ClearMoveStack();
+        ResetSelected();
+    }
+
+    public Boolean SelectedIdHasMoved(){
+        return selectedId != -1 && instance.charArray[selectedId].GetComponent<CharacterGameState>().HasMoved;
+    }
+
+    public Boolean SelectedIdPerformedAction(){
+        return selectedId != -1 && instance.charArray[selectedId].GetComponent<CharacterGameState>().PerformedAction;
+    }
+
+    // requires selectedId != -1
+    public Boolean IsPossibleMove(Coordinate w){
+        if (selectedId != -1){
+            return instance.charArray[SelectedId].GetComponent<CharacterMove>().PossibleMoves().Contains(w);
+        }
+        return false; 
     }
 
 
@@ -175,10 +249,6 @@ public class MoveController : MonoBehaviour
         SelectedId = -1;
     }
 
-    public void PrintTest(){
-        Debug.Log("printing successful.");
-    }
-
     private void SelectEnemyUnit(Coordinate w){
         int charId = board.Get(w);
         // Debug.Log("initiating SelectAttackTargetUnit");
@@ -195,19 +265,6 @@ public class MoveController : MonoBehaviour
 
 
 
-
-    private (Boolean, Boolean) GetSelectedState(){
-        return (IsSelected(), IsEnemySelected());
-    }
-
-    private Boolean IsTargetSelectedPlayer(Coordinate w){
-        return board.Get(w) == SelectedId; 
-    }
-
-    private Boolean IsTargetSelectedEnemy(Coordinate w){
-        return board.Get(w) == SelectedEnemyId; 
-    }
-
     private Boolean IsTargetAttackableEnemy(Coordinate w){
         if (SelectedId == -1){
             return false; 
@@ -218,7 +275,6 @@ public class MoveController : MonoBehaviour
         }
         return false; 
     }
-
 
     private Boolean IsTargetOnTeam(Coordinate w){
         if (board.Get(w) == -1){
@@ -235,23 +291,16 @@ public class MoveController : MonoBehaviour
     }
 
 
+}
 
 
-    // need a selected and a target;
-    // if selected and is on your team, and a target is in site, attack is enabled. 
-    // attack enemy.  will be used on button click. 
+    // private Boolean IsTargetSelectedPlayer(Coordinate w){
+    //     return board.Get(w) == SelectedId; 
+    // }
 
-    // logic for attack: player attacks first. reduce hp based on attack and modifiers (TBD later). 
-    // then if opponent is alive, then opponent attacks player. 
-    public void Attack(){
-        // if ()
-    }
-
-
-
-
-
-
+    // private Boolean IsTargetSelectedEnemy(Coordinate w){
+    //     return board.Get(w) == SelectedEnemyId; 
+    // }
 
     // will need a confirm (action) /back button
 
@@ -299,7 +348,7 @@ public class MoveController : MonoBehaviour
     //         m_Text = "Touch Position : " + touch.position;
     //     }
     // }
-}
+
 
 
 

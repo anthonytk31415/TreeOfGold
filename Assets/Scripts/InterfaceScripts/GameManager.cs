@@ -35,8 +35,10 @@ public class GameManager : MonoBehaviour
     // public GameObject cursor; // cursor object
     public GameObject[] charArray;      // need to update later to dynamically change
     public CursorStateMachine cursorStateMachine; 
-
     public GameObject moveControllerObject; 
+
+
+    [SerializeField] public GameObject statMenuController; 
 
     private void Awake() {
         // Singleton pattern implementation

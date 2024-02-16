@@ -1,10 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; 
-
 using TMPro; 
+
+// this is basically the stat menu controller
+
 public class StatMenuManager : MonoBehaviour
 {
 
@@ -34,22 +32,30 @@ public class StatMenuManager : MonoBehaviour
             BlankPlayerTextBoxes(); 
         } else if (charId >= 0 && charId < Instance.charArray.Length){
             var charUnitStats = Instance.charArray[charId].GetComponent<CharacterStats>(); 
+            var charGameStats = Instance.charArray[charId].GetComponent<CharacterGameState>();
             playerUnitTextComponents[0].text = charUnitStats.charName;
-            playerUnitTextComponents[1].text = "HP: " + charUnitStats.hp.ToString(); 
+            playerUnitTextComponents[1].text = "HP: " + charGameStats.GetCurHp().ToString(); 
             playerUnitTextComponents[2].text = "Attack: " + charUnitStats.attack.ToString();
         } else {
             BlankPlayerTextBoxes();
         }
     }
 
+    public void UpdateUnitScreen(){
+        MoveController moveController = Instance.moveControllerObject.GetComponent<MoveController>(); 
+        HandleCharIdChanged(moveController.SelectedId);
+        HandleEnemyIdChanged(moveController.SelectedEnemyId);
+    }
+
+
     private void HandleEnemyIdChanged(int enemyId){
-        Debug.Log("initiating handleEnemyIdChnaged");
         if (enemyId == -1){
             BlankEnemyTextBoxes(); 
         } else if (enemyId >= 0 && enemyId < Instance.charArray.Length){
             var charUnitStats = Instance.charArray[enemyId].GetComponent<CharacterStats>(); 
+            var charGameStats = Instance.charArray[enemyId].GetComponent<CharacterGameState>();
             enemyUnitTextComponents[0].text = charUnitStats.charName;
-            enemyUnitTextComponents[1].text = "HP: " + charUnitStats.hp.ToString(); 
+            enemyUnitTextComponents[1].text = "HP: " + charGameStats.GetCurHp().ToString(); 
             enemyUnitTextComponents[2].text = "Attack: " + charUnitStats.attack.ToString();
         } else {
             BlankEnemyTextBoxes();

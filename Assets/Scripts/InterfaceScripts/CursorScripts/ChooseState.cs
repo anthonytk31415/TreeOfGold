@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using PlasticPipe.PlasticProtocol.Messages;
 using UnityEngine;
 
-// here we choose the 
+// This is really the "highlihgt tiles" controller
 
 
 public class ChooseState : ICursorState
@@ -24,7 +24,6 @@ public class ChooseState : ICursorState
 
     // trigger all the things you want to do when you enter
     public void Enter(){
-        HighlightAllPlayerMoves();
         MoveController.OnSelectedCharIdChanged += HandleCharIdChanged; 
     }
 
@@ -48,12 +47,20 @@ public class ChooseState : ICursorState
 
     public void TriggerSelectedHighlights(){
         int selectedId = instance.moveControllerObject.GetComponent<MoveController>().SelectedId;
-        int enemyId =  instance.moveControllerObject.GetComponent<MoveController>().SelectedEnemyId;        
-        ResetBoard();        
+        int enemyId =  instance.moveControllerObject.GetComponent<MoveController>().SelectedEnemyId;    
+        Debug.Log("from choosestate trigger: selectedId: " + selectedId + ", enemyId: " + enemyId);    
+        ResetTiles();        
         if (selectedId != -1 ){
+            GameObject selectedUnit = instance.charArray[selectedId]; 
+            HighlightAllPlayerMoves();
+            if (!selectedUnit.GetComponent<CharacterGameState>().HasMoved){
+                HighlightPlayerUnitMoves(selectedId);    
+
+            }
             HighlightUnit(selectedId);
-            HighlightPlayerUnitMoves(selectedId);    
-            HighlightValidTargets(selectedId);
+            if (!selectedUnit.GetComponent<CharacterGameState>().HasAttacked){
+                HighlightValidTargets(selectedId);
+            }
             
         } else if (selectedId == -1 && enemyId != -1) {
             HighlightUnit(enemyId); 
@@ -61,12 +68,10 @@ public class ChooseState : ICursorState
 
     }
     
-
-
-    public void ResetBoard(){
-        ResetTiles();
-        HighlightAllPlayerMoves();
-    }
+    // public void ResetBoard(){
+    //     ResetTiles();
+    //     HighlightAllPlayerMoves();
+    // }
 
     // call this when you begin and after you've donea move(probably a switch in state so no need to redo call)
     public void HighlightAllPlayerMoves(){

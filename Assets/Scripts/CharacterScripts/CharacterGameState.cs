@@ -21,32 +21,59 @@ public class CharacterGameState : MonoBehaviour
         set {hasMoved = value;} 
     }
     
+    private Boolean isAlive; 
+    public Boolean IsAlive {
+        get {return isAlive;}
+        set {isAlive = value;} 
+    }
+
     private Boolean performedAction; 
     public Boolean PerformedAction {
         get {return performedAction;}
         set {performedAction = value;} 
     }
 
-
-    public Boolean hasAttacked; // update later; placeholder
+    private Boolean hasAttacked; // update later; placeholder
+    public Boolean HasAttacked {
+        get {return hasAttacked;} 
+        set {if (value == true) {
+                hasAttacked = true;
+                performedAction = true; 
+            } 
+        }
+    }
 
     public int curHp; 
     // Other methods as needed
-
 
     public void Initialize(GameManager gameManager, Board board, int charId, Boolean isYourTeam){
         this.gameManager = gameManager; 
         this.board = board;
         this.charId = charId;  
         this.isYourTeam = isYourTeam; 
-        this.hasMoved = false; 
-        this.performedAction = false;
         this.curHp = gameManager.GetCharacter(charId).GetComponent<CharacterStats>().GetHp();
+        this.isAlive = true; 
+        this.hasMoved = false; 
+        this.hasAttacked = false; 
+        this.performedAction = false;
     }
     
+
+    public void ResetMoves(){
+        if (isAlive){
+            hasMoved = false; 
+            hasAttacked = false;
+            performedAction = false;
+        }
+    }
+
+
     public void DecreaseHp(int dmg)
     {
         curHp = Math.Max(0, curHp - dmg); 
+        if (curHp == 0){
+            IsAlive = false; 
+        }
     }
 
     public int GetCurHp() 
