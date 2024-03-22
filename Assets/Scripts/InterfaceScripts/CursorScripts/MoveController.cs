@@ -22,7 +22,7 @@ public class MoveController : MonoBehaviour
     private Camera mainCamera;      // needed for mouse position;
     // public string m_Text;        // used for touch commands; tbd
 
-    // selectedid w/ delegate and event
+    // selectedId w/ delegate and event
     public delegate void SelectedCharIdChangedEventHandler(int selectedId);
     // Define the event based on the delegate
     public static event SelectedCharIdChangedEventHandler OnSelectedCharIdChanged;
@@ -164,9 +164,8 @@ public class MoveController : MonoBehaviour
                 // select enemy unit for stats
                 else if ((curState == (false, false) && IsTargetAnEnemy(w)) || 
                     (curState == (true, false) && IsTargetAnEnemy(w) && !IsTargetAttackableEnemy(w)) ||
-                    (curState == (false, true) && IsTargetAnEnemy(w) && SelectedEnemyId != targetBoardId))
+                    (curState == (false, true) && IsTargetAnEnemy(w) && SelectedEnemyId != targetBoardId))            
                 {
-                    Debug.Log("this cond is triggered");
                     ResetSelected(); 
                     SelectedEnemyId = board.Get(w);
                     // UnselectUnit();
@@ -184,7 +183,8 @@ public class MoveController : MonoBehaviour
                 }
 
                 else if (IsPlayerSelected() && SelectedIdPerformedAction() && IsTargetAnEnemy(w)){
-                    UnselectUnit();
+                    // UnselectUnit();
+                    ResetSelected(); 
                     SelectEnemyUnit(w);
                 }
 
@@ -194,9 +194,6 @@ public class MoveController : MonoBehaviour
                 {
                     SelectEnemyUnit(w);
                 }
-
-
-
 
                 instance.cursorStateMachine.chooseState.TriggerSelectedHighlights(); 
             }
@@ -246,8 +243,10 @@ public class MoveController : MonoBehaviour
     private Coordinate GetMouseClickCoordinate(Vector3 mousePosition){
         // Convert mouse position to world coordinates
         Vector3 worldPosition = mainCamera.ScreenToWorldPoint(mousePosition);
-        worldPosition.z = 0; // Set the z-coordinate to 0 to ensure it's on the same plane as the board
-        // add 0.5 to both x and y and take the floor to adjust to the center of the tile, which isa t0.0 for the bottom left corner
+        // Set the z-coordinate to 0 to ensure it's on the same plane as the board
+        worldPosition.z = 0; 
+        // add 0.5 to both x and y and take the floor to adjust to the center of the tile, 
+        // which isa t0.0 for the bottom left corner
         Coordinate w = board.ConvertSceneToMatCoords(
             (double) Math.Floor(worldPosition.x + 0.5), 
             (double) Math.Floor(worldPosition.y + 0.5));

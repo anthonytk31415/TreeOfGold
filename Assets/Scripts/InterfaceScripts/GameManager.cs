@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     private void Start(){
         InitializeCore();
         AuditCharArray();
+        PlayerPhaseScript.InstantiatePlayerPhaseObject();
     }
 
     private void Update(){
