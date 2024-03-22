@@ -39,7 +39,7 @@ public class CharacterBattle : MonoBehaviour
 
         yield return PlayerAttackEnemy(playerId, enemyId, instance, board);
         instance.statMenuController.GetComponent<StatMenuManager>().UpdateUnitScreen();
-        yield return player.GetComponentInChildren<HealthBarManager>().UpdateHealthBar(player);
+        
         if (enemy.GetComponent<CharacterGameState>().IsAlive){
             yield return PlayerAttackEnemy(enemyId, playerId, instance, board);
             instance.statMenuController.GetComponent<StatMenuManager>().UpdateUnitScreen();
@@ -56,7 +56,8 @@ public class CharacterBattle : MonoBehaviour
         int playerAttack = player.GetComponent<CharacterStats>().attack; 
         yield return instance.battleManagerObject.GetComponent<BattleManager>().TriggerBlackThenRed(player, enemy); 
         enemy.GetComponent<CharacterGameState>().DecreaseHp(playerAttack);
-        // yield return MethodForHealthBarTrigger()
+        yield return enemy.GetComponentInChildren<HealthBarManager>().UpdateHealthBar(enemy);
+        // yield return player.GetComponentInChildren<HealthBarManager>().UpdateHealthBar(player); //eed to figure out how
         if (!enemy.GetComponent<CharacterGameState>().IsAlive){
             yield return ApplyDeathSequence(enemyId, instance, board);
         }

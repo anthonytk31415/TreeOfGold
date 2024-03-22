@@ -27,10 +27,7 @@ public class CharactersObject : MonoBehaviour
         GameObject charInstance = Instantiate(charPrefab, new Vector3((float)u, (float)v, 0.0f), Quaternion.identity);
 
         GameObject healthBarPrefab = Resources.Load("Prefabs/CharacterUI/test", typeof(GameObject)) as GameObject;        
-        // Debug.Log("health bar prefab: ", healthBarPrefab);    
         GameObject healthBarInstance = Instantiate(healthBarPrefab, charInstance.transform);
-        // Debug.Log("health bar instantiated: ", healthBarInstance);
-        
 
         return charInstance; 
         
