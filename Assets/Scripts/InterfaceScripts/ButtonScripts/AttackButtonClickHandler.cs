@@ -28,7 +28,7 @@ public class AttackButtonClickHandler : MonoBehaviour
     }
 
     public Boolean CanAttackCommence(){
-        return Instance.moveControllerObject.GetComponent<MoveController>().IsSelected() && 
+        return Instance.moveControllerObject.GetComponent<MoveController>().IsPlayerSelected() && 
             Instance.moveControllerObject.GetComponent<MoveController>().IsEnemySelected();
     }
 
