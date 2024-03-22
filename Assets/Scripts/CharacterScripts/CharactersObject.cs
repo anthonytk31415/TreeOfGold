@@ -26,13 +26,13 @@ public class CharactersObject : MonoBehaviour
         GameObject charPrefab = Resources.Load("Prefabs/Characters/" + pfFileName, typeof(GameObject)) as GameObject;            
         GameObject charInstance = Instantiate(charPrefab, new Vector3((float)u, (float)v, 0.0f), Quaternion.identity);
 
-        GameObject healthBarPrefab = Resources.Load("Prefabs/CharacterUI/test", typeof(GameObject)) as GameObject;        
+        GameObject healthBarPrefab = Resources.Load("Prefabs/CharacterUI/HealthBar", typeof(GameObject)) as GameObject;        
         GameObject healthBarInstance = Instantiate(healthBarPrefab, charInstance.transform);
 
         return charInstance; 
         
     }
-    // manage Componenets to Char here. 
+    // manage Components to Char here. 
     public static void AddComponentsToChar(GameManager Instance, int id, string charName, int hp, int attack, int moves, int atkRange, Boolean isYourTeam)
     {
         Board board = Instance.board; 

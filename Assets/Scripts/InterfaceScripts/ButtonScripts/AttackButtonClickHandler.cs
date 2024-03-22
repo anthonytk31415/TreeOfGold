@@ -36,7 +36,6 @@ public class AttackButtonClickHandler : MonoBehaviour
     // This function will be called when the button is clicked
     public void OnButtonClick()
     {
-        Debug.Log("Attack Button Clicked!");
         if (CanAttackCommence())
         {
             /// can possibly split this up into a function so that you can call it with non button actions

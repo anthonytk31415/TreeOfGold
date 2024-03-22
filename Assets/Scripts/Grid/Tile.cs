@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic; 
 using UnityEngine;
 
-// we have a tile prefab and use the Unity editor to bid the Tile.cs script to the 
+// we have a tile prefab and use the Unity editor to bind the Tile.cs script to the 
 // prefab itself. We then use the Init() method to iteratively build our m x n grid. 
 
 public class Tile : MonoBehaviour {

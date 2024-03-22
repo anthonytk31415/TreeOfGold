@@ -24,7 +24,11 @@ public class WaitButton : MonoBehaviour
 
 
     public void OnButtonClick(){
-        int selectedId = Instance.moveControllerObject.GetComponent<MoveController>().SelectedId;        
+        int selectedId = Instance.moveControllerObject.GetComponent<MoveController>().SelectedId;   
+        // call get cell here on w 
+        Coordinate w = Instance.board.FindCharId(selectedId);
+        Instance.charArray[selectedId].GetComponent<CharacterMove>().MoveChar(w);       // move the character to wherever it is. 
+        Instance.charArray[selectedId].GetComponent<CharacterGameState>().HasAttacked = true;      
         Instance.charArray[selectedId].GetComponent<CharacterGameState>().HasMoved = true; 
         Instance.charArray[selectedId].GetComponent<CharacterGameState>().PerformedAction = true;
         Instance.moveControllerObject.GetComponent<MoveController>().ResetSelected();

@@ -45,7 +45,7 @@ public class CharacterBattle : MonoBehaviour
             instance.statMenuController.GetComponent<StatMenuManager>().UpdateUnitScreen();
         }
         player.GetComponent<CharacterGameState>().HasAttacked = true;
-        instance.moveControllerObject.GetComponent<MoveController>().PostActionCleanup();
+        instance.moveControllerObject.GetComponent<MoveController>().ResetSelected();
         
     }
 

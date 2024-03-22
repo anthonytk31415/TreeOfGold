@@ -53,6 +53,7 @@
     },
     "dotnet.defaultSolution": "TreeOfGold.sln",
     "cSpell.words": [
+        "Attackable",
         "Behaviour",
         "interactable",
         "UGUI"
