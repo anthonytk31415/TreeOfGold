@@ -1,11 +1,10 @@
 using System; 
-using System.Collections;
 using System.Collections.Generic;
-using PlasticPipe.PlasticProtocol.Messages;
 using UnityEngine;
 
-// This is really the "highlihgt tiles" controller
-
+/// <summary>
+/// This is really the "highlight tiles" controller
+/// </summary>
 
 public class ChooseState : ICursorState
 {
@@ -14,11 +13,10 @@ public class ChooseState : ICursorState
     public Board board; 
 
     // some properties that determine what the cursor does
-
-    public ChooseState(GameObject cursor, GameManager instance, Board board) {
+    public ChooseState(GameObject cursor, GameManager instance) {
         this.cursor = cursor;
         this.instance = instance;
-        this.board = board;  
+        this.board = instance.board;  
     }
 
 
@@ -45,10 +43,12 @@ public class ChooseState : ICursorState
     // if selectedId != -1 then 
     // selectedId == -1 and enemyId != 01
 
+
+
     public void TriggerSelectedHighlights(){
         int selectedId = instance.moveControllerObject.GetComponent<MoveController>().SelectedId;
         int enemyId =  instance.moveControllerObject.GetComponent<MoveController>().SelectedEnemyId;    
-        Debug.Log("from choosestate trigger: selectedId: " + selectedId + ", enemyId: " + enemyId);    
+        // Debug.Log("from choosestate trigger: selectedId: " + selectedId + ", enemyId: " + enemyId);    
         ResetTiles();        
         if (selectedId != -1 ){
             GameObject selectedUnit = instance.charArray[selectedId]; 
@@ -73,7 +73,7 @@ public class ChooseState : ICursorState
     //     HighlightAllPlayerMoves();
     // }
 
-    // call this when you begin and after you've donea move(probably a switch in state so no need to redo call)
+    // call this when you begin and after you've done a move(probably a switch in state so no need to redo call)
     public void HighlightAllPlayerMoves(){
         // Get all moves for those chars on your team and has not moved
         HashSet<Coordinate> allPlayerMoves = new(); 

@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+// using System.Collections;
+// using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +7,7 @@ public class WaitButton : MonoBehaviour
 {
 
     [SerializeField] GameManager Instance; 
-    [SerializeField] Board board; 
+    // [SerializeField] Board board; 
     [SerializeField] Button waitButton; 
 
     // Start is called before the first frame update

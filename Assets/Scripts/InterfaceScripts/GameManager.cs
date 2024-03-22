@@ -9,19 +9,14 @@
 
 // WIP 
 
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
-using Unity;
 
 public class GameManager : MonoBehaviour
 {
     // Singleton instance
     private static GameManager _instance;
     public static GameManager Instance { get { return _instance; } }
-
-    // // Board parameters
     public Board board;
     public Tile[,] tiles; 
 
@@ -36,9 +31,8 @@ public class GameManager : MonoBehaviour
     public GameObject[] charArray;      // need to update later to dynamically change
     public CursorStateMachine cursorStateMachine; 
     public GameObject moveControllerObject; 
-
     public GameScore gameScore; 
-
+    public GameObject battleManagerObject; 
     [SerializeField] public GameObject statMenuController; 
 
     private void Awake() {
@@ -52,6 +46,7 @@ public class GameManager : MonoBehaviour
     // Initializes the board at a fixed 10x14 size board. 
     private void Start(){
         InitializeCore();
+        AuditCharArray();
     }
 
     private void Update(){
@@ -63,22 +58,25 @@ public class GameManager : MonoBehaviour
 
         this._width = 6;                // dims of board
         this._height = 8;
-        this._totalHeight = _height + 3; 
+        this._totalHeight = _height + 3;         
         this.board = new Board(_width, _height);
+
         this.tiles = GridManager.Initialize(_width, _totalHeight); // this is instantiated with the board + menus
-        this.charArray = new GameObject[4];
-        CharactersObject.Initialize(Instance, board, charArray);
-        this.cursorStateMachine = new CursorStateMachine(Instance, board); 
+        this.charArray = new GameObject[4];         // this is hard coded the length of the chars that charactersobject 
+        CharactersObject.Initialize(Instance);
+
+        this.cursorStateMachine = new CursorStateMachine(Instance); 
         this.cursorStateMachine.Initialize(cursorStateMachine.chooseState);
-        this.moveControllerObject = MoveControllerObject.Initialize(board, Instance);
-        this.gameScore = new GameScore(charArray);
+
+        this.moveControllerObject = MoveControllerObject.Initialize(Instance);
+        this.gameScore = new GameScore(this.charArray);
+
+        this.battleManagerObject = BattleManagerObject.Initialize(Instance);
 
         // adjusts camera to centered position 
         Camera.main.transform.position = new Vector3((float)_width/2 -0.5f, (float)_totalHeight / 2 - 0.5f, -10);
 
     }
-
-    // Other game management methods can go here
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Instantiation Methods. 
@@ -105,13 +103,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
-
-
-
-
-
-
- 
+    public void AuditCharArray() {
+        Debug.Log("initiating charArray audit...");
+        foreach(GameObject charObj in charArray){
+            Debug.Log(charObj);
+        }
+    }
 }
+
 

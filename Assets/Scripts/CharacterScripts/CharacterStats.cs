@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+// CharacterStats purely handles the fixed stats of the character
+// Note it does not handle the stat state of the character. 
+
 public class CharacterStats : MonoBehaviour
 {
     public string charName; 

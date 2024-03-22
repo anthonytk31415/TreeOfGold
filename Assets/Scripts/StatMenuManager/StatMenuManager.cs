@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro; 
 
-// this is basically the stat menu controller
+// StatMenuManager manages the visualization of selected character names and stats 
 
 public class StatMenuManager : MonoBehaviour
 {
@@ -21,9 +21,6 @@ public class StatMenuManager : MonoBehaviour
         MoveController.OnSelectedEnemyIdChanged += HandleEnemyIdChanged;
         BlankPlayerTextBoxes();
         BlankEnemyTextBoxes();
-        // HandleScoreChanged
-        // HandleCharIdChanged
-
     }
 
     // subscribed handleChanges
@@ -61,7 +58,6 @@ public class StatMenuManager : MonoBehaviour
             BlankEnemyTextBoxes();
         }
     }
-
     private void BlankPlayerTextBoxes(){
         foreach (TextMeshProUGUI textObj in playerUnitTextComponents){
             textObj.text = "";
@@ -73,8 +69,6 @@ public class StatMenuManager : MonoBehaviour
             textObj.text = "";
         }
     }
-
-
 
     private void OnDestroy()
     {
@@ -90,8 +84,6 @@ public class StatMenuManager : MonoBehaviour
 
 
 }
-
-
 
 /// do i progrmamatically build an array of all the text fields and then 
 /// build the components? 

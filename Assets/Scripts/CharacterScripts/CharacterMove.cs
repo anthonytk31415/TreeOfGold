@@ -12,10 +12,10 @@ public class CharacterMove: MonoBehaviour
     public GameObject character; 
     public GameManager gameManager; 
     // Other methods as needed
-    public void Initialize(GameObject charInstance, Board board, int id, GameManager gameManager) 
+    public void Initialize(GameObject charInstance, int id, GameManager gameManager) 
     {
         this.moves = charInstance.GetComponent<CharacterStats>().moves; 
-        this.board = board; 
+        this.board = gameManager.board; 
         this.charId = id;
         this.character = charInstance; 
         this.gameManager = gameManager; 
@@ -26,7 +26,7 @@ public class CharacterMove: MonoBehaviour
 
     public HashSet<Coordinate> PossibleMoves() {
         if (!character.GetComponent<CharacterGameState>().HasMoved){
-            return CharInteraction.PlayerMoveOptions(board, board.FindCharId(charId), moves, gameManager);
+            return CharInteraction.PlayerMoveOptions(board.FindCharId(charId), moves, gameManager);
 
         } else {
             return new HashSet<Coordinate>();
@@ -50,7 +50,7 @@ public class CharacterMove: MonoBehaviour
     public HashSet<Coordinate> PossibleAttackTargets(){
         int range = character.GetComponent<CharacterStats>().attackRange;  
         Coordinate initialPos = board.FindCharId(charId);
-        HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(gameManager, board, initialPos, range); 
+        HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(gameManager, initialPos, range); 
         CharInteraction.TestEnemiesRange(possibleAttackTargets);  
         return possibleAttackTargets;      
     }

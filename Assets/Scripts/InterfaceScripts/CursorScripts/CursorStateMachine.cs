@@ -6,35 +6,14 @@ using UnityEngine;
 [Serializable]
 public class CursorStateMachine {
     public ICursorState CurrentState { get; private set; }
-
     private GameManager gameManager; 
-    private Board board; 
+
     public GameObject cursor;
-
-
-
-    // reference to state objects
     public ChooseState chooseState; 
-    // public ProfileState profileState; 
-    // public MoveState moveState; 
-    // public CommandState commandState; 
 
-    // event to notify other objects of the state change
-    // public event Action<CursorStateMachine> stateChanged; 
-
-    // need to build a CursorController
-    // to manipulate this in between phases
-    public CursorStateMachine(GameManager gameManager, Board board) {
-        // this.cursor = CursorObject.Initialize(board, gameManager);
-        // this.cursor = MoveControllerObject.Initialize(board, gameManager);
-        this.chooseState = new ChooseState(this.cursor, gameManager, board);
-        // this.profileState = new ProfileState(cursor);
-        // this.moveState = new MoveState(cursor);
-        // this.commandState = new CommandState(cursor);
-
+    public CursorStateMachine(GameManager gameManager) {
+        this.chooseState = new ChooseState(this.cursor, gameManager);
         this.gameManager = gameManager;
-        this.board = board;  
-
     }
 
 

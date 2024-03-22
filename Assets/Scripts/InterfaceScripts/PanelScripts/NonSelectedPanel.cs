@@ -8,7 +8,6 @@ using UnityEngine;
 
 public class NonSelectedPanel : MonoBehaviour
 {
-
     public GameObject nonSelectedPanel; 
 
     // Start is called before the first frame update

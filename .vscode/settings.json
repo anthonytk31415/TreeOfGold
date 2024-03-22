@@ -51,5 +51,10 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "TreeOfGold.sln"
+    "dotnet.defaultSolution": "TreeOfGold.sln",
+    "cSpell.words": [
+        "Behaviour",
+        "interactable",
+        "UGUI"
+    ]
 }

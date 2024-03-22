@@ -7,7 +7,6 @@ public class AttackButtonClickHandler : MonoBehaviour
 {
     [SerializeField] GameManager Instance; 
     [SerializeField] Button attackButton; 
-    // [SerializeField] Board board; 
 
     private void Start() {
         MoveController.OnSelectedEnemyIdChanged += HandleEnemyIdChanged;
@@ -46,7 +45,7 @@ public class AttackButtonClickHandler : MonoBehaviour
             GameObject player =  Instance.charArray[selectedId];
             GameObject enemy =  Instance.charArray[selectedEnemyId];
             if (!player.GetComponent<CharacterGameState>().HasAttacked){
-                CharacterBattle.CommenceBattle(selectedId, selectedEnemyId, Instance);
+                player.GetComponent<CharacterBattle>().CommenceBattle(selectedId, selectedEnemyId, Instance);
                 player.GetComponent<CharacterGameState>().HasAttacked = true; 
             }
         }     

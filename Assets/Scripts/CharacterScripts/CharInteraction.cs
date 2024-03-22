@@ -2,11 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// CharInteraction handles possible movement positions  
+// Do I call this CharStatePosition? 
+
 public static class CharInteraction 
 {
     // given board, distance d, and current position w, returns set of all possible 
     // moves. Can be used for movement, ranged attacks from 0-d. 
-    public static HashSet<Coordinate> SetOfMoves(Board board, Coordinate initialPos, int dist){
+    public static HashSet<Coordinate> SetOfMoves(GameManager gameManager, Coordinate initialPos, int dist){
+        Board board = gameManager.board;
         HashSet<Coordinate> res = new();           
         Queue<(Coordinate, int)> queue = new();
         queue.Enqueue((initialPos, dist));
@@ -30,7 +34,8 @@ public static class CharInteraction
         return res; 
     } 
 
-    public static HashSet<Coordinate> PlayerMoveOptions(Board board, Coordinate initialPos, int dist, GameManager gameManager){
+    public static HashSet<Coordinate> PlayerMoveOptions(Coordinate initialPos, int dist, GameManager gameManager){
+        Board board = gameManager.board; 
         HashSet<Coordinate> res = new();           
         Queue<(Coordinate, int)> queue = new();
         HashSet<Coordinate> visited = new(); 
@@ -67,7 +72,8 @@ public static class CharInteraction
     } 
 
 
-    public static HashSet<Coordinate> EnemiesWithinAttackRange(GameManager gameManager, Board board, Coordinate initialPos, int range){
+    public static HashSet<Coordinate> EnemiesWithinAttackRange(GameManager gameManager, Coordinate initialPos, int range){
+        Board board = gameManager.board;
         HashSet<Coordinate> res = new();           
         Queue<(Coordinate, int)> queue = new();
         queue.Enqueue((initialPos, range));
@@ -93,10 +99,12 @@ public static class CharInteraction
     }
 
     public static void TestEnemiesRange(HashSet<Coordinate> enemiesInRange){
-        Debug.Log("testing allenemies within range: ");
+        Debug.Log("testing all enemies within range: ");
         foreach(Coordinate w in enemiesInRange){
             Debug.Log(w);
         }
     }
+
+    // given current unit, return 
 
 }

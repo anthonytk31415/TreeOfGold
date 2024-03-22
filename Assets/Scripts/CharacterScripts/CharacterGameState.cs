@@ -44,14 +44,16 @@ public class CharacterGameState : MonoBehaviour
     }
 
     public int curHp; 
+    public int totalHp; 
     // Other methods as needed
 
-    public void Initialize(GameManager gameManager, Board board, int charId, Boolean isYourTeam){
+    public void Initialize(GameManager gameManager, int charId, Boolean isYourTeam){
         this.gameManager = gameManager; 
-        this.board = board;
+        this.board = gameManager.board;
         this.charId = charId;  
         this.isYourTeam = isYourTeam; 
         this.curHp = gameManager.GetCharacter(charId).GetComponent<CharacterStats>().GetHp();
+        this.totalHp = gameManager.GetCharacter(charId).GetComponent<CharacterStats>().GetHp();
         this.isAlive = true; 
         this.hasMoved = false; 
         this.hasAttacked = false; 
@@ -79,6 +81,11 @@ public class CharacterGameState : MonoBehaviour
     public int GetCurHp() 
     {
         return curHp; 
+    }
+
+       public int GetTotalHp() 
+    {
+        return totalHp; 
     }
 
     public void IncreaseHp(int heal)
