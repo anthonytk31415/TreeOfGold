@@ -19,6 +19,11 @@ public class PlayerPhaseScript : MonoBehaviour
     }
 
     public static IEnumerator InstantiatePlayerPhaseObject(){
+
+        // Lock mouse
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
         GameObject playerPhase = Resources.Load("Prefabs/PhaseBanner/PlayerPhaseCanvas", typeof(GameObject)) as GameObject;        
         GameObject playerPhaseInstance = Instantiate(playerPhase);
         Transform playerPhaseTextTransform = playerPhaseInstance.transform.Find("BackgroundPanel/PlayerPhaseText");
@@ -28,6 +33,12 @@ public class PlayerPhaseScript : MonoBehaviour
             yield return FadeToAlpha(0.5f, textObj);
         }
         Destroy(playerPhaseInstance);
+
+        // Unlock mouse
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+
         yield return new WaitForSeconds(0.5f);
     
     }
