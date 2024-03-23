@@ -109,7 +109,6 @@ public class ChooseState : ICursorState
 
     public void HighlightUnit(int charId){
         Coordinate w = board.FindCharId(charId);
-        Debug.Log("Highlight Unit. charId: " + charId +   "; w: " + w);
         Boolean yourTeam = instance.charArray[charId].GetComponent<CharacterGameState>().isYourTeam; 
         if (board.IsNull(w)){
             return; 

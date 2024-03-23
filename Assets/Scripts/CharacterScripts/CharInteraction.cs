@@ -99,7 +99,7 @@ public static class CharInteraction
     }
 
     public static void TestEnemiesRange(HashSet<Coordinate> enemiesInRange){
-        Debug.Log("testing all enemies within range: ");
+        // Debug.Log("testing all enemies within range: ");
         foreach(Coordinate w in enemiesInRange){
             Debug.Log(w);
         }

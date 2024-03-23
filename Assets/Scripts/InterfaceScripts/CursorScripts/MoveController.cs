@@ -107,7 +107,7 @@ public class MoveController : MonoBehaviour
                         SelectUnit(w);
                     }
                     else if (IsTargetAnEnemy(w)){
-                        Debug.Log("this is triggered: selected player, moved, and then selected enemy non-target");
+                        // Debug.Log("this is triggered: selected player, moved, and then selected enemy non-target");
                         SelectEnemyUnit(w);
                     }
                 }
