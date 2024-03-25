@@ -44,7 +44,6 @@ public class ChooseState : ICursorState
     // selectedId == -1 and enemyId != 01
 
 
-
     public void TriggerSelectedHighlights(){
         int selectedId = instance.moveControllerObject.GetComponent<MoveController>().SelectedId;
         int enemyId =  instance.moveControllerObject.GetComponent<MoveController>().SelectedEnemyId;    

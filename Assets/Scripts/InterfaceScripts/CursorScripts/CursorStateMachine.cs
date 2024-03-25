@@ -3,6 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/*
+We should name this the game state machine. 
+
+
+ChooseState 
+- this is really the ability for the player to issue commands to its own units. 
+- Change the name to this? 
+
+
+We will have 3 phases: 
+
+player phase (i.e. when the ChooseState is active)
+
+
+
+..x
+
+*/
+
+
+
+
 [Serializable]
 public class CursorStateMachine {
     public ICursorState CurrentState { get; private set; }

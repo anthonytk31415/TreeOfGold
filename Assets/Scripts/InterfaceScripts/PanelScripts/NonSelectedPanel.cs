@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-// default panel 
+// the panel is the lower action bar that gives the player commands to the selected unit. 
+// When nothing is selected, this is defaulted, all you can do is basically end turn
 
 
 public class NonSelectedPanel : MonoBehaviour
