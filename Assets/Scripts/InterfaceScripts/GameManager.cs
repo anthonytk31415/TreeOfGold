@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
     // Initializes the board at a fixed 10x14 size board. 
     private void Start(){
         InitializeCore();
-        StartCoroutine(PlayerPhaseScript.InstantiatePlayerPhaseObject());
+        
     }
 
     private void Update(){

@@ -1,4 +1,5 @@
-using System; 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,14 +16,21 @@ public class EnemyState : ICursorState
         this.enemyBattle = new EnemyBattle(instance);
     }
 
-    public void Enter(){
-        Debug.Log("do not forget to add the Enemy Phase Banner");
-        Debug.Log("entering Enemy State for the Enemy Phase.");
-        Debug.Log("From here, we'll kick off the Enemy functions like DoMove for each enemy in the CharArray that is alive. ");
-        enemyBattle.ApplyEnemyPhase();
+    private IEnumerator DoStartStuff(){
+        yield return EnemyPhaseScript.InstantiateEnemyPhaseObject(); 
+        yield return enemyBattle.ApplyEnemyPhase();
         CursorStateMachine csMachine = instance.cursorStateMachine; 
         csMachine.TransitionTo(csMachine.chooseState);
+        yield return null; 
     }
+
+
+    public void Enter(){
+        Debug.Log("entering Enemy State for the Enemy Phase.");
+        instance.StartCoroutine(DoStartStuff());
+    }
+
+
 
     // prob do not need anything here
     public void Update(){
@@ -31,7 +39,6 @@ public class EnemyState : ICursorState
     public void Exit(){
         Debug.Log("Exiting Enemy State");
     }
-
 
 
 }

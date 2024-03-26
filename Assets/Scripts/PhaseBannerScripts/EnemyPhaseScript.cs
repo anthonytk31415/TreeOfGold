@@ -5,10 +5,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerPhaseScript : MonoBehaviour
+public class EnemyPhaseScript : MonoBehaviour
 {
-    // public delegate void CoroutineFinished();
 
+    // public delegate void CoroutineFinished();
 
     // Start is called before the first frame update
     void Start()
@@ -21,27 +21,28 @@ public class PlayerPhaseScript : MonoBehaviour
         
     }
 
-    public static IEnumerator InstantiatePlayerPhaseObject(){
-
+    public static IEnumerator InstantiateEnemyPhaseObject(){
+        Debug.Log("enemy phase called. ");
         // Lock mouse
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        GameObject playerPhase = Resources.Load("Prefabs/PhaseBanner/PlayerPhaseCanvas", typeof(GameObject)) as GameObject;        
-        GameObject playerPhaseInstance = Instantiate(playerPhase);
-        Transform playerPhaseTextTransform = playerPhaseInstance.transform.Find("BackgroundPanel/PlayerPhaseText");
-        if (playerPhaseTextTransform != null){
-            // Debug.Log(playerPhaseTextTransform.GetComponent<TextMeshProUGUI>().color);
-            TextMeshProUGUI textObj = playerPhaseTextTransform.GetComponent<TextMeshProUGUI>(); 
+        GameObject enemyPhase = Resources.Load("Prefabs/PhaseBanner/EnemyPhaseCanvas", typeof(GameObject)) as GameObject;        
+        GameObject enemyPhaseInstance = Instantiate(enemyPhase);
+        Transform enemyPhaseTextTransform = enemyPhaseInstance.transform.Find("BackgroundPanel/EnemyPhaseText");
+        if (enemyPhaseTextTransform != null){
+            TextMeshProUGUI textObj = enemyPhaseTextTransform.GetComponent<TextMeshProUGUI>(); 
             yield return FadeToAlpha(0.5f, textObj);
         }
-        Destroy(playerPhaseInstance);
+        Destroy(enemyPhaseInstance);
 
         // Unlock mouse
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+        // call next set of functions after this is done.
         yield return new WaitForSeconds(0.5f);
+    
     }
 
     public static IEnumerator FadeToAlpha(float fadeDuration, TextMeshProUGUI textObj){

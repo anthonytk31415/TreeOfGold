@@ -1,4 +1,5 @@
-using System; 
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,11 +47,19 @@ public class ChooseState : ICursorState
         }
     }
 
+  private IEnumerator DoStartStuff(){
+        InitiatePlayerPhaseSettings();
+        yield return PlayerPhaseScript.InstantiatePlayerPhaseObject(); 
+        yield return new WaitForSeconds(0.5f);
+    }
+
 
     // trigger all the things you want to do when you enter
     public void Enter(){
         MoveController.OnSelectedCharIdChanged += HandleCharIdChanged; 
-        InitiatePlayerPhaseSettings();
+        instance.StartCoroutine(DoStartStuff());
+
+        // InitiatePlayerPhaseSettings();
     }
 
     public void Update(){
