@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
-// CharactersObject handles instantiation of the characters in the beginning of the 
-// round render. 
-
-
+/*
+CharactersObject handles instantiation of the characters in the beginning of the 
+round render. 
+*/
 public class CharactersObject : MonoBehaviour 
 {
 

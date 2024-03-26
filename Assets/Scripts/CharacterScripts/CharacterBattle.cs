@@ -74,8 +74,15 @@ public class CharacterBattle : MonoBehaviour
         } else {
             instance.gameScore.removeEnemyUnit();
         } 
+        instance.gameScore.AuditScore();
         yield return instance.battleManagerObject.GetComponent<BattleManager>().DeathFadeout(unit); 
         unit.SetActive(false); 
+
+
+        // THIS MECHANICALLY WORKS BUT NEEDS AUDITING ON WHERE TO PLACE IT AND LOGIC ETC.
+        // if (instance.gameScore.GetCurrentEnemyUnits() <= 1) {               // PLACEHOLDER FOR TEST
+        //     yield return PlayerWinScript.InstantiatePlayerWinBanner();
+        // }
     }
 
 

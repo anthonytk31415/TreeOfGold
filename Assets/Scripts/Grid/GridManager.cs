@@ -1,9 +1,18 @@
 using System.Collections; 
 using System.Collections.Generic; 
 using UnityEngine;
+/*
+This is an array of the references to the tiles on the screen. 
+This is all about tile-specific UI. 
 
-// this is an array of the references to the tiles on the screen. 
-// Tile[x, y] = reference of tile
+GridManager is an m x n array that stores the tiles of the board.
+Instantiation takes in the width and height of the board and in turn 
+creates the tiles. It stores 
+
+Tile[x, y] = reference of tile
+
+
+*/
 public class GridManager : MonoBehaviour {
         
     public static Tile[,] Initialize(int width, int height){

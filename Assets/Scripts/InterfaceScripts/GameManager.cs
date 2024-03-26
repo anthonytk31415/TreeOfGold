@@ -1,14 +1,20 @@
-// lets create the board
-// for the board initializer, we'll set up the 
-// board, and then we'll take in as an argument characters to load and their corresponding initial positions on the board. 
-// Boards will be for now rows = 10, columns = 14, which will be modified potentially later 
+/*
 
-// we'll need methods to modify positions 
-// how to deal with dead corpses when people die
-// modifiers for cells 
+lets create the board
+for the board initializer, we'll set up the 
+board, and then we'll take in as an argument characters to load and their corresponding initial positions on the board. 
+Boards will be for now rows = 10, columns = 14, which will be modified potentially later 
 
-// WIP 
+we'll need methods to modify positions 
+how to deal with dead corpses when people die
+modifiers for cells 
 
+WIP 
+
+
+ideally, when I instantiate gameManager, this happens 
+
+*/
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,22 +62,31 @@ public class GameManager : MonoBehaviour
 
     private void InitializeCore() {       
 
-        this._width = 6;                // dims of board
+        // dims of board
+        this._width = 6;                
         this._height = 8;
         this._totalHeight = _height + 3;         
         this.board = new Board(_width, _height);
-
         this.tiles = GridManager.Initialize(_width, _totalHeight); // this is instantiated with the board + menus
+
+        // characters build; Battling
         this.charArray = new GameObject[4];         // this is hard coded the length of the chars that charactersobject 
         CharactersObject.Initialize(Instance);
+        this.battleManagerObject = BattleManagerObject.Initialize(Instance);
 
+
+        // Movement
         this.cursorStateMachine = new CursorStateMachine(Instance); 
         this.cursorStateMachine.Initialize(cursorStateMachine.chooseState);
 
         this.moveControllerObject = MoveControllerObject.Initialize(Instance);
+
+        // Score
         this.gameScore = new GameScore(this.charArray);
 
-        this.battleManagerObject = BattleManagerObject.Initialize(Instance);
+
+
+
 
         // adjusts camera to centered position 
         Camera.main.transform.position = new Vector3((float)_width/2 -0.5f, (float)_totalHeight / 2 - 0.5f, -10);

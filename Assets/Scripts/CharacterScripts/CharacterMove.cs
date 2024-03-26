@@ -3,6 +3,17 @@ using System;
 using UnityEngine;
 using System.Collections.Generic; 
 
+/*
+CharacterMove manipulates the character movement in the model itself (the Board)
+and has helper functions that returns things like: 
+- PossibleMoves
+- PossibleAttackTargets
+
+
+Do we move this into a 
+
+*/
+
 public class CharacterMove: MonoBehaviour
 {
 

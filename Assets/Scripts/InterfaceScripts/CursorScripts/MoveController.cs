@@ -4,14 +4,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+                    *** DO WE WANT TO RENAME THIS??? ***
 
-// MoveController houses during the player phase logic for issuing commands to units. 
-// Things it handles: 
-// - uses eventHandlers to signify changes in selected characters as well as enemies
-// - houses a mouse click manager with logic that controls given the state of the board, what 
-//   you are allowed to select (e.g. if you have a player unit selected vs an enemy unit 
-//   vs nothing selected)
+MoveController houses during the player phase logic for issuing commands to units. 
+In other words, this handles the mouse actions that selects. 
 
+Things it handles: 
+- uses eventHandlers to signify changes in selected characters as well as enemies
+- houses a mouse click manager with logic that controls given the state of the board, what 
+  you are allowed to select (e.g. if you have a player unit selected vs an enemy unit 
+  vs nothing selected)
+
+
+
+*/
 
 public class MoveController : MonoBehaviour
 {

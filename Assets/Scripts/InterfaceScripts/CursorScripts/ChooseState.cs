@@ -2,15 +2,33 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+
 /// <summary>
 /// This is really the "highlight tiles" controller
 /// </summary>
+
+we want to build: 
+on update, if some conditions happen go to the next state. 
+- if you click on end --> move to enemy phase
+- if you are done with all moves --> move to enemy phase
+- if player == 0: end game phase with loss
+- if enemy == 0: end game with win
+
+-- do you call this on update? 
+
+
+*/
+
+
 
 public class ChooseState : ICursorState
 {
     public GameObject cursor; 
     public GameManager instance; 
     public Board board; 
+
+    public Boolean endTurn; 
 
     // some properties that determine what the cursor does
     public ChooseState(GameObject cursor, GameManager instance) {
@@ -20,12 +38,27 @@ public class ChooseState : ICursorState
     }
 
 
+
+    public void InitiatePlayerPhaseSettings(){
+        this.endTurn = false;
+        foreach (GameObject character in instance.charArray){
+            character.GetComponent<CharacterGameState>().ResetMoves();
+        }
+    }
+
+
     // trigger all the things you want to do when you enter
     public void Enter(){
         MoveController.OnSelectedCharIdChanged += HandleCharIdChanged; 
+        InitiatePlayerPhaseSettings();
     }
 
     public void Update(){
+        // if we click on end, then we move to enemy phase
+        if (endTurn){
+            CursorStateMachine csMachine = instance.cursorStateMachine;
+            csMachine.TransitionTo(csMachine.enemyState);
+        }
     }
 
     public void Exit(){

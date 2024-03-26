@@ -1,7 +1,16 @@
 - right now, you can move a char, wait, then move to a another area, and still select the unit to "do stuff". weird. 
 
 
-- enemy phase
-- 
+** enemy phase
+- trigger "enemy phase" banner
+- build a queue for doing moves
+- build a DoMove() method
 
+** player phase
+- reset moves and booleans
+
+
+** overall game
 - build win conditions
+- how to handle death? do you remove it from the character array?
+

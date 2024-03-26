@@ -24,21 +24,21 @@ player phase (i.e. when the ChooseState is active)
 */
 
 
-
-
 [Serializable]
 public class CursorStateMachine {
     public ICursorState CurrentState { get; private set; }
+    public ICursorState EnemyState { get; private set; }
     private GameManager gameManager; 
 
     public GameObject cursor;
     public ChooseState chooseState; 
+    public EnemyState enemyState; 
 
     public CursorStateMachine(GameManager gameManager) {
         this.chooseState = new ChooseState(this.cursor, gameManager);
+        this.enemyState = new EnemyState(gameManager);
         this.gameManager = gameManager;
     }
-
 
     // set the starting state
     public void Initialize(ICursorState state){

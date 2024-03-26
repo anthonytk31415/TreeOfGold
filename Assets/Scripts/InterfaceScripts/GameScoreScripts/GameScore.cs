@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Codice.CM.Client.Differences.Merge;
 using UnityEngine;
 
 public class GameScore 
@@ -36,6 +37,10 @@ public class GameScore
     public void removeEnemyUnit(){
         currentEnemyUnits -= 1; 
     }
+    public int GetCurrentEnemyUnits() {
+        return currentEnemyUnits; 
+    }
+
 
     public Boolean IsATeamDefeated(){
         return currentEnemyUnits == 0 || currentPlayerUnits == 0;
@@ -43,8 +48,12 @@ public class GameScore
     public Boolean DidPlayerWin(){
         return currentEnemyUnits == 0;
     }
-    public Boolean DidEnemywin(){
+    public Boolean DidEnemyWin(){
         return currentPlayerUnits == 0; 
+    }
+
+    public void AuditScore(){
+        Debug.Log(String.Format("player score:  {0}, enemy score: {1}", currentPlayerUnits, currentEnemyUnits));
     }
 
 }

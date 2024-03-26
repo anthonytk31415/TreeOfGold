@@ -3,9 +3,15 @@ using System.Collections;
 using System.Collections.Generic; 
 using UnityEngine;
 
-// we have a tile prefab and use the Unity editor to bind the Tile.cs script to the 
-// prefab itself. We then use the Init() method to iteratively build our m x n grid. 
+/*
 
+we have a tile prefab and use the Unity editor to bind the Tile.cs script to the 
+prefab itself. We then use the Init() method to iteratively build our m x n grid. 
+
+The tile class implements highlighting and effects of players, enemies, paths, 
+possible positional moves. 
+
+*/
 public class Tile : MonoBehaviour {
     [SerializeField] private Color _baseColor, _offsetColor, _menuColor; 
     [SerializeField] private Color _playerAllPathColor, _playerPathColor, _playerColor;

@@ -9,22 +9,30 @@
 // put them in an array
 // iterate across the array. 
 
-
 using UnityEngine;
 
-public class EnemyMove : MonoBehaviour{
-
+public class EnemyBattle{
 
     public GameManager instance; 
     public Board board; 
 
-
-    private void ApplyEnemyPhase(){
-
+    public EnemyBattle(GameManager instance){
+        this.instance = instance; 
+        this.board = instance.board; 
     }
 
-    private void PerformEnemyMove() {
+    public void ApplyEnemyPhase(){
+        GameObject[] charArray = instance.charArray; 
+        foreach (GameObject character in charArray){
+            CharacterGameState charGameState = character.GetComponent<CharacterGameState>();
+            if (!charGameState.isYourTeam && charGameState.IsAlive){
+                PerformEnemyMove(character);
+            }
+        }
+    }
 
+    public void PerformEnemyMove(GameObject character) {
+        Debug.Log("doing move on : ", character);
     }
 
     
