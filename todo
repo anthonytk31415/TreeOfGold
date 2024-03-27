@@ -14,3 +14,7 @@
 - build win conditions
 - how to handle death? do you remove it from the character array?
 
+
+
+
+- update the mechanism of chararray? make it its own class with access properties to decouple? 

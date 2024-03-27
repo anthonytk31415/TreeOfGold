@@ -34,8 +34,12 @@ public static class CharInteraction
         return res; 
     } 
 
+    // given an initial position of a character (who is on that position), along with dist to search (i.e. )
+    // the units move set, return the set of all coordinates the unit can move to
     public static HashSet<Coordinate> PlayerMoveOptions(Coordinate initialPos, int dist, GameManager gameManager){
         Board board = gameManager.board; 
+        GameObject character = gameManager.charArray[board.Get(initialPos)];
+        bool charIsYourTeam = character.GetComponent<CharacterGameState>().isYourTeam; 
         HashSet<Coordinate> res = new();           
         Queue<(Coordinate, int)> queue = new();
         HashSet<Coordinate> visited = new(); 
@@ -50,7 +54,7 @@ public static class CharInteraction
                 {
                     Coordinate w = new(curPos.GetX() + dx, curPos.GetY() + dy);
                     if (!visited.Contains(w) && board.IsWithinBoard(w)){
-                        // units can "go through" friendly units, but not opp. teams. 
+                        // units can "go through" friendly units, but not opp. team units
                         if (board.IsEmpty(w)){
                             res.Add(w);
                             visited.Add(w);
@@ -58,8 +62,8 @@ public static class CharInteraction
                         }
                         else {
                             GameObject unit = gameManager.charArray[board.Get(w)];
-                            bool teammate = unit.GetComponent<CharacterGameState>().isYourTeam;
-                            if (teammate){
+                            bool isTeammate = unit.GetComponent<CharacterGameState>().isYourTeam ;
+                            if (isTeammate == charIsYourTeam){
                                 visited.Add(w);
                                 queue.Enqueue((w, curMove - 1));
                             }
@@ -71,9 +75,13 @@ public static class CharInteraction
         return res; 
     } 
 
-
+    // given character in a current position (either team), return coordinates of 
+    // opposing team within attack range; 
+    // coded O(mn) Time
     public static HashSet<Coordinate> EnemiesWithinAttackRange(GameManager gameManager, Coordinate initialPos, int range){
         Board board = gameManager.board;
+        GameObject character = gameManager.charArray[board.Get(initialPos)];
+        bool charTeam = character.GetComponent<CharacterGameState>().isYourTeam; 
         HashSet<Coordinate> res = new();           
         Queue<(Coordinate, int)> queue = new();
         queue.Enqueue((initialPos, range));
@@ -87,7 +95,7 @@ public static class CharInteraction
                 {
                     Coordinate w = new(curPos.GetX() + dx, curPos.GetY() + dy);
                     if (!res.Contains(w) && board.IsWithinBoard(w) && board.Get(w) != -1 
-                        && !gameManager.charArray[board.Get(w)].GetComponent<CharacterGameState>().isYourTeam )
+                        && (gameManager.charArray[board.Get(w)].GetComponent<CharacterGameState>().isYourTeam != charTeam) )
                     {
                         res.Add(w);
                         queue.Enqueue((w, curMove - 1)); 
@@ -98,7 +106,9 @@ public static class CharInteraction
         return res; 
     }
 
-    public static void TestEnemiesRange(HashSet<Coordinate> enemiesInRange){
+
+    // i dont know what i was doing with this...
+    public static void AuditEnemiesInRange(HashSet<Coordinate> enemiesInRange){
         // Debug.Log("testing all enemies within range: ");
         foreach(Coordinate w in enemiesInRange){
             Debug.Log(w);

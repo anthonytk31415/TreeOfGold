@@ -38,6 +38,7 @@ public class Board
     // assigns id to pieces, then coordinates to pieces, the places them in board
     // IDs start at 1 onward. 
     // O(1) operation
+    // Get will return the charId of the coordinate; -1 if nothing exists
     public int Get(Coordinate w) {
         return board[w.GetX(), w.GetY()];
     }

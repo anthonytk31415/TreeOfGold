@@ -68,6 +68,7 @@ public class CharactersObject : MonoBehaviour
             };
         
         // GameObject[] charArray = new GameObject[chars.Length]; 
+        // NOTE! the id is simply the array entry of the character
         for (int id = 0; id < chars.Length; id ++)
         {
             // first, instantiate the char

@@ -38,7 +38,6 @@ public class CharacterMove: MonoBehaviour
     public HashSet<Coordinate> PossibleMoves() {
         if (!character.GetComponent<CharacterGameState>().HasMoved){
             return CharInteraction.PlayerMoveOptions(board.FindCharId(charId), moves, gameManager);
-
         } else {
             return new HashSet<Coordinate>();
         }
