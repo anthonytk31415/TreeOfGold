@@ -77,9 +77,9 @@ public class GameManager : MonoBehaviour
 
         // Movement
         this.cursorStateMachine = new CursorStateMachine(Instance); 
-        this.cursorStateMachine.Initialize(cursorStateMachine.chooseState);
 
         this.moveControllerObject = MoveControllerObject.Initialize(Instance);
+        this.cursorStateMachine.Initialize(cursorStateMachine.chooseState);
 
         // Score
         this.gameScore = new GameScore(this.charArray);

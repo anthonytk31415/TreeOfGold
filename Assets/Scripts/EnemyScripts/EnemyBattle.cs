@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System; 
 
 /*
 This is instantiated with EnemyState and used in the CursorStateMachine system
@@ -41,34 +42,76 @@ public class EnemyBattle{
 
 
         // get position, target
-        GetBestMove(character);
-
+        EnemyMove curMove = GetBestMove(character);
+        Debug.Log("best move: " + curMove);
 
         // execute the move
-
+        yield return DoMove(curMove);
         yield return new WaitForSeconds(0.5f);
     }
         // HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(gameManager, initialPos, range); 
-    private void GetBestMove(GameObject character) {
+    private EnemyMove GetBestMove(GameObject character) {
         // get enemies in range; 
         int charId = character.GetComponent<CharacterGameState>().charId; 
         int range = character.GetComponent<CharacterStats>().attackRange; 
-        Coordinate w = instance.board.FindCharId(charId);
-        HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(instance, w, range); 
+        int moves = character.GetComponent<CharacterStats>().moves; 
+        int charAttack = character.GetComponent<CharacterStats>().attack;
+        Coordinate initialPos = instance.board.FindCharId(charId);
 
-        // if its empty then return move to the closest enemy. 
-        if (possibleAttackTargets.Count == 0){
-            Debug.Log("No targets");
-            return; 
+        // get possible moves. 
+
+        HashSet<Coordinate> possibleMoves = CharInteraction.PlayerMoveOptions(initialPos, moves, instance); 
+        
+        // audit step: 
+        // Debug.Log("possible moves for " + character);
+        // Audit.DebugIter(character);
+
+        // Audit
+        // AuditDebug.DebugIter(possibleMoves);
+
+
+        // note!!! for testing, you could apply the move, but only at the model level, perhaps?
+
+        HashSet<Coordinate> enemyTargets = new(); 
+        List<(int, EnemyMove)> enemyMoves = new();
+        foreach(Coordinate possibleMove in possibleMoves){
+            // Debug.Log("enemies within range of " + possibleMove + ":");
+            HashSet<Coordinate> enemies = CharInteraction.EnemiesWithinAttackRange(instance, character, possibleMove, range);                        
+            // AuditDebug.DebugIter(enemies);
+
+            foreach (Coordinate potentialTarget in enemies) {
+                if (!enemyTargets.Contains(potentialTarget)){
+                    enemyTargets.Add(potentialTarget);
+                    GameObject opponent = instance.charArray[instance.board.Get(potentialTarget)]; 
+                    // add to the queue the EnemyMove target
+                    int opponentHPAfterAttack = opponent.GetComponent<CharacterGameState>().HPAfterAttack(charAttack);
+                    EnemyMove curEnemyMove = new EnemyMove(instance, character, possibleMove, potentialTarget); 
+                    if (opponentHPAfterAttack == 0){
+                        // return curEnemyMove; // figure out how to return this value 
+                    }
+                    enemyMoves.Add((opponentHPAfterAttack, new EnemyMove(instance, character, possibleMove, potentialTarget)));
+                } 
+            }
         }
-        Debug.Log("there are targets");
-        return;
-        // otherwise, of all the enemies within range, find the best one. 
+        if (enemyMoves.Count > 0){
+            enemyMoves.Sort((x, y) => x.Item1.CompareTo(y.Item1)); 
+            return enemyMoves[0].Item2; 
+        }
+        else {
+            // for now, just stay still. 
+            return new EnemyMove(instance, character, initialPos, null);
+        }
+    }
 
-        // start a priority queue sorted by smallest damage after attack sequence 
-        // then smallest distance to nearest opposing team unit
 
-        // for each move, create a targets set
+    public IEnumerator DoMove(EnemyMove move){
+        int charId = move.character.GetComponent<CharacterGameState>().charId; 
+        int enemyId = instance.board.Get(move.posTarget); 
+        move.character.GetComponent<CharacterMove>().MoveChar(move.posUnit);
+        yield return move.character.GetComponent<CharacterBattle>().PlayerAttackChain(charId, enemyId, instance);
+
+        // later, apply the UI above plates effects
+
     }
 
 

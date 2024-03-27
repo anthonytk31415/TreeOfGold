@@ -40,9 +40,10 @@ public static class CharInteraction
         Board board = gameManager.board; 
         GameObject character = gameManager.charArray[board.Get(initialPos)];
         bool charIsYourTeam = character.GetComponent<CharacterGameState>().isYourTeam; 
-        HashSet<Coordinate> res = new();           
+        HashSet<Coordinate> res = new();
         Queue<(Coordinate, int)> queue = new();
         HashSet<Coordinate> visited = new(); 
+        res.Add(initialPos);           
         queue.Enqueue((initialPos, dist));
         visited.Add(initialPos);
 
@@ -78,9 +79,8 @@ public static class CharInteraction
     // given character in a current position (either team), return coordinates of 
     // opposing team within attack range; 
     // coded O(mn) Time
-    public static HashSet<Coordinate> EnemiesWithinAttackRange(GameManager gameManager, Coordinate initialPos, int range){
-        Board board = gameManager.board;
-        GameObject character = gameManager.charArray[board.Get(initialPos)];
+    public static HashSet<Coordinate> EnemiesWithinAttackRange(GameManager gameManager, GameObject character, Coordinate initialPos, int range){
+        Board board = gameManager.board;       
         bool charTeam = character.GetComponent<CharacterGameState>().isYourTeam; 
         HashSet<Coordinate> res = new();           
         Queue<(Coordinate, int)> queue = new();
@@ -116,5 +116,13 @@ public static class CharInteraction
     }
 
     // given current unit, return 
+
+    // public static int ResultOpponentHPAfterBattle(int unitId, GameManager instance, int targetId){
+    //     GameObject character = instance.charArray[unitId];
+    //     int charAttack = character.GetComponent<CharacterStats>().attack; 
+    //     GameObject opponent = instance.charArray[targetId];
+    //     return opponent.GetComponent<CharacterGameState>().HPAfterAttack(charAttack);
+    // }
+
 
 }

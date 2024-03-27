@@ -76,9 +76,15 @@ public class CharacterGameState : MonoBehaviour
     }
 
 
+    // used to calculate damage; might have to do some decoupling later for this method
+    public int HPAfterAttack(int dmg){
+        return Math.Max(0, curHp - dmg);
+    }
+
+
     public void DecreaseHp(int dmg)
     {
-        curHp = Math.Max(0, curHp - dmg); 
+        curHp = HPAfterAttack(dmg); 
         if (curHp == 0){
             IsAlive = false; 
         }

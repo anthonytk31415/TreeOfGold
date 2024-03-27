@@ -45,6 +45,8 @@ public class ChooseState : ICursorState
         foreach (GameObject character in instance.charArray){
             character.GetComponent<CharacterGameState>().ResetMoves();
         }
+        Debug.Log("auditing movecontrollerobject: " + instance.moveControllerObject);
+        instance.moveControllerObject.GetComponent<MoveController>().ResetSelected();
     }
 
   private IEnumerator DoStartStuff(){

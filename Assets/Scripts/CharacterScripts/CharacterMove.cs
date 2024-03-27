@@ -60,7 +60,7 @@ public class CharacterMove: MonoBehaviour
     public HashSet<Coordinate> PossibleAttackTargets(){
         int range = character.GetComponent<CharacterStats>().attackRange;  
         Coordinate initialPos = board.FindCharId(charId);
-        HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(gameManager, initialPos, range); 
+        HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(gameManager, character, initialPos, range); 
         // CharInteraction.TestEnemiesRange(possibleAttackTargets);  
         return possibleAttackTargets;      
     }
