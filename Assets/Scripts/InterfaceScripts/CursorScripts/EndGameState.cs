@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
-We have decided a winner. 
-*/
 
-
-
+/// <summary>
+/// EndGameState - end state for the game. We have decided a winner. 
+/// </summary>
 public class EndGameState : ICursorState
 {
 
@@ -25,7 +23,6 @@ public class EndGameState : ICursorState
 
 
     public void TriggerBanner(){
-        Debug.Log("end game banner triggered");
         if (instance.gameScore.IsATeamDefeated()){
             if (instance.gameScore.DidPlayerWin()){
                 instance.StartCoroutine(PlayerWinScript.InstantiatePlayerWinBanner());
@@ -42,7 +39,6 @@ public class EndGameState : ICursorState
     // trigger all the things you want to do when you enter
     public void Enter(){
         TriggerBanner();
-
     }
 
     public void Update(){

@@ -35,4 +35,4 @@ Patch Log:
 - move to its own class 
 
 ** ChooseState --> playerstate (3/28/24)
-- remanmed chooseState to playerState for clarity 
+- renamed chooseState to playerState for clarity 

@@ -61,7 +61,7 @@ public class CharacterBattle : MonoBehaviour
         int playerAttack = player.GetComponent<CharacterStats>().attack; 
 
         // View implementation
-        yield return instance.battleManagerObject.GetComponent<BattleManager>().TriggerBlackThenRed(player, enemy); 
+        yield return instance.battleEffectsManagerObject.GetComponent<BattleEffectsManager>().TriggerBlackThenRed(player, enemy); 
 
         // Model implementation
         enemy.GetComponent<CharacterGameState>().DecreaseHp(playerAttack);
@@ -88,7 +88,7 @@ public class CharacterBattle : MonoBehaviour
         } else {
             instance.gameScore.removeEnemyUnit();
         } 
-        yield return instance.battleManagerObject.GetComponent<BattleManager>().DeathFadeout(unit); 
+        yield return instance.battleEffectsManagerObject.GetComponent<BattleEffectsManager>().DeathFadeout(unit); 
         unit.SetActive(false); 
         yield return null; 
     }

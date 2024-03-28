@@ -12,15 +12,14 @@ using UnityEngine.UI;
 
 
 /// <summary>
-/// BattleManager manages the animations when two units do battle with each other. 
+/// BattleEffectsManager manages the animations when two units do battle with each other. 
 /// </summary>
-public class BattleManager: MonoBehaviour 
+public class BattleEffectsManager: MonoBehaviour 
 {
     private GameManager instance; 
     private Board board;
 
     public void Initialize(GameManager instance){
-        // GameObject battleManager = new GameObject("Battle Manager");
         this.instance = instance; 
         this.board = instance.board; 
 

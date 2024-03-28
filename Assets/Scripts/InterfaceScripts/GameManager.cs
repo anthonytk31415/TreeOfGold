@@ -38,9 +38,8 @@ public class GameManager : MonoBehaviour
     public GameStateMachine gameStateMachine; 
     public GameObject moveControllerObject; 
     public GameScore gameScore; 
-    public GameObject battleManagerObject; 
+    public GameObject battleEffectsManagerObject; 
     [SerializeField] public GameObject statMenuController; 
-
     public HighlightTilesManager highlightTilesManager; 
 
     private void Awake() {
@@ -75,7 +74,7 @@ public class GameManager : MonoBehaviour
         // characters build; Battling
         this.charArray = new GameObject[4];         // this is hard coded the length of the chars that charactersobject 
         CharactersObject.Initialize(Instance);
-        this.battleManagerObject = BattleManagerObject.Initialize(Instance);
+        this.battleEffectsManagerObject = BattleEffectsManagerObject.Initialize(Instance);
 
 
         // Movement
