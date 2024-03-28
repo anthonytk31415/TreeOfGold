@@ -1,24 +1,36 @@
-- right now, you can move a char, wait, then move to a another area, and still select the unit to "do stuff". weird. 
+
+** Build win conditions: 
+- clean up
+- do it so when enemy wins on their turn, you go straight to end game state
+
+** GameManager Updates: 
+- update the mechanism of chararray? make it its own class with access properties to decouple? 
+
+** Enemy Phase: 
+- disable player clicks during enemy phase
+- massive cleanup of logic for the character battle sequences 
+- 
 
 
-** enemy phase
+move highlight functions in its own class
+
+
+** MoveController
+- redesign this into a state machine in conjunction with chooseState
+
+** Highlight Tiles
+- move to its own class
+
+
+Patch Log: 
+
+** enemy phase (3/28/24)
 - trigger "enemy phase" banner
 - build a queue for doing moves
 - build a DoMove() method
 
-** player phase
+** player phase (3/28/24)
 - reset moves and booleans
 
-
-** overall game
-- build win conditions
-- how to handle death? do you remove it from the character array?
-
-
-
-
-- update the mechanism of chararray? make it its own class with access properties to decouple? 
-
-
-- disable player clicks during enemy phase
-- massive cleanup of logic for the character battle sequences 
+** Gameplay (3/28/24)
+- how to handle death: remove it from the board, mark unit inactive array?

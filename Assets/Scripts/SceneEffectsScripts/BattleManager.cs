@@ -10,6 +10,10 @@ using UnityEngine.UI;
 
 // uses StartCoroutine to initiate animations
 
+
+/// <summary>
+/// BattleManager manages the animations when two units do battle with each other. 
+/// </summary>
 public class BattleManager: MonoBehaviour 
 {
     private GameManager instance; 

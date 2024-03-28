@@ -7,7 +7,6 @@ public class GameScore
 {
     private int totalPlayerUnits;
     private int totalEnemyUnits;
-
     private int currentPlayerUnits; 
     private int currentEnemyUnits; 
 
@@ -41,13 +40,14 @@ public class GameScore
         return currentEnemyUnits; 
     }
 
-
     public Boolean IsATeamDefeated(){
         return currentEnemyUnits == 0 || currentPlayerUnits == 0;
     }
+
     public Boolean DidPlayerWin(){
         return currentEnemyUnits == 0;
     }
+
     public Boolean DidEnemyWin(){
         return currentPlayerUnits == 0; 
     }

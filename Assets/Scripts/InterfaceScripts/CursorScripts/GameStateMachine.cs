@@ -5,19 +5,6 @@ using UnityEngine;
 
 
 /*
-We should name this the game state machine. 
-
-
-ChooseState 
-- this is really the ability for the player to issue commands to its own units. 
-- Change the name to this? 
-
-
-We will have 3 phases: 
-
-player phase (i.e. when the ChooseState is active)
-
-
 
 ..x
 
@@ -25,20 +12,18 @@ player phase (i.e. when the ChooseState is active)
 
 
 [Serializable]
-public class CursorStateMachine {
+public class GameStateMachine {
     public EnemyState enemyState; 
     public ChooseState chooseState; 
     public EndGameState endGameState;
     public ICursorState CurrentState { get; private set; }
-
     private GameManager gameManager; 
-
     public GameObject cursor;
     public bool endGame; 
 
 
 
-    public CursorStateMachine(GameManager gameManager) {
+    public GameStateMachine(GameManager gameManager) {
         this.chooseState = new ChooseState(this.cursor, gameManager);
         this.enemyState = new EnemyState(gameManager);
         this.endGameState = new EndGameState(gameManager);

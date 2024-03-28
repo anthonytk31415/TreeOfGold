@@ -39,12 +39,10 @@ public class HealthBarManager : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
     }
 
-
     // Update is called once per frame
     void Update()
     {
         
     }
-
 
 }

@@ -16,18 +16,21 @@ public class EnemyState : ICursorState
         this.enemyBattle = new EnemyBattle(instance);
     }
 
-    private IEnumerator DoStartStuff(){
-        yield return EnemyPhaseScript.InstantiateEnemyPhaseObject(); 
+    private IEnumerator EnemyPhaseAsyncMethods(){
+        yield return EnemyPhaseScript.DisplayEnemyPhaseBanner(); 
         yield return enemyBattle.ApplyEnemyPhase();
-        CursorStateMachine csMachine = instance.cursorStateMachine; 
-        csMachine.TransitionTo(csMachine.chooseState);
+        GameStateMachine gSMachine = instance.gameStateMachine; 
+        if (instance.gameStateMachine.endGame){
+            gSMachine.TransitionTo(gSMachine.endGameState);
+        }
+        else {
+            gSMachine.TransitionTo(gSMachine.chooseState);     
+        }   
         yield return null; 
     }
 
-    public void Enter(){
-        Debug.Log("entering Enemy State for the Enemy Phase.");
-        
-        instance.StartCoroutine(DoStartStuff());
+    public void Enter(){        
+        instance.StartCoroutine(EnemyPhaseAsyncMethods());
     }
 
     // prob do not need anything here
@@ -36,8 +39,8 @@ public class EnemyState : ICursorState
     }
     public void Exit(){
         MoveController mc  = instance.moveControllerObject.GetComponent<MoveController>();
-        Debug.Log("Exiting Enemy State");
-        Debug.Log("selId: " + mc.SelectedId +"; selEnemyID: " + mc.SelectedEnemyId);
+        // Debug.Log("Exiting Enemy State");
+        // Debug.Log("selId: " + mc.SelectedId +"; selEnemyID: " + mc.SelectedEnemyId);
     }
 
 }

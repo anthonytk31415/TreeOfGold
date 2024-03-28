@@ -39,7 +39,7 @@ public static class CharInteraction
     public static HashSet<Coordinate> PlayerMoveOptions(Coordinate initialPos, int dist, GameManager gameManager){
         Board board = gameManager.board; 
         // Debug.Log(gameManager.charArray[0]);
-        Debug.Log("initial pos: " + initialPos +"; selectedID: " + gameManager.moveControllerObject.GetComponent<MoveController>().SelectedId);
+        // Debug.Log("initial pos: " + initialPos +"; selectedID: " + gameManager.moveControllerObject.GetComponent<MoveController>().SelectedId);
         GameObject character = gameManager.charArray[board.Get(initialPos)];
         bool charIsYourTeam = character.GetComponent<CharacterGameState>().isYourTeam; 
         HashSet<Coordinate> res = new();
@@ -109,12 +109,12 @@ public static class CharInteraction
     }
 
 
-    // i dont know what i was doing with this...
     public static void AuditEnemiesInRange(HashSet<Coordinate> enemiesInRange){
-        // Debug.Log("testing all enemies within range: ");
+        string debugMsg = ""; 
         foreach(Coordinate w in enemiesInRange){
-            Debug.Log(w);
+            debugMsg += w; 
         }
+        Debug.Log(debugMsg);
     }
 
     // given current unit, return 

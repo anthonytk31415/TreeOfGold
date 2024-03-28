@@ -57,15 +57,17 @@ public class CharacterMove: MonoBehaviour
 
     }
 
+    // return a units possible attack targets at its current position w/o
+    // moving. Used to determine highlights for attacks
+    // and for enemy phase decision making 
     public HashSet<Coordinate> PossibleAttackTargets(){
         int range = character.GetComponent<CharacterStats>().attackRange;  
         Coordinate initialPos = board.FindCharId(charId);
         HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(gameManager, character, initialPos, range); 
-        // CharInteraction.TestEnemiesRange(possibleAttackTargets);  
         return possibleAttackTargets;      
     }
 
-
+    // used for cancelling moves
     public void UndoMoveChar(Coordinate w){
         MoveChar(w);
         character.GetComponent<CharacterGameState>().HasMoved = false;

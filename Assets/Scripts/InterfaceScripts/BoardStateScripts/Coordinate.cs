@@ -32,7 +32,6 @@ public class Coordinate {
     public override int GetHashCode() {
         return Value.GetHashCode();
     }
-
     public override string ToString() {
         return string.Format("Coordinate with x: {0}, y: {1}", x, y);
     }

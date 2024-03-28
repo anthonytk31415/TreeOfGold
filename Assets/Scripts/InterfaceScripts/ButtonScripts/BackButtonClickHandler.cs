@@ -12,6 +12,6 @@ public class BackButtonClickHandler : MonoBehaviour
         // Debug.Log("Button Clicked!");
         // Add your custom functionality here
         Instance.moveControllerObject.GetComponent<MoveController>().UndoMove();
-        Instance.cursorStateMachine.chooseState.TriggerSelectedHighlights();
+        Instance.highlightTilesManager.TriggerSelectedHighlights();
     }
 }

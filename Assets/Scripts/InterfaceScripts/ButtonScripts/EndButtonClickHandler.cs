@@ -8,6 +8,6 @@ public class EndButtonClickHandler : MonoBehaviour
     public void OnButtonClick()
     {
         // Debug.Log("end button clicked");
-        Instance.cursorStateMachine.chooseState.endTurn = true;
+        Instance.gameStateMachine.chooseState.endTurn = true;
     }
 }

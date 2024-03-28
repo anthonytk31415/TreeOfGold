@@ -100,9 +100,9 @@ public class MoveController : MonoBehaviour
     private void UpdateMouseClickManager(){
         if (Input.GetMouseButtonDown(0)){
             Vector3 mousePosition = Input.mousePosition;
-            Debug.Log("mouse position: " + mousePosition); 
+            // Debug.Log("mouse position: " + mousePosition); 
             Coordinate w = GetMouseClickCoordinate(mousePosition);
-            Debug.Log("click position: " + w);
+            // Debug.Log("click position: " + w);
             // Debug.Log("is within board? : " + board.IsWithinBoard(w));
 
             if (board.IsWithinBoard(w)){
@@ -184,7 +184,6 @@ public class MoveController : MonoBehaviour
                     SelectedEnemyId = board.Get(w);
                     // UnselectUnit();
                 }
-
                 // unselect all 
                 else if ((IsPlayerSelected() && SelectedId == targetBoardId) || 
                     (curState == (false, true) && SelectedEnemyId == targetBoardId) ||
@@ -195,7 +194,6 @@ public class MoveController : MonoBehaviour
                     // UnselectEnemyUnit();
                     ResetSelected(); 
                 }
-
                 else if (IsPlayerSelected() && SelectedIdPerformedAction() && IsTargetAnEnemy(w)){
                     // UnselectUnit();
                     ResetSelected(); 
@@ -208,8 +206,7 @@ public class MoveController : MonoBehaviour
                 {
                     SelectEnemyUnit(w);
                 }
-
-                instance.cursorStateMachine.chooseState.TriggerSelectedHighlights(); 
+                instance.highlightTilesManager.TriggerSelectedHighlights(); 
             }
         }
     }
@@ -220,8 +217,8 @@ public class MoveController : MonoBehaviour
             Coordinate prevPos = moveStack.Pop();
             int unitId = board.Get(curPos); 
             instance.charArray[unitId].GetComponent<CharacterMove>().UndoMoveChar(prevPos);
-            instance.cursorStateMachine.chooseState.ResetTiles(); 
-            instance.cursorStateMachine.chooseState.TriggerSelectedHighlights();
+            instance.highlightTilesManager.ResetTiles();
+            instance.highlightTilesManager.TriggerSelectedHighlights();
             UnselectEnemyUnit();
         }
     }
@@ -235,7 +232,7 @@ public class MoveController : MonoBehaviour
         UnselectUnit();
         UnselectEnemyUnit(); 
         ClearMoveStack();
-        instance.cursorStateMachine.chooseState.ResetTiles(); 
+        instance.highlightTilesManager.ResetTiles();
     }
 
     public Boolean SelectedIdHasMoved(){

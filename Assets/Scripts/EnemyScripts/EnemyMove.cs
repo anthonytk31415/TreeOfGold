@@ -26,7 +26,6 @@ public class EnemyMove {
         this.posUnit = posUnit; 
         this.posTarget =  posTarget; 
     }
-
     public override string ToString()
     {
         return $"Character: {character}, posUnit: {posUnit}, posTarget: {posTarget}";

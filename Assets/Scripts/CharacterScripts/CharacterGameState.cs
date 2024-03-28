@@ -81,7 +81,6 @@ public class CharacterGameState : MonoBehaviour
         return Math.Max(0, curHp - dmg);
     }
 
-
     public void DecreaseHp(int dmg)
     {
         curHp = HPAfterAttack(dmg); 

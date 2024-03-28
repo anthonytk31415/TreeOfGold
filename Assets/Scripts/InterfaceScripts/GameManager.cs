@@ -35,11 +35,13 @@ public class GameManager : MonoBehaviour
     // Useful GameObjects
     // public GameObject cursor; // cursor object
     public GameObject[] charArray;      // need to update later to dynamically change
-    public CursorStateMachine cursorStateMachine; 
+    public GameStateMachine gameStateMachine; 
     public GameObject moveControllerObject; 
     public GameScore gameScore; 
     public GameObject battleManagerObject; 
     [SerializeField] public GameObject statMenuController; 
+
+    public HighlightTilesManager highlightTilesManager; 
 
     private void Awake() {
         // Singleton pattern implementation
@@ -56,7 +58,7 @@ public class GameManager : MonoBehaviour
     }
 
     private void Update(){
-        cursorStateMachine.Update();
+        gameStateMachine.Update();
         // moveController.Update();
     }
 
@@ -68,6 +70,7 @@ public class GameManager : MonoBehaviour
         this._totalHeight = _height + 3;         
         this.board = new Board(_width, _height);
         this.tiles = GridManager.Initialize(_width, _totalHeight); // this is instantiated with the board + menus
+        this.highlightTilesManager = new HighlightTilesManager(Instance);
 
         // characters build; Battling
         this.charArray = new GameObject[4];         // this is hard coded the length of the chars that charactersobject 
@@ -76,10 +79,10 @@ public class GameManager : MonoBehaviour
 
 
         // Movement
-        this.cursorStateMachine = new CursorStateMachine(Instance); 
+        this.gameStateMachine = new GameStateMachine(Instance); 
 
         this.moveControllerObject = MoveControllerObject.Initialize(Instance);
-        this.cursorStateMachine.Initialize(cursorStateMachine.chooseState);
+        this.gameStateMachine.Initialize(gameStateMachine.chooseState);
 
         // Score
         this.gameScore = new GameScore(this.charArray);

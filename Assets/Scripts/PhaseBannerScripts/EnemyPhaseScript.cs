@@ -21,7 +21,7 @@ public class EnemyPhaseScript : MonoBehaviour
         
     }
 
-    public static IEnumerator InstantiateEnemyPhaseObject(){
+    public static IEnumerator DisplayEnemyPhaseBanner(){
         Debug.Log("enemy phase called. ");
         // Lock mouse
         Cursor.lockState = CursorLockMode.Locked;

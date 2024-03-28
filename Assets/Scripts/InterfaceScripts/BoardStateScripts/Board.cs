@@ -8,7 +8,7 @@ using UnityEngine;
 
 // Purpose of Board: 
 // - maintains container of units and other objects (for now, units) on the board
-// - keeps track of position, character id, and assignment of character ids  --> shoudl i move this into its own class?
+// - keeps track of position, character id, and assignment of character ids  --> should i move this into its own class?
 
 // work only in matrix operations; 
 // only when you move things in the board, use screen coordinates
@@ -80,7 +80,6 @@ public class Board
     public bool IsNull(Coordinate w) {
         return w.GetX() == -1 && w.GetY() == -1;
     }
-
 
     // given an id, return the position of it, or return (-1, -1) if it fails. 
     public Coordinate FindCharId (int id){

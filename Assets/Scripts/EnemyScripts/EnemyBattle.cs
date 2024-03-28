@@ -6,9 +6,7 @@ using System;
 /*
 This is instantiated with EnemyState and used in the CursorStateMachine system
 to manage the enemy phase. EnemyState provides actions for doing enemy moves. 
-
 */
-
 
 public class EnemyBattle {
 
@@ -21,14 +19,12 @@ public class EnemyBattle {
     }
 
     public IEnumerator ApplyEnemyPhase(){
-        Debug.Log("initiating apply enemy phase. ");
         GameObject[] charArray = instance.charArray; 
         foreach (GameObject character in charArray){
             CharacterGameState charGameState = character.GetComponent<CharacterGameState>();
             if (!charGameState.isYourTeam && charGameState.IsAlive){
                 yield return PerformEnemyMove(character);
-                if (instance.cursorStateMachine.endGame){
-                    Debug.Log("this is the end of the game");
+                if (instance.gameStateMachine.endGame){
                     break;
                 }
             }
@@ -39,13 +35,10 @@ public class EnemyBattle {
     // if there is an player unit in the set and it is killable, attack it. Otherwise, 
     // attack the first unit. Otherwise, move max distance to the closest unit. 
     public IEnumerator PerformEnemyMove(GameObject character) {
-        Debug.Log("doing move on : " + character);
-
         // ** highlight character
 
         // get position, target
         EnemyMove curMove = GetBestMove(character);
-        Debug.Log("best move: " + curMove);
 
         // execute the move
         yield return DoMove(curMove);
@@ -84,12 +77,13 @@ public class EnemyBattle {
                 } 
             }
         }
+        // if you have moves where you can attack, pick the one with the opponent's least ending-hp
         if (enemyMoves.Count > 0){
             enemyMoves.Sort((x, y) => x.Item1.CompareTo(y.Item1)); 
             return enemyMoves[0].Item2; 
         }
+        // otherwise, stay still (for now)
         else {
-            // for now, just stay still. 
             return new EnemyMove(instance, character, initialPos, null);
         }
     }
