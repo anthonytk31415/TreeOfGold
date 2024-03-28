@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class EnemyState : ICursorState
+public class EnemyState : IGameState
 {
     public GameManager instance; 
     public Board board; 

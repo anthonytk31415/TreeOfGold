@@ -25,7 +25,7 @@ public class MoveController : MonoBehaviour
     public GameManager instance; 
     public Coordinate arrowCoordinate;
     private Camera mainCamera;      // needed for mouse position;
-    // public string m_Text;        // used for touch commands; tbd
+
 
     // selectedId w/ delegate and event
     public delegate void SelectedCharIdChangedEventHandler(int selectedId);
@@ -96,7 +96,7 @@ public class MoveController : MonoBehaviour
     }
 
     private void UpdateMouseClickManager(){
-        if (Input.GetMouseButtonDown(0)){
+        if (instance.gameStateMachine.IsPlayerState() && Input.GetMouseButtonDown(0)){
             Vector3 mousePosition = Input.mousePosition;
             // Debug.Log("mouse position: " + mousePosition); 
             Coordinate w = GetMouseClickCoordinate(mousePosition);
@@ -111,7 +111,7 @@ public class MoveController : MonoBehaviour
 
                 // you move, click elsewhere --> undo move, undo select; and if you clicked on a 
                 // team unit, select that team
-                if (IsPlayerSelected() && SelectedIdHasMoved() && !IsTargetAttackableEnemy(w)){
+                if (IsPlayerSelected() && SelectedIdHasMoved() && !IsTargetAttackableEnemy(w)){     
                     UndoMove(); 
                     // UnselectUnit(); 
                     ResetSelected();
@@ -127,7 +127,7 @@ public class MoveController : MonoBehaviour
                 // select enemy if current target has moved
 
                 // move unit condition
-                else if ((curState == (true, false) || curState == (true, true)) && IsPossibleMove(w)){
+                else if ((curState == (true, false) || curState == (true, true)) && IsPossibleMove(w) && SelectedId != targetBoardId){
                     moveStack.Push(board.FindCharId(SelectedId)); 
                     moveStack.Push(w);
                     instance.charArray[SelectedId].GetComponent<CharacterMove>().MoveChar(w);
@@ -190,6 +190,7 @@ public class MoveController : MonoBehaviour
                 {
                     // UnselectUnit();
                     // UnselectEnemyUnit();
+                    Debug.Log("AA triggered");
                     ResetSelected(); 
                 }
                 else if (IsPlayerSelected() && SelectedIdPerformedAction() && IsTargetAnEnemy(w)){

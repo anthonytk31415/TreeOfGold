@@ -23,7 +23,7 @@ on update, if some conditions happen go to the next state.
 
 
 
-public class PlayerState : ICursorState
+public class PlayerState : IGameState
 {
     public GameObject cursor; 
     public GameManager instance; 
@@ -48,8 +48,7 @@ public class PlayerState : ICursorState
 
     }
 
-  private IEnumerator DoStartStuff(){
-        
+    private IEnumerator DoStartStuff(){        
         yield return PlayerPhaseScript.InstantiatePlayerPhaseObject(); 
         yield return new WaitForSeconds(0.5f);
     }

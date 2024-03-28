@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// EndGameState - end state for the game. We have decided a winner. 
 /// </summary>
-public class EndGameState : ICursorState
+public class EndGameState : IGameState
 {
 
 

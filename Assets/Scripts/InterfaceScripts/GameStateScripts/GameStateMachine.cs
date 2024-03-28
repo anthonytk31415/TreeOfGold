@@ -16,7 +16,7 @@ public class GameStateMachine {
     public EnemyState enemyState; 
     public PlayerState playerState; 
     public EndGameState endGameState;
-    public ICursorState CurrentState { get; private set; }
+    public IGameState CurrentState { get; private set; }
     private GameManager gameManager; 
     public GameObject cursor;
     public bool endGame; 
@@ -31,7 +31,7 @@ public class GameStateMachine {
     }
 
     // set the starting state
-    public void Initialize(ICursorState state){
+    public void Initialize(IGameState state){
         CurrentState = state; 
         state.Enter(); 
         // notify other events that state has changed
@@ -39,7 +39,7 @@ public class GameStateMachine {
     }
 
     // exit this state and enter another
-    public void TransitionTo(ICursorState nextState){
+    public void TransitionTo(IGameState nextState){
         CurrentState.Exit();
         CurrentState = nextState; 
         CurrentState.Enter();
@@ -58,6 +58,10 @@ public class GameStateMachine {
 
     public void TriggerEndGame(){
         this.endGame = true; 
+    }
+
+    public bool IsPlayerState(){
+        return CurrentState == playerState; 
     }
 
 }

@@ -1,0 +1,10 @@
+
+/// <summary>
+/// Interface for the PlayerMoveControllerState
+/// </summary>
+public interface IPlayerMoveControllerState{
+    public void Enter();
+    public void Update();
+    public void Exit();
+
+}
