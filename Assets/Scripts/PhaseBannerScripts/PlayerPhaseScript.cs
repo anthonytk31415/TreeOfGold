@@ -31,7 +31,6 @@ public class PlayerPhaseScript : MonoBehaviour
         GameObject playerPhaseInstance = Instantiate(playerPhase);
         Transform playerPhaseTextTransform = playerPhaseInstance.transform.Find("BackgroundPanel/PlayerPhaseText");
         if (playerPhaseTextTransform != null){
-            // Debug.Log(playerPhaseTextTransform.GetComponent<TextMeshProUGUI>().color);
             TextMeshProUGUI textObj = playerPhaseTextTransform.GetComponent<TextMeshProUGUI>(); 
             yield return FadeToAlpha(0.5f, textObj);
         }

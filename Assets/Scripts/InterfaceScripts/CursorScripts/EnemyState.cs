@@ -24,7 +24,7 @@ public class EnemyState : ICursorState
             gSMachine.TransitionTo(gSMachine.endGameState);
         }
         else {
-            gSMachine.TransitionTo(gSMachine.chooseState);     
+            gSMachine.TransitionTo(gSMachine.playerState);     
         }   
         yield return null; 
     }

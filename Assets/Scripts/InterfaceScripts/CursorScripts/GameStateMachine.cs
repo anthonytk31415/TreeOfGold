@@ -14,7 +14,7 @@ using UnityEngine;
 [Serializable]
 public class GameStateMachine {
     public EnemyState enemyState; 
-    public ChooseState chooseState; 
+    public PlayerState playerState; 
     public EndGameState endGameState;
     public ICursorState CurrentState { get; private set; }
     private GameManager gameManager; 
@@ -22,9 +22,8 @@ public class GameStateMachine {
     public bool endGame; 
 
 
-
     public GameStateMachine(GameManager gameManager) {
-        this.chooseState = new ChooseState(this.cursor, gameManager);
+        this.playerState = new PlayerState(this.cursor, gameManager);
         this.enemyState = new EnemyState(gameManager);
         this.endGameState = new EndGameState(gameManager);
         this.gameManager = gameManager;
@@ -49,7 +48,7 @@ public class GameStateMachine {
         // stateChanged?.Invoke;
     }
 
-    // allow the statemachine to update the state
+    // allow the state machine to update the state
     public void Update(){
         if (CurrentState != null){
             CurrentState.Update();

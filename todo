@@ -1,4 +1,3 @@
-
 ** Build win conditions: 
 - clean up
 - do it so when enemy wins on their turn, you go straight to end game state
@@ -9,18 +8,15 @@
 ** Enemy Phase: 
 - disable player clicks during enemy phase
 - massive cleanup of logic for the character battle sequences 
-- 
-
-
-move highlight functions in its own class
-
 
 ** MoveController
 - redesign this into a state machine in conjunction with chooseState
 
-** Highlight Tiles
-- move to its own class
 
+** Data controller for characters, maps, etc.
+
+** Phase Banner
+- consolidate phase banner scripts? lots of duplicated methods
 
 Patch Log: 
 
@@ -34,3 +30,9 @@ Patch Log:
 
 ** Gameplay (3/28/24)
 - how to handle death: remove it from the board, mark unit inactive array?
+
+** Highlight Tiles (3/28/24)
+- move to its own class 
+
+** ChooseState --> playerstate (3/28/24)
+- remanmed chooseState to playerState for clarity 

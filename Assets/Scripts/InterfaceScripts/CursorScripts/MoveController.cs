@@ -16,8 +16,6 @@ Things it handles:
   you are allowed to select (e.g. if you have a player unit selected vs an enemy unit 
   vs nothing selected)
 
-
-
 */
 
 public class MoveController : MonoBehaviour
@@ -257,7 +255,7 @@ public class MoveController : MonoBehaviour
         // Set the z-coordinate to 0 to ensure it's on the same plane as the board
         worldPosition.z = 0; 
         // add 0.5 to both x and y and take the floor to adjust to the center of the tile, 
-        // which isa t0.0 for the bottom left corner
+        // which is a t0.0 for the bottom left corner
         Coordinate w = board.ConvertSceneToMatCoords(
             (double) Math.Floor(worldPosition.x + 0.5), 
             (double) Math.Floor(worldPosition.y + 0.5));

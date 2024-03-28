@@ -23,7 +23,7 @@ on update, if some conditions happen go to the next state.
 
 
 
-public class ChooseState : ICursorState
+public class PlayerState : ICursorState
 {
     public GameObject cursor; 
     public GameManager instance; 
@@ -31,7 +31,7 @@ public class ChooseState : ICursorState
     public Boolean endTurn; 
 
     // some properties that determine what the cursor does
-    public ChooseState(GameObject cursor, GameManager instance) {
+    public PlayerState(GameObject cursor, GameManager instance) {
         this.cursor = cursor;
         this.instance = instance;
         this.board = instance.board;          

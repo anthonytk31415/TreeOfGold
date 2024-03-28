@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
         this.gameStateMachine = new GameStateMachine(Instance); 
 
         this.moveControllerObject = MoveControllerObject.Initialize(Instance);
-        this.gameStateMachine.Initialize(gameStateMachine.chooseState);
+        this.gameStateMachine.Initialize(gameStateMachine.playerState);
 
         // Score
         this.gameScore = new GameScore(this.charArray);

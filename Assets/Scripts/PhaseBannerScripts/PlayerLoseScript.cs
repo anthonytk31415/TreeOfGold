@@ -28,7 +28,6 @@ public class PlayerLoseScript : MonoBehaviour
         GameObject playerPhaseInstance = Instantiate(playerPhase);
         Transform playerPhaseTextTransform = playerPhaseInstance.transform.Find("BackgroundPanel/PlayerLoseText");
         if (playerPhaseTextTransform != null){
-            Debug.Log(playerPhaseTextTransform.GetComponent<TextMeshProUGUI>().color);
             TextMeshProUGUI textObj = playerPhaseTextTransform.GetComponent<TextMeshProUGUI>(); 
             textObj.alpha = 0f;
             yield return UnFadeToAlpha(0.5f, textObj);
