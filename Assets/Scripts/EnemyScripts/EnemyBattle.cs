@@ -10,7 +10,7 @@ to manage the enemy phase. EnemyState provides actions for doing enemy moves.
 */
 
 
-public class EnemyBattle{
+public class EnemyBattle {
 
     public GameManager instance; 
     public Board board; 
@@ -27,19 +27,21 @@ public class EnemyBattle{
             CharacterGameState charGameState = character.GetComponent<CharacterGameState>();
             if (!charGameState.isYourTeam && charGameState.IsAlive){
                 yield return PerformEnemyMove(character);
+                if (instance.cursorStateMachine.endGame){
+                    Debug.Log("this is the end of the game");
+                    break;
+                }
             }
         }
         yield return new WaitForSeconds(0.5f);
     }
-
 
     // if there is an player unit in the set and it is killable, attack it. Otherwise, 
     // attack the first unit. Otherwise, move max distance to the closest unit. 
     public IEnumerator PerformEnemyMove(GameObject character) {
         Debug.Log("doing move on : " + character);
 
-        // highlight character
-
+        // ** highlight character
 
         // get position, target
         EnemyMove curMove = GetBestMove(character);
@@ -49,7 +51,7 @@ public class EnemyBattle{
         yield return DoMove(curMove);
         yield return new WaitForSeconds(0.5f);
     }
-        // HashSet<Coordinate> possibleAttackTargets = CharInteraction.EnemiesWithinAttackRange(gameManager, initialPos, range); 
+
     private EnemyMove GetBestMove(GameObject character) {
         // get enemies in range; 
         int charId = character.GetComponent<CharacterGameState>().charId; 
@@ -59,25 +61,14 @@ public class EnemyBattle{
         Coordinate initialPos = instance.board.FindCharId(charId);
 
         // get possible moves. 
-
         HashSet<Coordinate> possibleMoves = CharInteraction.PlayerMoveOptions(initialPos, moves, instance); 
-        
-        // audit step: 
-        // Debug.Log("possible moves for " + character);
-        // Audit.DebugIter(character);
-
-        // Audit
-        // AuditDebug.DebugIter(possibleMoves);
-
 
         // note!!! for testing, you could apply the move, but only at the model level, perhaps?
 
         HashSet<Coordinate> enemyTargets = new(); 
         List<(int, EnemyMove)> enemyMoves = new();
         foreach(Coordinate possibleMove in possibleMoves){
-            // Debug.Log("enemies within range of " + possibleMove + ":");
-            HashSet<Coordinate> enemies = CharInteraction.EnemiesWithinAttackRange(instance, character, possibleMove, range);                        
-            // AuditDebug.DebugIter(enemies);
+            HashSet<Coordinate> enemies = CharInteraction.EnemiesWithinAttackRange(instance, character, possibleMove, range);                       
 
             foreach (Coordinate potentialTarget in enemies) {
                 if (!enemyTargets.Contains(potentialTarget)){

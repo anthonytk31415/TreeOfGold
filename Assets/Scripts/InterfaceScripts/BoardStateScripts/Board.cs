@@ -40,6 +40,7 @@ public class Board
     // O(1) operation
     // Get will return the charId of the coordinate; -1 if nothing exists
     public int Get(Coordinate w) {
+        // Debug.Log(w);
         return board[w.GetX(), w.GetY()];
     }
 

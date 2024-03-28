@@ -16,11 +16,12 @@ using Unity;
 // note as of feb 18: the async functions work! might need some cleanup, but the logic is there!
 // yield return is the way to go!
 
+// this controller CharacterBattle updates both the model and the UI. Is this not a good separation of concerns? 
+
 public class CharacterBattle : MonoBehaviour
 {
 
     public void Start(){
-
     }
 
 
@@ -37,16 +38,14 @@ public class CharacterBattle : MonoBehaviour
         GameObject enemy = instance.charArray[enemyId]; 
         Board board = instance.board; 
 
-        yield return PlayerAttackEnemy(playerId, enemyId, instance, board);
-        instance.statMenuController.GetComponent<StatMenuManager>().UpdateUnitScreen();
-        
+        yield return PlayerAttackEnemy(playerId, enemyId, instance, board);        
         if (enemy.GetComponent<CharacterGameState>().IsAlive){
             yield return PlayerAttackEnemy(enemyId, playerId, instance, board);
-            instance.statMenuController.GetComponent<StatMenuManager>().UpdateUnitScreen();
+            
         }
         player.GetComponent<CharacterGameState>().HasAttacked = true;
-        instance.moveControllerObject.GetComponent<MoveController>().ResetSelected();
-        
+
+        yield return null;
     }
 
     // This purely does the animation of player attacking enemy. 
@@ -57,13 +56,16 @@ public class CharacterBattle : MonoBehaviour
         yield return instance.battleManagerObject.GetComponent<BattleManager>().TriggerBlackThenRed(player, enemy); 
         enemy.GetComponent<CharacterGameState>().DecreaseHp(playerAttack);
         yield return enemy.GetComponentInChildren<HealthBarManager>().UpdateHealthBar(enemy);
-        // yield return player.GetComponentInChildren<HealthBarManager>().UpdateHealthBar(player); //eed to figure out how
+
         if (!enemy.GetComponent<CharacterGameState>().IsAlive){
             yield return ApplyDeathSequence(enemyId, instance, board);
         }
+        instance.statMenuController.GetComponent<StatMenuManager>().UpdateUnitScreen();
+        instance.moveControllerObject.GetComponent<MoveController>().ResetSelected();
+        yield return AssessWinner(instance);
     }
 
-    // Animation for applying death sequence
+    // Animation for applying death sequence. as well as apply death to model
     public IEnumerator ApplyDeathSequence(int unitId, GameManager instance, Board board){
         Coordinate w = board.FindCharId(unitId);     
         board.PutEmpty(w);
@@ -77,7 +79,7 @@ public class CharacterBattle : MonoBehaviour
         instance.gameScore.AuditScore();
         yield return instance.battleManagerObject.GetComponent<BattleManager>().DeathFadeout(unit); 
         unit.SetActive(false); 
-
+        yield return null; 
 
         // THIS MECHANICALLY WORKS BUT NEEDS AUDITING ON WHERE TO PLACE IT AND LOGIC ETC.
         // if (instance.gameScore.GetCurrentEnemyUnits() <= 1) {               // PLACEHOLDER FOR TEST
@@ -85,5 +87,13 @@ public class CharacterBattle : MonoBehaviour
         // }
     }
 
+    public IEnumerator AssessWinner(GameManager instance){
+        
+        if (instance.gameScore.IsATeamDefeated()){
+            instance.cursorStateMachine.TriggerEndGame();           
+            yield break;
+        }
+        yield return null; 
 
+    }
 }

@@ -25,6 +25,7 @@ on update, if some conditions happen go to the next state.
 
 public class ChooseState : ICursorState
 {
+
     public GameObject cursor; 
     public GameManager instance; 
     public Board board; 
@@ -35,22 +36,22 @@ public class ChooseState : ICursorState
     public ChooseState(GameObject cursor, GameManager instance) {
         this.cursor = cursor;
         this.instance = instance;
-        this.board = instance.board;  
+        this.board = instance.board;          
     }
 
 
 
     public void InitiatePlayerPhaseSettings(){
         this.endTurn = false;
+        instance.moveControllerObject.GetComponent<MoveController>().ResetSelected();
         foreach (GameObject character in instance.charArray){
             character.GetComponent<CharacterGameState>().ResetMoves();
         }
-        Debug.Log("auditing movecontrollerobject: " + instance.moveControllerObject);
-        instance.moveControllerObject.GetComponent<MoveController>().ResetSelected();
+
     }
 
   private IEnumerator DoStartStuff(){
-        InitiatePlayerPhaseSettings();
+        
         yield return PlayerPhaseScript.InstantiatePlayerPhaseObject(); 
         yield return new WaitForSeconds(0.5f);
     }
@@ -58,6 +59,7 @@ public class ChooseState : ICursorState
 
     // trigger all the things you want to do when you enter
     public void Enter(){
+        InitiatePlayerPhaseSettings();
         MoveController.OnSelectedCharIdChanged += HandleCharIdChanged; 
         instance.StartCoroutine(DoStartStuff());
 
@@ -65,10 +67,14 @@ public class ChooseState : ICursorState
     }
 
     public void Update(){
+        CursorStateMachine csMachine = instance.cursorStateMachine;
         // if we click on end, then we move to enemy phase
         if (endTurn){
-            CursorStateMachine csMachine = instance.cursorStateMachine;
             csMachine.TransitionTo(csMachine.enemyState);
+            return; 
+        }
+        if (instance.cursorStateMachine.endGame){
+            csMachine.TransitionTo(csMachine.endGameState);
         }
     }
 
@@ -90,8 +96,7 @@ public class ChooseState : ICursorState
 
     public void TriggerSelectedHighlights(){
         int selectedId = instance.moveControllerObject.GetComponent<MoveController>().SelectedId;
-        int enemyId =  instance.moveControllerObject.GetComponent<MoveController>().SelectedEnemyId;    
-        // Debug.Log("from choosestate trigger: selectedId: " + selectedId + ", enemyId: " + enemyId);    
+        int enemyId =  instance.moveControllerObject.GetComponent<MoveController>().SelectedEnemyId;     
         ResetTiles();        
         if (selectedId != -1 ){
             GameObject selectedUnit = instance.charArray[selectedId]; 
@@ -121,7 +126,7 @@ public class ChooseState : ICursorState
         // Get all moves for those chars on your team and has not moved
         HashSet<Coordinate> allPlayerMoves = new(); 
         foreach (GameObject character in instance.charArray) {
-            if (character.GetComponent<CharacterGameState>().isYourTeam && !character.GetComponent<CharacterGameState>().HasMoved){
+            if (character.GetComponent<CharacterGameState>().isYourTeam && !character.GetComponent<CharacterGameState>().HasMoved && character.GetComponent<CharacterGameState>().IsAlive){
                 HashSet<Coordinate> curMoves = character.GetComponent<CharacterMove>().PossibleMoves();
                 allPlayerMoves.UnionWith(curMoves);
             }

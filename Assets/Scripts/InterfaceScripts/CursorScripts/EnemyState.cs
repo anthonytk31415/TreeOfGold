@@ -24,21 +24,20 @@ public class EnemyState : ICursorState
         yield return null; 
     }
 
-
     public void Enter(){
         Debug.Log("entering Enemy State for the Enemy Phase.");
+        
         instance.StartCoroutine(DoStartStuff());
     }
-
-
 
     // prob do not need anything here
     public void Update(){
 
     }
     public void Exit(){
+        MoveController mc  = instance.moveControllerObject.GetComponent<MoveController>();
         Debug.Log("Exiting Enemy State");
+        Debug.Log("selId: " + mc.SelectedId +"; selEnemyID: " + mc.SelectedEnemyId);
     }
-
 
 }

@@ -5,11 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerPhaseScript : MonoBehaviour
+public class PlayerLoseScript : MonoBehaviour
 {
-    // public delegate void CoroutineFinished();
-
-
     // Start is called before the first frame update
     void Start()
     {
@@ -21,19 +18,20 @@ public class PlayerPhaseScript : MonoBehaviour
         
     }
 
-    public static IEnumerator InstantiatePlayerPhaseObject(){
+    public static IEnumerator InstantiatePlayerLoseBanner(){
 
         // Lock mouse
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        GameObject playerPhase = Resources.Load("Prefabs/PhaseBanner/PlayerPhaseCanvas", typeof(GameObject)) as GameObject;        
+        GameObject playerPhase = Resources.Load("Prefabs/PhaseBanner/PlayerLoseCanvas", typeof(GameObject)) as GameObject;        
         GameObject playerPhaseInstance = Instantiate(playerPhase);
-        Transform playerPhaseTextTransform = playerPhaseInstance.transform.Find("BackgroundPanel/PlayerPhaseText");
+        Transform playerPhaseTextTransform = playerPhaseInstance.transform.Find("BackgroundPanel/PlayerLoseText");
         if (playerPhaseTextTransform != null){
-            // Debug.Log(playerPhaseTextTransform.GetComponent<TextMeshProUGUI>().color);
+            Debug.Log(playerPhaseTextTransform.GetComponent<TextMeshProUGUI>().color);
             TextMeshProUGUI textObj = playerPhaseTextTransform.GetComponent<TextMeshProUGUI>(); 
-            yield return FadeToAlpha(0.5f, textObj);
+            textObj.alpha = 0f;
+            yield return UnFadeToAlpha(0.5f, textObj);
         }
         Destroy(playerPhaseInstance);
 
@@ -41,17 +39,19 @@ public class PlayerPhaseScript : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
+
         yield return new WaitForSeconds(0.5f);
+    
     }
 
-    public static IEnumerator FadeToAlpha(float fadeDuration, TextMeshProUGUI textObj){
+    public static IEnumerator UnFadeToAlpha(float fadeDuration, TextMeshProUGUI textObj){
         float ticks = 10f; 
         float tickUnit = fadeDuration/ticks; 
         float curTick = 0f; 
         while (curTick < fadeDuration)
         {
             float percentageComplete = curTick/fadeDuration; 
-            float pctAlpha = 1 - percentageComplete; 
+            float pctAlpha = percentageComplete; 
             textObj.alpha = pctAlpha;
             curTick += tickUnit;
             yield return new WaitForSeconds(tickUnit);

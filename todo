@@ -18,3 +18,7 @@
 
 
 - update the mechanism of chararray? make it its own class with access properties to decouple? 
+
+
+- disable player clicks during enemy phase
+- massive cleanup of logic for the character battle sequences 

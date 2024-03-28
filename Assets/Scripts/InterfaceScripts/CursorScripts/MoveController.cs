@@ -73,6 +73,7 @@ public class MoveController : MonoBehaviour
     public Boolean IsEnemySelected(){
         return SelectedEnemyId != -1; 
     }
+    
     private (Boolean, Boolean) GetSelectedState(){
         return (IsPlayerSelected(), IsEnemySelected());
     }
@@ -99,9 +100,15 @@ public class MoveController : MonoBehaviour
     private void UpdateMouseClickManager(){
         if (Input.GetMouseButtonDown(0)){
             Vector3 mousePosition = Input.mousePosition;
+            Debug.Log("mouse position: " + mousePosition); 
             Coordinate w = GetMouseClickCoordinate(mousePosition);
+            Debug.Log("click position: " + w);
+            // Debug.Log("is within board? : " + board.IsWithinBoard(w));
+
             if (board.IsWithinBoard(w)){
+                // Debug.Log("testing board" + board.Get(new Coordinate(0,0)));
                 int targetBoardId = board.Get(w); 
+                // Debug.Log("target boardId: " + targetBoardId);
                 (Boolean, Boolean) curState = GetSelectedState();
 
                 // you move, click elsewhere --> undo move, undo select; and if you clicked on a 

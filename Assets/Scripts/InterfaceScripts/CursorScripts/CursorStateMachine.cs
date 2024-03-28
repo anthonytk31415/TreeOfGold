@@ -28,16 +28,22 @@ player phase (i.e. when the ChooseState is active)
 public class CursorStateMachine {
     public EnemyState enemyState; 
     public ChooseState chooseState; 
+    public EndGameState endGameState;
     public ICursorState CurrentState { get; private set; }
 
     private GameManager gameManager; 
 
     public GameObject cursor;
+    public bool endGame; 
+
+
 
     public CursorStateMachine(GameManager gameManager) {
         this.chooseState = new ChooseState(this.cursor, gameManager);
         this.enemyState = new EnemyState(gameManager);
+        this.endGameState = new EndGameState(gameManager);
         this.gameManager = gameManager;
+        this.endGame = false; 
     }
 
     // set the starting state
@@ -52,7 +58,7 @@ public class CursorStateMachine {
     public void TransitionTo(ICursorState nextState){
         CurrentState.Exit();
         CurrentState = nextState; 
-        nextState.Enter();
+        CurrentState.Enter();
 
         // notify other events that state has changed
         // stateChanged?.Invoke;
@@ -63,6 +69,11 @@ public class CursorStateMachine {
         if (CurrentState != null){
             CurrentState.Update();
         }
+    }
+
+
+    public void TriggerEndGame(){
+        this.endGame = true; 
     }
 
 }

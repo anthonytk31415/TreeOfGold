@@ -63,12 +63,12 @@ public class CharactersObject : MonoBehaviour
         (String, int, int, int, int, int, int, Boolean)[] chars = {
             ("glenn",       9, 5, 7, 0, 0, 1, true), 
             ("greenMage",   6, 11, 3, 0, 1, 1, true), 
-            ("knight",      12, 4, 3, 0, 2, 1, false), 
-            ("purpleMage",  5, 4, 3, 1, 0, 1, false)
+            ("knight",      12, 12, 3, 0, 2, 1, false), 
+            ("purpleMage",  5, 6, 3, 1, 0, 1, false)
             };
         
         // GameObject[] charArray = new GameObject[chars.Length]; 
-        // NOTE! the id is simply the array entry of the character
+        // NOTE! the id is simply the array entry of the character in charArray; 
         for (int id = 0; id < chars.Length; id ++)
         {
             // first, instantiate the char

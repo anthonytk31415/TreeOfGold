@@ -38,6 +38,8 @@ public static class CharInteraction
     // the units move set, return the set of all coordinates the unit can move to
     public static HashSet<Coordinate> PlayerMoveOptions(Coordinate initialPos, int dist, GameManager gameManager){
         Board board = gameManager.board; 
+        // Debug.Log(gameManager.charArray[0]);
+        Debug.Log("initial pos: " + initialPos +"; selectedID: " + gameManager.moveControllerObject.GetComponent<MoveController>().SelectedId);
         GameObject character = gameManager.charArray[board.Get(initialPos)];
         bool charIsYourTeam = character.GetComponent<CharacterGameState>().isYourTeam; 
         HashSet<Coordinate> res = new();
