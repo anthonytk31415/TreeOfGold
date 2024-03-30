@@ -25,10 +25,12 @@ public class EndGameState : IGameState
     public void TriggerBanner(){
         if (instance.gameScore.IsATeamDefeated()){
             if (instance.gameScore.DidPlayerWin()){
-                instance.StartCoroutine(PlayerWinScript.InstantiatePlayerWinBanner());
+                // instance.StartCoroutine(PlayerWinScript.InstantiatePlayerWinBanner());
+                instance.StartCoroutine(PhaseBannerManager.InstantiateBanner(instance, PhaseBanner.PlayerWin));
             }
             else if (instance.gameScore.DidEnemyWin()) {
-                instance.StartCoroutine(PlayerLoseScript.InstantiatePlayerLoseBanner());
+                // instance.StartCoroutine(PlayerLoseScript.InstantiatePlayerLoseBanner());
+                instance.StartCoroutine(PhaseBannerManager.InstantiateBanner(instance, PhaseBanner.PlayerLose));
             }
         }
         // do we need to do variable cleanup? 

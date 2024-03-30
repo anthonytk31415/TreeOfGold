@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-/*
 
-..x
-
-*/
-
+/// <summary>
+///  This controls the phases of the game, between Player, Enemy and EndGame phases. It uses
+///  the State Pattern to change states.
+/// </summary>
 
 [Serializable]
 public class GameStateMachine {
@@ -20,6 +19,8 @@ public class GameStateMachine {
     private GameManager gameManager; 
     public GameObject cursor;
     public bool endGame; 
+
+
 
 
     public GameStateMachine(GameManager gameManager) {

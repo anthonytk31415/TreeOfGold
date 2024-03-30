@@ -1,5 +1,6 @@
 using System; 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // CharInteraction handles possible movement positions  
@@ -108,7 +109,6 @@ public static class CharInteraction
         return res; 
     }
 
-
     public static void AuditEnemiesInRange(HashSet<Coordinate> enemiesInRange){
         string debugMsg = ""; 
         foreach(Coordinate w in enemiesInRange){
@@ -116,6 +116,101 @@ public static class CharInteraction
         }
         Debug.Log(debugMsg);
     }
+
+    // return the move that puts you to the closest unit
+    public static Coordinate MoveToClosestEnemy(Coordinate posChar){
+        return new Coordinate(-1, -1);
+    }
+
+    /// <summary>
+    /// Returns the shortest path the the char2 from char1 with rules on being
+    /// able to not occupy a friendly cell before the char2, but being able to 
+    /// walk through a friendly (but not through an enemy). 
+    /// Note ** the last element of the list is the unit itself. 
+    /// </summary>
+    
+    public static List<Coordinate> PathBetweenUnits(GameManager gameManager, Coordinate char1, Coordinate char2){
+        Dictionary<Coordinate, Coordinate> parent = new();          // parents of (-1, -1) have no parent
+        Queue<Coordinate> queue = new();
+        HashSet<Coordinate> visited = new();
+        queue.Enqueue(char1);         
+        visited.Add(char1);
+        parent.Add(char1, new Coordinate(-1, -1));
+        (int, int)[] positions = {(1,0), (-1, 0), (0, 1), (0, -1)}; 
+
+        // use BFS to get shortest path to char2 from char1 using the queue
+        while (queue.Count > 0){
+            Coordinate curPos = queue.Dequeue();
+            if (curPos.Equals(char2)){                
+                break;
+            }
+            foreach ((int dx, int dy) in positions) {
+                Coordinate w  = new Coordinate(curPos.GetX() + dx, curPos.GetY() + dy);
+                // not in visited, within board, not enemy, and if friend, not adjacent to target
+                // you cannot go to char2 if you are currently on a friendly unit that's not you yourself
+                // but you can go to a friendly unit
+                if (gameManager.board.IsWithinBoard(w) && 
+                        !visited.Contains(w) &&
+                        (gameManager.moveControllerObject.GetComponent<MoveController>().IsNotEnemy(char1, w) || 
+                                w.Equals(char2)
+                        ))                                        
+                {
+                    // if cur move is friend and next move is char2: 
+                    if (!(gameManager.moveControllerObject.GetComponent<MoveController>().IsSameTeam(char1, curPos) && !char1.Equals(curPos) && w.Equals(char2)))
+                    {
+                        visited.Add(w);
+                        parent.Add(w, curPos); 
+                        queue.Enqueue(w);
+                    }
+                }
+            }
+        }
+
+        List<Coordinate> res = new();
+        // we got to char2 position; now trace back using parent
+        Coordinate tracePos = char2; 
+        while (!tracePos.Equals(char1))
+        {
+            res.Add(tracePos); 
+            tracePos = parent[tracePos];
+        }
+        res.Reverse();
+        return res; 
+    }
+
+
+    /// <summary>
+    /// Given a unit based on its coordinate, return the path to the closest
+    /// opponent
+    /// </summary>
+    /// <param name="gameManager"></param>
+    /// <param name="unit"></param>
+    /// <returns></returns>
+    public static List<Coordinate> FindClosestOpponent(GameManager gameManager, Coordinate unit)
+    {
+        List<(int, List<Coordinate>)> opponentCandidates = new();
+        for (int id = 0; id < gameManager.charArray.Length; id ++ )
+        {
+            Coordinate curUnit = gameManager.board.FindCharId(id);
+            GameObject curUnitObject = gameManager.charArray[id]; 
+
+            if (curUnitObject.GetComponent<CharacterGameState>().IsAlive && 
+                    !curUnit.Equals(unit) && 
+                    gameManager.moveControllerObject.GetComponent<MoveController>().IsEnemy(unit, curUnit))
+            {
+                List<Coordinate> curPath = PathBetweenUnits(gameManager, unit, curUnit); 
+                opponentCandidates.Add((curPath.Count, curPath));
+            }
+        }
+        opponentCandidates.Sort((x, y) => x.Item1.CompareTo(y.Item1));
+        if (opponentCandidates.Count > 0){
+            return opponentCandidates[0].Item2; 
+        }
+        return new List<Coordinate>();
+    }
+
+
+
 
     // given current unit, return 
 

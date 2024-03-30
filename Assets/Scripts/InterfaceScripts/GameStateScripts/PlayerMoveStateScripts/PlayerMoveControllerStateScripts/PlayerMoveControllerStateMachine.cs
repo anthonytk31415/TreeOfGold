@@ -7,22 +7,25 @@ using UnityEngine;
 public class PlayerMoveControllerStateMachine {
 
     // states: 
-    public SelectedState selectedState;
+    public SelectedUnmovedState selectedUnmovedState;
+    public SelectedMovedState selectedMovedState;
     public UnselectedState unselectedState;
-    public NonPlayerPhase nonPlayerPhase;
+    public NonPlayerPhaseState nonPlayerPhaseState;
     public IPlayerMoveControllerState CurrentState {get; private set; }
     private GameManager gameManager;
+    private MoveController moveController; 
+    private PlayerMoveControllerStateMachine playerMoveControllerStateMachine; 
 
-    public PlayerMoveControllerStateMachine(GameManager gameManager) {
-        this.gameManager = gameManager;
-        // this.selectedState;
-        // this.unselectedState;
-        // this.nonPlayerPhase;
-        // this.CurrentState
+    public PlayerMoveControllerStateMachine(GameManager gameManager, MoveController moveController) {
+        this.selectedUnmovedState = new SelectedUnmovedState(gameManager, moveController, this);   
+        this.selectedMovedState = new SelectedMovedState(gameManager, moveController, this);   
+        this.unselectedState = new UnselectedState(gameManager, moveController, this);   
+        this.nonPlayerPhaseState = new NonPlayerPhaseState(gameManager, moveController, this);   
     }    
 
     public void Initialize() {
-
+        this.CurrentState = unselectedState; 
+        
     }
 
     public void TransitionTo(IPlayerMoveControllerState nextState){
@@ -31,15 +34,13 @@ public class PlayerMoveControllerStateMachine {
         CurrentState.Enter();
     }
 
-    public void Update(){
-        if (CurrentState != null){
-            CurrentState.Update();
-        }
+
+
+    public void ProcessClick(Coordinate w){
+        CurrentState.Process(w); 
     }
 
-
-
-
+    
 
 
 }

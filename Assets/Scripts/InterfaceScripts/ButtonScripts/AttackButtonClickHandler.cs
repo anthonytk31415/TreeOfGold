@@ -28,8 +28,10 @@ public class AttackButtonClickHandler : MonoBehaviour
     }
 
     public Boolean CanAttackCommence(){
-        return Instance.moveControllerObject.GetComponent<MoveController>().IsPlayerSelected() && 
-            Instance.moveControllerObject.GetComponent<MoveController>().IsEnemySelected();
+        MoveController mc = Instance.moveControllerObject.GetComponent<MoveController>();        
+        return mc.IsPlayerSelected() && 
+            mc.IsEnemySelected() && 
+            Instance.gameStateMachine.CurrentState == Instance.gameStateMachine.playerState;
     }
 
 
@@ -47,6 +49,8 @@ public class AttackButtonClickHandler : MonoBehaviour
                 player.GetComponent<CharacterBattle>().CommenceBattle(selectedId, selectedEnemyId, Instance);
                 player.GetComponent<CharacterGameState>().HasAttacked = true; 
             }
+            MoveController mc = Instance.moveControllerObject.GetComponent<MoveController>();
+            mc.playerMoveControllerStateMachine.TransitionTo(mc.playerMoveControllerStateMachine.unselectedState);
         }     
     }
 

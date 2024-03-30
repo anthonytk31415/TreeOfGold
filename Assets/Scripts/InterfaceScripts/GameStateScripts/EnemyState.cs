@@ -16,8 +16,13 @@ public class EnemyState : IGameState
         this.enemyBattle = new EnemyBattle(instance);
     }
 
+    /// <summary>
+    /// Use this method to chain enemy phase IEnumerators during the start phase
+    /// </summary>
+    /// <returns>IEnumerator</returns>
     private IEnumerator EnemyPhaseAsyncMethods(){
-        yield return EnemyPhaseScript.DisplayEnemyPhaseBanner(); 
+        // yield return EnemyPhaseScript.DisplayEnemyPhaseBanner(); 
+        yield return PhaseBannerManager.InstantiateBanner(instance, PhaseBanner.EnemyPhase);
         yield return enemyBattle.ApplyEnemyPhase();
         GameStateMachine gSMachine = instance.gameStateMachine; 
         if (instance.gameStateMachine.endGame){
@@ -39,8 +44,6 @@ public class EnemyState : IGameState
     }
     public void Exit(){
         MoveController mc  = instance.moveControllerObject.GetComponent<MoveController>();
-        // Debug.Log("Exiting Enemy State");
-        // Debug.Log("selId: " + mc.SelectedId +"; selEnemyID: " + mc.SelectedEnemyId);
     }
 
 }

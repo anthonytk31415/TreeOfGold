@@ -16,6 +16,8 @@ public class HighlightTilesManager
     /// <summary>
     /// Governs the tile highlights based on what units are selected.
     /// Currently, only implemented for player phase.
+    /// This is typically triggered by listening to MoveController's state (selectedId, selectedEnemyId),
+    /// or by making actions on the player phase (see the PlayerState event listener subscription).
     /// </summary>
     public void TriggerSelectedHighlights(){
         int selectedId = instance.moveControllerObject.GetComponent<MoveController>().SelectedId;

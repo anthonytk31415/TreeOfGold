@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System; 
+using System;
+using UnityEditor.PackageManager;
 
 /*
 This is instantiated with EnemyState and used in the CursorStateMachine system
@@ -57,23 +58,18 @@ public class EnemyBattle {
         HashSet<Coordinate> possibleMoves = CharInteraction.PlayerMoveOptions(initialPos, moves, instance); 
 
         // note!!! for testing, you could apply the move, but only at the model level, perhaps?
-
         HashSet<Coordinate> enemyTargets = new(); 
         List<(int, EnemyMove)> enemyMoves = new();
         foreach(Coordinate possibleMove in possibleMoves){
             HashSet<Coordinate> enemies = CharInteraction.EnemiesWithinAttackRange(instance, character, possibleMove, range);                       
 
-            foreach (Coordinate potentialTarget in enemies) {
-                if (!enemyTargets.Contains(potentialTarget)){
-                    enemyTargets.Add(potentialTarget);
-                    GameObject opponent = instance.charArray[instance.board.Get(potentialTarget)]; 
+            foreach (Coordinate potentialEnemyTarget in enemies) {
+                if (!enemyTargets.Contains(potentialEnemyTarget)){
+                    enemyTargets.Add(potentialEnemyTarget);
+                    GameObject opponent = instance.charArray[instance.board.Get(potentialEnemyTarget)]; 
                     // add to the queue the EnemyMove target
                     int opponentHPAfterAttack = opponent.GetComponent<CharacterGameState>().HPAfterAttack(charAttack);
-                    EnemyMove curEnemyMove = new EnemyMove(instance, character, possibleMove, potentialTarget); 
-                    if (opponentHPAfterAttack == 0){
-                        // return curEnemyMove; // figure out how to return this value 
-                    }
-                    enemyMoves.Add((opponentHPAfterAttack, new EnemyMove(instance, character, possibleMove, potentialTarget)));
+                    enemyMoves.Add((opponentHPAfterAttack, new EnemyMove(instance, character, possibleMove, potentialEnemyTarget, true)));
                 } 
             }
         }
@@ -82,18 +78,33 @@ public class EnemyBattle {
             enemyMoves.Sort((x, y) => x.Item1.CompareTo(y.Item1)); 
             return enemyMoves[0].Item2; 
         }
-        // otherwise, stay still (for now)
+        // otherwise, stay still (for now); this is buggy. lets give the position an entry. 
         else {
-            return new EnemyMove(instance, character, initialPos, null);
+            // Debug.Log("no actual attacks, now move closest");
+            List<Coordinate> closestEnemyPath = CharInteraction.FindClosestOpponent(instance, initialPos);
+            // Debug.Log("length of closest path: " + closestEnemyPath.Count);
+            AuditDebug.DebugIter(closestEnemyPath);
+            if (closestEnemyPath.Count == 0) {
+                return new EnemyMove(instance, character, initialPos, null, false);
+            }
+            else {
+                return new EnemyMove(instance, character, closestEnemyPath[moves-1], null, false);
+            }            
         }
     }
 
 
     public IEnumerator DoMove(EnemyMove move){
+        // Debug.Log("current move: " + move);        
         int charId = move.character.GetComponent<CharacterGameState>().charId; 
-        int enemyId = instance.board.Get(move.posTarget); 
+        // Debug.Log("with charId: " + charId);
+        // Debug.Log("move triggered with: " + move.posUnit + "on char:" + move.character );
         move.character.GetComponent<CharacterMove>().MoveChar(move.posUnit);
-        yield return move.character.GetComponent<CharacterBattle>().PlayerAttackChain(charId, enemyId, instance);
+        if (move.attack){
+            int enemyId = instance.board.Get(move.posTarget); 
+            yield return move.character.GetComponent<CharacterBattle>().PlayerAttackChain(charId, enemyId, instance);
+        } 
+        yield return null;
 
         // later, apply the UI above plates effects
 

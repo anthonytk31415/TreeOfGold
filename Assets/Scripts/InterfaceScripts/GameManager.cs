@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     public GameObject battleEffectsManagerObject; 
     [SerializeField] public GameObject statMenuController; 
     public HighlightTilesManager highlightTilesManager; 
-
+    public PhaseBannerFactory phaseBannerFactory; 
     private void Awake() {
         // Singleton pattern implementation
         if (_instance != null && _instance != this)
@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
         CharactersObject.Initialize(Instance);
         this.battleEffectsManagerObject = BattleEffectsManagerObject.Initialize(Instance);
 
+        this.phaseBannerFactory = new PhaseBannerFactory(); 
 
         // Movement
         this.gameStateMachine = new GameStateMachine(Instance); 

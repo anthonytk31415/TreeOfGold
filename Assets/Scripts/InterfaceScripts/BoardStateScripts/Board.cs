@@ -39,6 +39,12 @@ public class Board
     // IDs start at 1 onward. 
     // O(1) operation
     // Get will return the charId of the coordinate; -1 if nothing exists
+
+    /// <summary>
+    /// Given a coordinate w, return its charId relative to charArray, or -1 if none exists. 
+    /// </summary>
+    /// <param name="w"></param>
+    /// <returns></returns>
     public int Get(Coordinate w) {
         // Debug.Log(w);
         return board[w.GetX(), w.GetY()];
@@ -81,7 +87,11 @@ public class Board
         return w.GetX() == -1 && w.GetY() == -1;
     }
 
-    // given an id, return the position of it, or return (-1, -1) if it fails. 
+    /// <summary>
+    /// given an id, return the position of it, or return (-1, -1) if it fails. 
+    /// </summary>
+    /// <param name="id">charId</param>
+    /// <returns></returns>
     public Coordinate FindCharId (int id){
         for (int i = 0; i < board.GetLength(0); i ++){
             for (int j = 0; j < board.GetLength(1); j ++){
@@ -93,7 +103,12 @@ public class Board
         return new Coordinate(-1, -1);
     }
 
-    // puts a piece ID into an x/y slot
+    /// <summary>
+    /// puts a piece ID into an (x, y) slot
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="destination"></param>
+
     void MovePiece(int id, Coordinate destination){        
         Coordinate v = FindCharId(id);
         if (!v.Equals(new Coordinate(-1, -1)) && (IsEmpty(destination)))
