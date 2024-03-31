@@ -1,13 +1,16 @@
-** Build win conditions: 
-- clean up
-- do it so when enemy wins on their turn, you go straight to end game state
+Todo: 
+
+Highlight mechanics
+- consolidate into the unselectedState manager
+- clicking on enemy unit in unselected phase shows enemies movement
+- when moved, show trail of move
+
+
+Battle
+- add archer style attacks
 
 ** GameManager Updates: 
 - update the mechanism of chararray? make it its own class with access properties to decouple? 
-
-** Enemy Phase: 
-- disable player clicks during enemy phase
-- massive cleanup of logic for the character battle sequences 
 
 ** MoveController
 - redesign this into a state machine in conjunction with chooseState
@@ -16,9 +19,25 @@
 ** Data controller for characters, maps, etc.
 
 ** Phase Banner
-- consolidate phase banner scripts? lots of duplicated methods
+- change banner priority to upper level for correct screening
+
+
+- Enemy phase highlights; Screen
+
+
+
 
 Patch Log: 
+** Phase Banner (3/29/24)
+- consolidate phase banner scripts with a factory. lots of duplicated methods
+
+** Build win conditions:  
+- clean up
+- do it so when enemy wins on their turn, you go straight to end game state
+
+** Enemy Phase: (3/29/24)
+- disable player clicks during enemy phase
+- massive cleanup of logic for the character battle sequences 
 
 ** enemy phase (3/28/24)
 - trigger "enemy phase" banner

@@ -63,6 +63,7 @@ public class PlayerState : IGameState
     public void Enter(){
         InitiatePlayerPhaseSettings();
         MoveController.OnSelectedCharIdChanged += HandleCharIdChanged; 
+        MoveController.OnSelectedEnemyIdChanged += HandleEnemyIdChanged; 
         instance.StartCoroutine(DoStartStuff());
     }
 
@@ -80,6 +81,7 @@ public class PlayerState : IGameState
 
     public void Exit(){
         MoveController.OnSelectedCharIdChanged -= HandleCharIdChanged;
+        MoveController.OnSelectedEnemyIdChanged -= HandleEnemyIdChanged; 
     }
 
     /// <summary>
@@ -90,5 +92,8 @@ public class PlayerState : IGameState
         instance.highlightTilesManager.TriggerSelectedHighlights();
     }
 
+    public void HandleEnemyIdChanged(int enemyId){
+        instance.highlightTilesManager.TriggerSelectedHighlights();
+    }
 
 }

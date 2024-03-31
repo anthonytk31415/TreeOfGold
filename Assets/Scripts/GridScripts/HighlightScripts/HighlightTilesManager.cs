@@ -137,4 +137,18 @@ public class HighlightTilesManager
         }
     }
 
+    // public void HighlightUnselectedEnemy(int selectedEnemyId){
+    //     Coordinate w = board.FindCharId(selectedEnemyId);
+    //     Boolean yourTeam = instance.charArray[selectedEnemyId].GetComponent<CharacterGameState>().isYourTeam; 
+    //     if (board.IsNull(w)){
+    //         return; 
+    //     } else {
+    //         Tile tile = GridManager.FindTile(instance.tiles, w); 
+    //         if (yourTeam){
+    //             tile.TogglePlayer();
+    //         }
+    //         else {
+    //             tile.ToggleEnemy(); 
+    //         }
+    //     }
 }
