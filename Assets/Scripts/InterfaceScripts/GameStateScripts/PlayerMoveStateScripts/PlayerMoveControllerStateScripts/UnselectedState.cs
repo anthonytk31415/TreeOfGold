@@ -33,8 +33,6 @@ public class UnselectedState : IPlayerMoveControllerState {
         if (moveController.GetClickTarget(w) == ClickTarget.friend){
             moveController.ResetSelected();
             moveController.SelectedId = targetUnit;         
-
-            MyTest();
             
             playerMoveControllerStateMachine.TransitionTo(playerMoveControllerStateMachine.selectedUnmovedState);
             return;

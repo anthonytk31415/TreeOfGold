@@ -30,7 +30,6 @@ public class MoveController : MonoBehaviour
     public GameManager instance; 
     public Coordinate arrowCoordinate;
     private Camera mainCamera;      // needed for mouse position;
-
     public PlayerMoveControllerStateMachine playerMoveControllerStateMachine; 
 
     // selectedId w/ delegate and event
@@ -85,7 +84,6 @@ public class MoveController : MonoBehaviour
     private void Awake() {
         moveController = this;
     }
-
 
     // Start is called before the first frame update
     private void Start() {

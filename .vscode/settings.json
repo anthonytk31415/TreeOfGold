@@ -58,6 +58,8 @@
         "hashset",
         "interactable",
         "killable",
+        "Lerp",
+        "Rigidbody",
         "UGUI"
     ]
 }

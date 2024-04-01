@@ -61,7 +61,7 @@ public class CharactersObject : MonoBehaviour
         // temporarily we'll provide the chars we want to instantiate for testing; 
         // later we'll build some mechanism to do this; perhaps move this class outside the game manager. 
         (String, int, int, int, int, int, int, Boolean)[] chars = {
-            ("glenn",       9, 5, 7, 2, 0, 1, true), 
+            ("lena",       9, 5, 7, 2, 0, 1, true),            // was "glenn"
             ("greenMage",   6, 2, 3, 2, 4, 1, true), 
             ("knight",      12, 3, 3, 2, 5, 1, false), 
             ("purpleMage",  5, 6, 3, 1, 2, 1, false)

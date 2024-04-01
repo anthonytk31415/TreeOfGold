@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
         if (_instance != null && _instance != this)
             Destroy(this.gameObject);    
         _instance = this;
-
+        _instance.name = "gameManager";
     }
 
     // Initializes the board at a fixed 10x14 size board. 
