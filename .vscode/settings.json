@@ -61,5 +61,6 @@
         "Lerp",
         "Rigidbody",
         "UGUI"
-    ]
+    ],
+    "dotnet.preferCSharpExtension": true
 }

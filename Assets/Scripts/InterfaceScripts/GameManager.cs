@@ -36,7 +36,8 @@ public class GameManager : MonoBehaviour
     // public GameObject cursor; // cursor object
     public GameObject[] charArray;      // need to update later to dynamically change
     public GameStateMachine gameStateMachine; 
-    public GameObject moveControllerObject; 
+    public GameObject moveControllerObject;
+    public GameObject characterAnimateController; 
     public GameScore gameScore; 
     public GameObject battleEffectsManagerObject; 
     [SerializeField] public GameObject statMenuController; 
@@ -76,7 +77,8 @@ public class GameManager : MonoBehaviour
         CharactersObject.Initialize(Instance);
         this.battleEffectsManagerObject = BattleEffectsManagerObject.Initialize(Instance);
 
-        this.phaseBannerFactory = new PhaseBannerFactory(); 
+        this.phaseBannerFactory = new PhaseBannerFactory();
+        this.characterAnimateController = CharacterAnimateControllerObject.Initialize(Instance);
 
         // Movement
         this.gameStateMachine = new GameStateMachine(Instance); 
