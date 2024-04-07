@@ -11,6 +11,12 @@ using System.Collections.Generic;
 // apply this during the character instantiate phase
 
 // maybe we do a singleton in the gamemanager and then call it on a charid
+
+
+
+// somethign weird is happening: the last framee is stopping between sequences so it doesnt complete the full
+// tranlsation
+
 public class CharacterAnimateController : MonoBehaviour
 {
     GameManager instance; 
@@ -38,13 +44,20 @@ public class CharacterAnimateController : MonoBehaviour
 
 
 
-    public void Initialize(GameManager instance){
+    public void Initialize(GameManager instance)
+    {
         this.instance = instance; 
+
+        for (int i = 0; i < instance.charArray.Length; i ++ )
+        {
+            ApplyInitialState(i);
+        }
+
     }
 
     public void DefineReferences(int charId)
     {
-        Debug.Log("this: " + this.charId + "; charid: " + charId);
+        // Debug.Log("this: " + this.charId + "; charid: " + charId);
 
         this.charId = charId;
         this.character = instance.charArray[charId];
@@ -52,6 +65,12 @@ public class CharacterAnimateController : MonoBehaviour
         this.animator = character.GetComponent<Animator>();
         this.rb = character.GetComponent<Rigidbody2D>();
 
+    }
+
+    public void ApplyInitialState(int charId)
+    {
+        ApplyAnimationDefaultState(charId);
+        animator.SetBool("idleDownBool", true);
     }
 
     // we'll want to apply 
@@ -70,7 +89,7 @@ public class CharacterAnimateController : MonoBehaviour
         {
             animator.SetBool(param.name, false);
         }
-        animator.SetBool("idleDownBool", true);
+        // animator.SetBool("idleDownBool", true);
     }
 
     // write methods for animate: up, down, left, right
@@ -80,24 +99,43 @@ public class CharacterAnimateController : MonoBehaviour
 
     public IEnumerator ApplyTranslationDir(int charId, Direction direction) {
         DefineReferences(charId);
-        Vector2 originalPos = rb.position;
+        Vector2 originalPos = character.transform.position;
         Vector2 step = directionToVector[direction];
+        Debug.Log(step);
         string boolName = directionToIdleBool[direction];
 
         Action<float> translation = (float x) =>{
             Vector2 finalPos = originalPos + x * step;
-            rb.MovePosition(finalPos);
+            character.transform.position =  finalPos;
+            // rb.MovePosition(finalPos);
         };
 
-        float totalTime = .2f;
-        float totalFrames = 16f;
 
         ApplyAnimationDefaultState(charId);
+        // yield return null; 
+        // animator.SetBool("idleDownBool", false);
+        yield return null; 
         animator.SetBool(boolName, true);
+        // Debug.Log(boolName +", : val: "); 
         // apply movement
+        yield return null; 
+        float totalTime = .2f;
+        float totalFrames = 16f;
         yield return Lerp(totalTime, totalFrames, translation);
         yield return null;
     }
+
+
+
+// need transiiton time = 0
+// need transitions form all states
+
+    // public IEnumerator ApplyDirection(int charId, Direction direction) {
+    //     string boolName = directionToIdleBool[direction];
+    //     animator.SetBool(boolName, true);
+    //     yield return null; 
+    // }
+
 
     public IEnumerator ApplyMoves(int charId, List<Direction> directions)
     {
@@ -110,7 +148,7 @@ public class CharacterAnimateController : MonoBehaviour
 
 
 
-    // given total time, we will execute teh function evenly in paritions. 
+    // given total time, we will execute the function evenly in paritions. 
     public static IEnumerator Lerp(
         float totalTime,
         float totalFrames,
@@ -118,15 +156,15 @@ public class CharacterAnimateController : MonoBehaviour
     {
         float time = 0f;
         float timeInterval = totalTime / totalFrames;
-
+        yield return new WaitForSeconds(timeInterval);
         while (time < totalTime)
         {
-            Debug.Log("current time: " + time);
+            // Debug.Log("current time: " + time);
             action(time / totalTime);
             yield return new WaitForSeconds(timeInterval);
             time += timeInterval;
         }
-        action(1);
+        action(1.0f);
         yield return new WaitForSeconds(timeInterval);
 
     }

@@ -35,7 +35,7 @@ public class ButtonTest1 : MonoBehaviour
     public IEnumerator Test() {
 
         //idleBoolFalse();
-        yield return instance.characterAnimateController.GetComponent<CharacterAnimateController>().ApplyTranslationDir(0, Direction.up);
+        yield return instance.characterAnimateController.GetComponent<CharacterAnimateController>().ApplyTranslationDir(1, Direction.left);
         // animator.SetBool("idleDownBool", true);
         // yield return new WaitForSeconds(1.0f);
         // idleBoolFalse();

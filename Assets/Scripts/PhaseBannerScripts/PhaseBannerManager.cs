@@ -26,7 +26,7 @@ public class PhaseBannerManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         GameObject playerPhase = Resources.Load(phaseBannerFactory.getCanvas(phaseBanner), typeof(GameObject)) as GameObject;        
-        Debug.Log(playerPhase);
+        // Debug.Log(playerPhase);
         GameObject playerPhaseInstance = Instantiate(playerPhase);
         Transform playerPhaseTextTransform = playerPhaseInstance.transform.Find(phaseBannerFactory.getText(phaseBanner));
         if (playerPhaseTextTransform != null){

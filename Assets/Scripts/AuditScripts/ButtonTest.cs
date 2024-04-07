@@ -24,8 +24,15 @@ public class ButtonTest : MonoBehaviour
 
 
         //rb.MovePosition(originalPosition + delta); 
-        List<Direction> myList = new List<Direction> { Direction.down, Direction.up };
-        StartCoroutine(instance.characterAnimateController.GetComponent<CharacterAnimateController>().ApplyMoves(0, myList));
+        //List<Direction> myList = new List<Direction> { Direction.down, Direction.up };
+        List<Direction> myList = new List<Direction> {
+            // Direction.down , Direction.up, Direction.left , Direction.right,Direction.down , Direction.up,Direction.left , 
+            Direction.right,
+
+
+
+        };
+        StartCoroutine(instance.characterAnimateController.GetComponent<CharacterAnimateController>().ApplyMoves(1, myList));
     }
         
 

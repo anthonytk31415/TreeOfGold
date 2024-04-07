@@ -10,18 +10,20 @@ public class EditorMenu : EditorWindow
 {
     string animatorName = "Add Animator Controller Name Here.";
 
-    [MenuItem("Window / Custom Controls / Show Menu")]
+    [MenuItem("Window / Custom Controls / Create Animator Controller")]
 
     public static void ShowWindow()
     {
         EditorWindow.GetWindow(typeof(EditorMenu));
     }
 
-    [MenuItem("Window / Custom Controls / My Command")]
-    public static void MyCommandFromMenu()
+    [MenuItem("Window / Custom Controls / Create Sprite")]
+    public static void InitiateCreateSprite()
     {
-        InitiateMyCommand();
+        EditorBuildAnimatorSettings.CreateChar("locke");
     }
+
+
 
     static void InitiateMyCommand()
     {
@@ -40,8 +42,12 @@ public class EditorMenu : EditorWindow
         if (GUILayout.Button("Apply", GUILayout.Width(100), GUILayout.Height(30)))
         {
             Debug.Log("pressing the button!" + animatorName);
-            EditorBuildAnimatorSettings.CreateTest(animatorName);
-            //asdf
+
+            List<string> chars = new List<string> {"celes", "sabin", "shadow", "terra", "gerad", "locke"};
+            foreach (string charName in chars){
+                EditorBuildAnimatorSettings.MainFunction(charName);
+            }
+
         }
         EditorGUILayout.EndHorizontal();
     }
