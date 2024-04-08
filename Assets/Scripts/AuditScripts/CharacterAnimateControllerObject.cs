@@ -1,14 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿// using System;
+// using UnityEngine;
 
-public class CharacterAnimateControllerObject: MonoBehaviour
-{
+// public class CharacterAnimateControllerObject: MonoBehaviour
+// {
 
-    public static GameObject Initialize(GameManager instance)
-    {
-        GameObject charAnimateController = new GameObject("CharacterAnimateControllerObject");
-        charAnimateController.AddComponent<CharacterAnimateController>();
-        charAnimateController.GetComponent<CharacterAnimateController>().Initialize(instance);
-        return charAnimateController;
-    }
-}
+//     public static GameObject Initialize(GameManager instance)
+//     {
+//         GameObject charAnimateController = new GameObject("CharacterAnimateControllerObject");
+//         charAnimateController.AddComponent<CharacterAnimateController>();
+//         charAnimateController.GetComponent<CharacterAnimateController>().Initialize(instance);
+//         return charAnimateController;
+//     }
+// }

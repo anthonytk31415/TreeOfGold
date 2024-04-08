@@ -45,7 +45,7 @@ public class EditorMenu : EditorWindow
 
             List<string> chars = new List<string> {"celes", "sabin", "shadow", "terra", "gerad", "locke"};
             foreach (string charName in chars){
-                EditorBuildAnimatorSettings.MainFunction(charName);
+                EditorBuildAnimatorSettings.BuildAnimationControllerAndPrefab(charName);
             }
 
         }

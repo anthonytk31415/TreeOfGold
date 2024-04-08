@@ -122,13 +122,18 @@ public static class CharInteraction
         return new Coordinate(-1, -1);
     }
 
+
     /// <summary>
     /// Returns the shortest path the the char2 from char1 with rules on being
     /// able to not occupy a friendly cell before the char2, but being able to 
     /// walk through a friendly (but not through an enemy). 
     /// Note ** the last element of the list is the unit itself. 
+    /// Testing whether we can use char2 as a generic moving cell
     /// </summary>
-    
+    /// <param name="gameManager"> the singleton instance gameManager</param>
+    /// <param name="char1">starting point w, typically the player unit </param>
+    /// <param name="char2">ending point v, sometimes the target enemy unit</param>
+    /// <returns></returns>
     public static List<Coordinate> PathBetweenUnits(GameManager gameManager, Coordinate char1, Coordinate char2){
         Dictionary<Coordinate, Coordinate> parent = new();          // parents of (-1, -1) have no parent
         Queue<Coordinate> queue = new();
@@ -153,7 +158,7 @@ public static class CharInteraction
                         !visited.Contains(w) &&
                         (gameManager.moveControllerObject.GetComponent<MoveController>().IsNotEnemy(char1, w) || 
                                 w.Equals(char2)
-                        ))                                        
+                    ))                                        
                 {
                     // if cur move is friend and next move is char2: 
                     if (!(gameManager.moveControllerObject.GetComponent<MoveController>().IsSameTeam(char1, curPos) && !char1.Equals(curPos) && w.Equals(char2)))

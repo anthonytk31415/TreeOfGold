@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
         this.battleEffectsManagerObject = BattleEffectsManagerObject.Initialize(Instance);
 
         this.phaseBannerFactory = new PhaseBannerFactory();
-        this.characterAnimateController = CharacterAnimateControllerObject.Initialize(Instance);
+
 
         // Movement
         this.gameStateMachine = new GameStateMachine(Instance); 

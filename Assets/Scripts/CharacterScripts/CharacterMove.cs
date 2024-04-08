@@ -45,16 +45,23 @@ public class CharacterMove: MonoBehaviour
 
     // public void MoveChar
     // if playerSelected and mouse clicked on entry in its path/ move 
-    public void MoveChar(Coordinate w){
+    public void MoveChar(Coordinate destination){
         // move on board
-        Coordinate u = board.FindCharId(charId);        // old pos
-        board.PutEmpty(u);
-        board.Put(w, charId);                           // new pos
+        GetComponent<CharacterAnimateController>().AnimateMoveChar(charId, destination); 
+        MoveCharBoard(destination);                       // new pos
         // // move visually; need coordinate to scene function here
-        var (x, y) = board.ConvertMatToSceneCoords(w);
-        transform.position = new Vector2((float) x, (float) y);
+        // var (x, y) = board.ConvertMatToSceneCoords(destination);
+        // transform.position = new Vector2((float) x, (float) y);
+        // 
+
         character.GetComponent<CharacterGameState>().HasMoved = true;
 
+    }
+
+    public void MoveCharBoard(Coordinate destination){
+        Coordinate start = board.FindCharId(charId);        // old pos
+        board.PutEmpty(start);
+        board.Put(destination, charId);     
     }
 
     // return a units possible attack targets at its current position w/o
@@ -68,8 +75,10 @@ public class CharacterMove: MonoBehaviour
     }
 
     // used for cancelling moves
-    public void UndoMoveChar(Coordinate w){
-        MoveChar(w);
+    public void UndoMoveChar(Coordinate destination){
+        MoveCharBoard(destination);                       // new pos
+        var (x, y) = board.ConvertMatToSceneCoords(destination);
+        transform.position = new Vector2((float) x, (float) y); // just "teleport back"
         character.GetComponent<CharacterGameState>().HasMoved = false;
     }
 }

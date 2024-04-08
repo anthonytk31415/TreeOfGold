@@ -49,8 +49,9 @@ public class CharactersObject : MonoBehaviour
         charInstance.GetComponent<CharacterGameState>().Initialize(Instance, id, isYourTeam); 
         charInstance.AddComponent<CharacterBattle>(); 
         charInstance.AddComponent<Rigidbody2D>();
-        charInstance.GetComponent<Rigidbody2D>().gravityScale = 0;
-
+        charInstance.GetComponent<Rigidbody2D>().gravityScale = 0;      
+        charInstance.AddComponent<CharacterAnimateController>();
+        charInstance.GetComponent<CharacterAnimateController>().Initialize(Instance, id, charInstance); 
     }
 
     // Spawn characters from a set of predefined chars; 

@@ -6,6 +6,8 @@ Highlight mechanics
 - when moved, show trail of move
 
 
+
+
 Battle
 - add archer style attacks
 
@@ -25,9 +27,26 @@ Battle
 - Enemy phase highlights; Screen
 
 
+movement: 
+- control movement to show characters moving from selected unmoved to moved
+- when selected, "walk"
+- build attack sequence 
+
+
+build special moves 
+- sabin: healing, elemental, 
+- terra: fire magic damage, sword damage, support
+- celes, magic absorb, ice attack, ice mage
+- shadow: mirror image, damage, utility
+
 
 
 Patch Log: 
+
+** 4/7/24
+-- added a bunch of functionality with character instatiation, animation controllers, and 
+    coroutnies to control movement
+
 ** Phase Banner (3/29/24)
 - consolidate phase banner scripts with a factory. lots of duplicated methods
 

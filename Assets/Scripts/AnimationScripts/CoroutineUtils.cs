@@ -8,7 +8,7 @@ public static class CoroutineUtils {
 
 
     // in increments, do an action
-
+    // PROBABLY NOT USED - DEPRECATE?
     public static IEnumerator Lerp(
         float totalTime, 
         float totalFrames, 
