@@ -20,8 +20,13 @@ public class EditorMenu : EditorWindow
     [MenuItem("Window / Custom Controls / Create Character from baseCharacter")]
     public static void InitiateCreationBuildCharacter()
     {
-        // EditorBuildCharacter.BuildCharacter("celes");
         EditorBuildCharacter.InstantiateCharacterFromBaseCharacter("locke");
+    }
+
+    [MenuItem("Window / Custom Controls / Create baseCharacter")]
+    public static void InitiateBaseCharacter()
+    {
+        EditorBuildCharacter.BuildCharacter("baseCharacter");
     }
 
 
@@ -31,12 +36,13 @@ public class EditorMenu : EditorWindow
         EditorBuildAnimatorSettings.CreateChar("locke");
     }
 
-
-
-    static void InitiateMyCommand()
+    [MenuItem("Window / Custom Controls / Test: UpdateAnimator ")]
+    public static void InitiateUpdateAnimator()
     {
-        Debug.Log("Hello World");
+        EditorBuildAnimatorSettings.UpdateAnimator("baseCharacter");
     }
+
+
 
     // the menu with settings
     private void OnGUI()
@@ -52,9 +58,12 @@ public class EditorMenu : EditorWindow
             Debug.Log("pressing the button!" + animatorName);
 
             // List<string> chars = new List<string> {"celes", "sabin", "shadow", "terra", "gerad", "locke"};
-            List<string> chars = new List<string> {"locke"};
+            List<string> chars = new List<string> {"locke", "celes"};
             foreach (string charName in chars){
-                EditorBuildAnimatorSettings.BuildAnimationControllerAndPrefab(charName);
+                // EditorBuildAnimatorSettings.NewCharPrefabWithAnimator(charName);
+
+                // build char from basechar
+                EditorBuildCharacter.InstantiateCharacterFromBaseCharacter(charName);
             }
 
         }

@@ -185,7 +185,7 @@ public class CharacterAnimateController : MonoBehaviour
     // assumes one unit away and destination is a valid entry
     public void AnimateAttackSword(Direction direction){
         GameObject player = character; 
-        Debug.Log(direction);
+        // Debug.Log(direction);
         GameObject sword = player.transform.Find("").gameObject;
         Coordinate playerCoordinate = instance.board.FindCharId(charId); 
         Coordinate enemyCoordinate = Coordinate.Add(playerCoordinate, DirectionToCoordinate(direction));
@@ -197,8 +197,6 @@ public class CharacterAnimateController : MonoBehaviour
             this.animator.ResetTrigger(attackCommand);
 
             // update orders 
-
-
             this.animator.SetTrigger(attackCommand);
         }
     }

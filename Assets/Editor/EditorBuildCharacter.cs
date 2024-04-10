@@ -7,6 +7,10 @@ using System;
 using System.IO;
 
 
+// step 0: build the base character
+// step 1: build character from baseCharacter
+
+
 /// To do: 
 /// at some point we will delete all other character animations clips and animation controllers. 
 /// And ony have one: baseCharacter prefab. 
@@ -48,6 +52,7 @@ public class EditorBuildCharacter : MonoBehaviour
         foreach (string walkSuffix in walkSuffixes ){
             CreateStates(character, charName, "walk", "walk", walkSuffix, walkSuffix);
         }
+        character.AddComponent<Animator>();
         return character;         
     }
 
@@ -80,7 +85,7 @@ public class EditorBuildCharacter : MonoBehaviour
 
 
     /// <summary>
-    /// Given a character, instantiate all of the states for a given state
+    /// Given a character, instantiate all of the gameObject-based child states for a given state (e.g "idle")
     /// </summary>
     /// <param name="character">parent character gameObject </param>
     /// <param name="charName">name of character for file path purposes</param>
@@ -116,6 +121,7 @@ public class EditorBuildCharacter : MonoBehaviour
     /// <param name="characterName">character's name</param>
     /// <returns></returns>
     public static GameObject InstantiateCharacterFromBaseCharacter(string characterName){
+
         // instantiate prefab
         GameObject charPrefab = Resources.Load("Prefabs/Characters/baseCharacter", typeof(GameObject)) as GameObject;            
         // create game object
@@ -143,7 +149,7 @@ public class EditorBuildCharacter : MonoBehaviour
             }
         }
         // save the prefab
-
+        EditorBuildAnimatorSettings.SavePrefab(charInstance, characterName);
         return charPrefab;
     }
 

@@ -6,8 +6,11 @@ using UnityEditor.Animations;
 using System;
 using System.IO;
 
+
 // Durations need to be 0 
 // 
+
+// step 2: build animation controller
 
 
 /// <summary>
@@ -18,13 +21,14 @@ using System.IO;
 
 public class EditorBuildAnimatorSettings
 {
+
     /// <summary>
     /// The main Method of the class. Creates the animation controller, instantiates a gameObject from 
     /// a prefab, and then attaches the controller to the prefab. 
     /// Will probably update this so the steps go: create shell, use baseCharacter, then save. 
     /// </summary>
-    /// <param name="animatorControllerName"></param>
-    public static void BuildAnimationControllerAndPrefab(string animatorControllerName){
+    /// <param name="animatorControllerName">name of animator controller</param>
+    public static AnimatorController BuildAnimationController(string animatorControllerName){
         UnityEditor.Animations.AnimatorController animController = CreateAnimationController(animatorControllerName); 
 
         List<string> idleStates = new List<string> {
@@ -94,8 +98,11 @@ public class EditorBuildAnimatorSettings
             ApplyTransitionProperties(animatorStateTransition);
         }
 
-        CreateChar(animatorControllerName);
+        return animController; 
+
     }
+
+
 
 /// <summary>
 /// Instantiate the animation controller for a given character to trigger animations. this is save din assets/resources/animations/<character name> 
@@ -125,17 +132,28 @@ public class EditorBuildAnimatorSettings
     public static void AddAnimationControllerParameters(UnityEditor.Animations.AnimatorController controller, 
             List<string> stringStates
     ){
+        HashSet<string> parameters = new();
+        foreach(AnimatorControllerParameter parameter in controller.parameters){
+            parameters.Add(parameter.name);
+        }        
         foreach (string animState in stringStates)
-        {
+        {   
             if (animState.Contains("attack")){
-                controller.AddParameter(animState + "Trigger", AnimatorControllerParameterType.Trigger);
+                string paramName = animState + "Trigger"; 
+                if (!parameters.Contains(paramName)){
+                    controller.AddParameter(paramName, AnimatorControllerParameterType.Trigger);
+                    parameters.Add(paramName);
+                }
             }
             else {
-                controller.AddParameter(animState + "Bool", AnimatorControllerParameterType.Bool);
-            }
+                string paramName = animState + "Bool"; 
+                if (!parameters.Contains(paramName)){
+                    controller.AddParameter(paramName, AnimatorControllerParameterType.Bool);
+                    parameters.Add(paramName);
+                }
+            }            
         }
     }
-
 
     // create animation clip; save it to database at filepath; 
     // since we largely build animations by hand, we just want to run this code once
@@ -187,7 +205,7 @@ public class EditorBuildAnimatorSettings
 
     // each state can get into another state by setting the bool to true; this code builds the graph
     public static List<UnityEditor.Animations.AnimatorStateTransition> BuildAnimatorStateTransitionsForIdleWalk(
-            List<UnityEditor.Animations.AnimatorState> animationStates) 
+            List<UnityEditor.Animations.AnimatorState> idleWalkStates) 
     {
 
         // UnityEditor.Animations.AnimatorState idleDown = animationStates[0];
@@ -195,13 +213,13 @@ public class EditorBuildAnimatorSettings
 
         List<UnityEditor.Animations.AnimatorStateTransition> allTransitions = new();
 
-        for (int i = 0; i < animationStates.Count; i ++){
-            AnimatorState toState = animationStates[i];
-            for (int j = i + 1; j < animationStates.Count; j ++){
+        for (int i = 0; i < idleWalkStates.Count; i ++){
+            AnimatorState toState = idleWalkStates[i];
+            for (int j = i + 1; j < idleWalkStates.Count; j ++){
                 if (i == j){
                     continue; 
                 }
-                AnimatorState fromState = animationStates[j];
+                AnimatorState fromState = idleWalkStates[j];
                 UnityEditor.Animations.AnimatorStateTransition defaultStateToCurStateTransition = toState.AddTransition(fromState);
                 defaultStateToCurStateTransition.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0, fromState.name + "Bool");
                 allTransitions.Add(defaultStateToCurStateTransition);
@@ -233,7 +251,6 @@ public class EditorBuildAnimatorSettings
                 idleToAttackTransition.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0, idleState.name + "Bool");
                 allTransitions.Add(idleToAttackTransition);
 
-
                 UnityEditor.Animations.AnimatorStateTransition attackToIdleTransition = idleState.AddTransition(attackState);
                 attackToIdleTransition.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0, attackState.name + "Trigger");
                 allTransitions.Add(attackToIdleTransition);
@@ -263,7 +280,9 @@ public class EditorBuildAnimatorSettings
 /// <summary>
 /// creates a sprite and a prefab with the proper settings like sprite renderer, 
 /// animator, attaches the appropriate runtimeAnimatorController to the sprite
-/// and saves it to the characters folder in resources
+/// and saves it to the characters folder in resources. 
+/// This is a completely new character. 
+/// 
 /// </summary>
 /// <param name="charName"></param>
     public static void CreateChar(string charName)
@@ -282,26 +301,104 @@ public class EditorBuildAnimatorSettings
         animator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>
                 ("Animations/" + charName + "/" + charName + "AnimationController");
 
-        string localPath = "Assets/Resources/Prefabs/Characters/" + charName + ".prefab";
+        SavePrefab(newChar , charName); 
+    }
 
+
+    /// <summary>
+    /// save the gameObject as a prefab in the prefab/character folder  
+    /// </summary>
+    /// <param name="gameObject">gameObject to save</param>
+    /// <param name="charName">name of char</param>
+    /// <returns></returns>
+    public static bool SavePrefab(GameObject gameObject, String charName){
+        string localPath = "Assets/Resources/Prefabs/Characters/" + charName + ".prefab";
         // Make sure the file name is unique, in case an existing Prefab has the same name.
         localPath = AssetDatabase.GenerateUniqueAssetPath(localPath);
-
         // Create the new Prefab and log whether Prefab was saved successfully.
         bool prefabSuccess;
-        PrefabUtility.SaveAsPrefabAsset(newChar, localPath, out prefabSuccess);
-
-
+        PrefabUtility.SaveAsPrefabAsset(gameObject, localPath, out prefabSuccess);
         if (prefabSuccess == true)
             Debug.Log("Prefab was saved successfully");
         else
             Debug.Log("Prefab failed to save" + prefabSuccess);
+        return prefabSuccess;
+    } 
 
-        /// add in order layer
 
+    public static GameObject NewCharPrefabWithAnimator(string charName){
+        UnityEditor.Animations.AnimatorController animController = BuildAnimationController(charName);
+        GameObject newChar = EditorBuildCharacter.InstantiateCharacterFromBaseCharacter(charName);
+        return newChar;
     }
 
 
+// this method below updates the animator (the baseChar) one so it applies below: 
+// basically takes a vanilla animator with states defined, and builds the things so then 
+// CharacterAnimatorController can activate the stuff
+// *** still need to test out attacking
+
+
+// given an existing prefab: 
+// - get the animator
+// - transitions for each idle to all other walks and idles; 
+// - transitions for each walk to all other walk and idles 
+// - transitions from each idle to attack 
+// - transitions from each attack to each idle 
+
+    public static void UpdateAnimator(string charName){
+        string filePath = "Animations/" + charName + "/" + charName; 
+
+        Debug.Log(filePath);
+        AnimatorController controller = Resources.Load<AnimatorController>(filePath);
+        
+        List<string> idleStates = new List<string> {
+            "idleUp", "idleDown", "idleLeft", "idleRight" 
+            };
+        List<string> walkStates = new List<string> {
+            "walkUp", "walkDown", "walkLeft", "walkRight" 
+            };    
+        List<string> attackSwordStates = new List<string> {
+            "attackSwordUp", "attackSwordDown", "attackSwordLeft", "attackSwordRight", 
+            }; 
+
+        List<List<string>> allListStates = new List<List<string>>() {idleStates, walkStates, attackSwordStates};
+
+        // Add parameters (bool) to Animator controller
+        List<string> stringStates = new();
+        foreach (List<String> listState in allListStates){
+            stringStates.AddRange(listState);
+        }
+
+        var rootStateMachine = controller.layers[0].stateMachine; 
+
+        // (1) adding parameters 
+        AddAnimationControllerParameters(controller, stringStates);
+
+        // (2) adding state transitions 
+        List<AnimatorState> idleWalkAnimatorStates = new(); 
+        List<AnimatorState> attackAnimatorStates = new();
+        List<AnimatorState> idleAnimatorStates = new();
+
+        foreach(ChildAnimatorState state in rootStateMachine.states){
+            if (state.state.name.Contains("idle") || state.state.name.Contains("walk")){ 
+                idleWalkAnimatorStates.Add(state.state);
+            }
+            if (state.state.name.Contains("idle")){
+                idleAnimatorStates.Add(state.state);
+            }
+            if (state.state.name.Contains("attack")){
+                attackAnimatorStates.Add(state.state);
+            }
+        }
+
+        // *** IMPORTANT *** TOGGLE THIS if you need to biuld state transitions 
+        // BuildAnimatorStateTransitionsForIdleWalk(idleWalkAnimatorStates); 
+        // BuildAnimatorStateTransitionsForIdleAttack(attackAnimatorStates, idleAnimatorStates); 
+    }
+
+
+    
 
 }
 
