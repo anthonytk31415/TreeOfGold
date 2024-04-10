@@ -44,11 +44,17 @@ public class Coordinate {
     /// <param name="start"></param>
     /// <param name="end"></param>
     /// <returns></returns>
-    public static Vector2 Difference(Coordinate start, Coordinate end){
+    public static Vector2 DifferenceInVector(Coordinate start, Coordinate end){
         int dx = end.GetX() - start.GetX();
         int dy = end.GetY() - start.GetY();
         return new Vector2(dx, dy); 
     }
+    public static Coordinate Add(Coordinate start, Coordinate end){
+        int dx = end.GetX() + start.GetX();
+        int dy = end.GetY() + start.GetY();
+        return new Coordinate(dx, dy); 
+    }
+
 
     /// <summary>
     /// Given adjacent coordinates, return direction you must go from start to get to end.
@@ -64,7 +70,7 @@ public class Coordinate {
             {new Vector2(-1, 0), Direction.left},
             {new Vector2(1, 0), Direction.right}
         };
-        Vector2 delta = Difference(start, end);
+        Vector2 delta = DifferenceInVector(start, end);
         if (vectorToDirection.ContainsKey(delta)){
             return vectorToDirection[delta];
         }

@@ -8,7 +8,7 @@ using UnityEditor;
 
 public class EditorMenu : EditorWindow
 {
-    string animatorName = "Add Animator Controller Name Here.";
+    string animatorName = "Add Animator Controller Name Here (currently name does not do anything).";
 
     [MenuItem("Window / Custom Controls / Create Animator Controller")]
 
@@ -16,6 +16,14 @@ public class EditorMenu : EditorWindow
     {
         EditorWindow.GetWindow(typeof(EditorMenu));
     }
+
+    [MenuItem("Window / Custom Controls / Create Character from baseCharacter")]
+    public static void InitiateCreationBuildCharacter()
+    {
+        // EditorBuildCharacter.BuildCharacter("celes");
+        EditorBuildCharacter.InstantiateCharacterFromBaseCharacter("locke");
+    }
+
 
     [MenuItem("Window / Custom Controls / Create Sprite")]
     public static void InitiateCreateSprite()
@@ -43,7 +51,8 @@ public class EditorMenu : EditorWindow
         {
             Debug.Log("pressing the button!" + animatorName);
 
-            List<string> chars = new List<string> {"celes", "sabin", "shadow", "terra", "gerad", "locke"};
+            // List<string> chars = new List<string> {"celes", "sabin", "shadow", "terra", "gerad", "locke"};
+            List<string> chars = new List<string> {"locke"};
             foreach (string charName in chars){
                 EditorBuildAnimatorSettings.BuildAnimationControllerAndPrefab(charName);
             }

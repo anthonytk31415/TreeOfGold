@@ -3,42 +3,92 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
+using System;
+using System.IO;
 
+// Durations need to be 0 
+// 
 
 
 /// <summary>
-///  dont forget to make sure the "walks" are looped
+/// EditorBuildAnimatorSettings builds the animation controller and prefab. Will handle
+/// all the state transitions, boolean/trigger properties, transitions, and perhaps
+/// instantiate (maybe? still needed?) the animation clips. Will also bind clips to specific states. 
 /// </summary>
 
 public class EditorBuildAnimatorSettings
 {
+    /// <summary>
+    /// The main Method of the class. Creates the animation controller, instantiates a gameObject from 
+    /// a prefab, and then attaches the controller to the prefab. 
+    /// Will probably update this so the steps go: create shell, use baseCharacter, then save. 
+    /// </summary>
+    /// <param name="animatorControllerName"></param>
     public static void BuildAnimationControllerAndPrefab(string animatorControllerName){
         UnityEditor.Animations.AnimatorController animController = CreateAnimationController(animatorControllerName); 
-    
+
+        List<string> idleStates = new List<string> {
+            "idleUp", "idleDown", "idleLeft", "idleRight" 
+            };
+
+        List<string> walkStates = new List<string> {
+            "walkUp", "walkDown", "walkLeft", "walkRight" 
+            };    
+
+        List<string> attackSwordStates = new List<string> {
+            "attackSwordUp", "attackSwordDown", "attackSwordLeft", "attackSwordRight", 
+            }; 
+
+        List<string> idleWalkStates = new(); 
+        idleWalkStates.AddRange(idleStates);
+        idleWalkStates.AddRange(walkStates); 
+
+        List<List<string>> allListStates = new List<List<string>>() {idleStates, walkStates, attackSwordStates};
+
         // Add parameters (bool) to Animator controller
-        List<string> stringStates = new List<string> {
-            "idleDown", "idleUp", "idleLeft", "idleRight",
-            "walkUp", "walkDown", "walkLeft", "walkRight"
-        };
+        List<string> stringStates = new();
+        foreach (List<String> listState in allListStates){
+            stringStates.AddRange(listState);
+        }
 
         AddAnimationControllerParameters(animController, stringStates);
-
-        // skipping creating animation clips, since we already have them.     
-        // find animation clip
 
         string filePath = "Assets/Resources/Animations/" + animatorControllerName + "/";
         string pathForResources = "Animations/" + animatorControllerName + "/";
 
-        // create animation clips; CAN BE DISABLED 
-        // foreach(string stringState in stringStates){
-        //     CreateAnimationClip(stringState, filePath);
-        // }
+        // skipping creating animation clips, since we already have them.     
+        // find animation clip
 
+        // create animation clips; CAN BE DISABLED 
+        CreateAnimationClips(stringStates, filePath); 
+
+        // build states and attach the already built animation clips to the corresponding state; 
+        // do it for all states
         List<UnityEditor.Animations.AnimatorState> animatorStates = BuildStateMachineWithStates(
             animController, stringStates, pathForResources
         );
 
-        List<AnimatorStateTransition> animatorStateTransitions = BuildAnimatorStateTransitions(animatorStates);
+        
+        List<UnityEditor.Animations.AnimatorState> idleAnimatorStates = new();
+        List<UnityEditor.Animations.AnimatorState> walkAnimatorStates = new();
+        List<UnityEditor.Animations.AnimatorState> attackAnimatorStates = new();
+    
+        foreach (AnimatorState animatorState in animatorStates){
+            if (animatorState.name.Contains("idle")){
+                idleAnimatorStates.Add(animatorState);
+            } else if (animatorState.name.Contains("walk")){
+                walkAnimatorStates.Add(animatorState);
+            } else if (animatorState.name.Contains("attack")) {
+                attackAnimatorStates.Add(animatorState);
+            }
+        }
+
+        List<AnimatorState> idleWalkAnimatorStates = new(); 
+        idleWalkAnimatorStates.AddRange(idleAnimatorStates);
+        idleWalkAnimatorStates.AddRange(walkAnimatorStates); 
+
+        List<AnimatorStateTransition> animatorStateTransitions = BuildAnimatorStateTransitionsForIdleWalk(idleWalkAnimatorStates);
+        animatorStateTransitions.AddRange(BuildAnimatorStateTransitionsForIdleAttack(attackAnimatorStates, idleWalkAnimatorStates));
 
         foreach(AnimatorStateTransition animatorStateTransition in animatorStateTransitions){
             ApplyTransitionProperties(animatorStateTransition);
@@ -47,8 +97,11 @@ public class EditorBuildAnimatorSettings
         CreateChar(animatorControllerName);
     }
 
-    // instantiate the animation controller for a given character to trigger animations. 
-    // this is save din assets/resources/animations/<character name> 
+/// <summary>
+/// Instantiate the animation controller for a given character to trigger animations. this is save din assets/resources/animations/<character name> 
+/// </summary>
+/// <param name="animatorControllerName"></param>
+/// <returns></returns>
     public static UnityEditor.Animations.AnimatorController CreateAnimationController(string animatorControllerName){
         string folderPath = "Assets/Resources/Animations";
         if (!AssetDatabase.IsValidFolder(folderPath + "/" + animatorControllerName))
@@ -62,14 +115,24 @@ public class EditorBuildAnimatorSettings
         return controller;
     }
 
-    // add the all the parameters as defined by your list of states in bools 
-    // so you can use to toggle between states
+/// <summary>
+/// Add the all the parameters to your animation controller, as defined by your list of states.  
+/// Used for to triggering between states. 
+/// Attacks = trigger. all else = bool. Might change later. 
+/// </summary>
+/// <param name="controller"></param>
+/// <param name="stringStates"></param>
     public static void AddAnimationControllerParameters(UnityEditor.Animations.AnimatorController controller, 
             List<string> stringStates
     ){
         foreach (string animState in stringStates)
         {
-            controller.AddParameter(animState + "Bool", AnimatorControllerParameterType.Bool);
+            if (animState.Contains("attack")){
+                controller.AddParameter(animState + "Trigger", AnimatorControllerParameterType.Trigger);
+            }
+            else {
+                controller.AddParameter(animState + "Bool", AnimatorControllerParameterType.Bool);
+            }
         }
     }
 
@@ -77,14 +140,31 @@ public class EditorBuildAnimatorSettings
     // create animation clip; save it to database at filepath; 
     // since we largely build animations by hand, we just want to run this code once
     // to build the shell, the build the animations, and save the animations. 
-    public static AnimationClip CreateAnimationClip(string clipName, string filePath){
+    public static AnimationClip CreateAnimationClip(string clipName, string filePath)
+    {
         AnimationClip animationClip = new AnimationClip();
         animationClip.name = clipName;
+        if (clipName.Contains("walk")){
+            AnimationUtility.GetAnimationClipSettings(animationClip).loopTime = true;
+        }
         AssetDatabase.CreateAsset(animationClip, filePath + clipName + ".anim");
         return animationClip;
     }
 
-    // build the animate state machine that the attaches the already loaded corresponding animation
+    public static List<AnimationClip> CreateAnimationClips(List<string> clipNames, string filePath){
+        List<AnimationClip> res = new();
+        foreach(string clipName in clipNames){
+            string fullpathAndFileName = filePath + clipName + ".anim"; 
+            if (!File.Exists(fullpathAndFileName)){
+                AnimationClip curClip = CreateAnimationClip(clipName, filePath);
+                res.Add(curClip);
+            }
+        }
+        return res; 
+    }
+
+
+    // build the animate state machine that then attaches the already loaded corresponding animation
     // to the state. returns a list of the states for further use. 
     public static List<UnityEditor.Animations.AnimatorState> BuildStateMachineWithStates(
             UnityEditor.Animations.AnimatorController controller, 
@@ -95,8 +175,10 @@ public class EditorBuildAnimatorSettings
         foreach (string animStateName in stringStates)
         {
             UnityEditor.Animations.AnimatorState curState = rootStateMachine.AddState(animStateName);
+            if(animStateName.Equals("idleDown")){
+                rootStateMachine.defaultState = curState;
+            }
             AnimationClip animationClip = Resources.Load<AnimationClip>(pathForResources + animStateName);
-            Debug.Log(animationClip);
             curState.motion = animationClip;
             animationStates.Add(curState);
         }
@@ -104,7 +186,7 @@ public class EditorBuildAnimatorSettings
     }
 
     // each state can get into another state by setting the bool to true; this code builds the graph
-    public static List<UnityEditor.Animations.AnimatorStateTransition> BuildAnimatorStateTransitions(
+    public static List<UnityEditor.Animations.AnimatorStateTransition> BuildAnimatorStateTransitionsForIdleWalk(
             List<UnityEditor.Animations.AnimatorState> animationStates) 
     {
 
@@ -133,7 +215,40 @@ public class EditorBuildAnimatorSettings
         return allTransitions; 
     }
 
-    // applies proper StateTransitions for character movement
+/// <summary>
+/// Given idle and attack state transitions (in the same animator controller), Build the idle <-> attack transitions.
+/// </summary>
+/// <param name="attackStates"></param>
+/// <param name="idleStates"></param>
+/// <returns></returns>
+    public static List<UnityEditor.Animations.AnimatorStateTransition> BuildAnimatorStateTransitionsForIdleAttack(
+            List<UnityEditor.Animations.AnimatorState> attackStates, List<UnityEditor.Animations.AnimatorState> idleStates) 
+    {
+
+        List<UnityEditor.Animations.AnimatorStateTransition> allTransitions = new();
+
+        foreach (AnimatorState idleState in idleStates) {
+            foreach (AnimatorState attackState in attackStates) {
+                UnityEditor.Animations.AnimatorStateTransition idleToAttackTransition = attackState.AddTransition(idleState);
+                idleToAttackTransition.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0, idleState.name + "Bool");
+                allTransitions.Add(idleToAttackTransition);
+
+
+                UnityEditor.Animations.AnimatorStateTransition attackToIdleTransition = idleState.AddTransition(attackState);
+                attackToIdleTransition.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0, attackState.name + "Trigger");
+                allTransitions.Add(attackToIdleTransition);
+            }
+        }
+        return allTransitions; 
+    }
+
+
+
+
+/// <summary>
+/// Applies proper StateTransitions for character movement transition. 
+/// </summary>
+/// <param name="transition"></param>
     public static void ApplyTransitionProperties(UnityEditor.Animations.AnimatorStateTransition transition){
         transition.hasExitTime = true;
         transition.exitTime = 0;
@@ -143,12 +258,17 @@ public class EditorBuildAnimatorSettings
     }
 
 
-    // creates a sprite and a prefab with the proepr settings like sprite renderer, 
-    // animator, attaches the appropriate runtimeAnimatorController to the sprite
-    // and saves it to the characters folder in resources
+
+
+/// <summary>
+/// creates a sprite and a prefab with the proper settings like sprite renderer, 
+/// animator, attaches the appropriate runtimeAnimatorController to the sprite
+/// and saves it to the characters folder in resources
+/// </summary>
+/// <param name="charName"></param>
     public static void CreateChar(string charName)
     {
-        // sprites loaded using resorces.load must be in the resources folder. 
+        // sprites loaded using resources.load must be in the resources folder. 
         var curSprite = Resources.Load<Sprite>("Sprites/" + charName + "/" + charName + "_walk_front0");
 
         GameObject newChar = new GameObject(charName);
@@ -182,89 +302,6 @@ public class EditorBuildAnimatorSettings
     }
 
 
-
-    public static void CreateAnimatorControllerDEPRECATED(string animatorControllerName)
-    {
-        // Creates the controller
-        string folderPath = "Assets/Resources/Animations";
-        if (!AssetDatabase.IsValidFolder(folderPath + "/" + animatorControllerName))
-        {
-            AssetDatabase.CreateFolder(folderPath, animatorControllerName);
-        }
-        string filePath = folderPath + "/" + animatorControllerName + "/";
-        string animControllerName = animatorControllerName + "AnimationController.controller";
-        var controller = UnityEditor.Animations.AnimatorController
-                .CreateAnimatorControllerAtPath(filePath + animControllerName);
-
-        // Add parameters (bool) to Animator controller
-        List<string> stringStates = new List<string> {
-            "idleDown", "idleUp", "idleLeft", "idleRight",
-            "walkUp", "walkDown", "walkLeft", "walkRight"
-        };
-
-        foreach (string animState in stringStates)
-        {
-            controller.AddParameter(animState + "Bool", AnimatorControllerParameterType.Bool);
-        }
-
-        // Create State Machine and add AnimationStates, while also binding animation clip template
-        var rootStateMachine = controller.layers[0].stateMachine;
-
-        List<UnityEditor.Animations.AnimatorState> animationStates = new();
-        foreach (string animState in stringStates)
-        {
-            UnityEditor.Animations.AnimatorState curState = rootStateMachine.AddState(animState);
-
-            // Create Animation Clip for each Animation State
-            AnimationClip animationClip = new AnimationClip();
-            animationClip.name = animState;
-            AssetDatabase.CreateAsset(animationClip, filePath + animationClip.name + ".anim");
-
-            // add Animation Clip to the state
-            curState.motion = animationClip;
-
-            // add to list of animationstates
-            animationStates.Add(curState);
-        }
-
-        // identify idledown to create states
-        UnityEditor.Animations.AnimatorState idleDown = animationStates[0];
-
-        // Build Animator State Transitions: 
-        // add pairs of transitions from nonDefaultState to defaultState (which is idleDown)
-        List<UnityEditor.Animations.AnimatorStateTransition> allTransitions = new();
-        foreach (UnityEditor.Animations.AnimatorState curState in animationStates)
-        {
-            if (curState.name != "idleDown")
-            {
-                UnityEditor.Animations.AnimatorStateTransition defaultStatetoCurStateTransition = idleDown.AddTransition(curState);
-                defaultStatetoCurStateTransition.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0, curState.name + "Bool");
-                allTransitions.Add(defaultStatetoCurStateTransition);
-
-                UnityEditor.Animations.AnimatorStateTransition curStateToDefaultState = curState.AddTransition(idleDown);
-                curStateToDefaultState.AddCondition(UnityEditor.Animations.AnimatorConditionMode.If, 0, "idleDownBool");
-                allTransitions.Add(curStateToDefaultState);
-
-                // add in condition
-
-            }
-        }
-
-        // apply properties to each transition
-        foreach (UnityEditor.Animations.AnimatorStateTransition transition in allTransitions)
-        {
-            transition.hasExitTime = true;
-            transition.exitTime = 0;
-            transition.hasFixedDuration = true;
-            transition.duration = 0.0f;
-            transition.offset = 0;
-        }
-
-        CreateChar(animatorControllerName);
-    }
-
-    // takes a charName and, with the charName that presumably has animationcontroller
-    // with animations, binds that controller to a new char object
 
 }
 

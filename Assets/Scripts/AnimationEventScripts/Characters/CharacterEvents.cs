@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 
+// not sure how I am using this
+
 public class CharacterEvents : MonoBehaviour
 {
     public void WalkToIdleDown()
@@ -35,4 +37,6 @@ public class CharacterEvents : MonoBehaviour
             animator.SetBool(param.name, false);
         }
     }
+
+
 }

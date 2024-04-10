@@ -8,8 +8,9 @@ public class ButtonTest : MonoBehaviour
     [SerializeField] Button testButton; 
     public void OnButtonClick(){
         GameManager instance = GameObject.FindObjectOfType<GameManager>();
-        GameObject character = instance.charArray[0];
-        character.GetComponent<CharacterAnimateController>().InstantiateTraversal(Direction.right);
+        GameObject character = instance.charArray[1];
+        // character.GetComponent<CharacterAnimateController>().AnimateAttackSword(Direction.down);
+        Debug.Log(Direction.down);
     }
         
 
