@@ -47,9 +47,9 @@ public class CharacterMove: MonoBehaviour
     // if playerSelected and mouse clicked on entry in its path/ move 
     public void MoveChar(Coordinate destination){
         // move on board
-        GetComponent<CharacterAnimateController>().AnimateMoveChar(charId, destination); 
+        GetComponent<CharacterAnimateController>().AnimateMoveChar(destination); 
         MoveCharBoard(destination);                       // new pos
-        // // move visually; need coordinate to scene function here
+        // move visually; need coordinate to scene function here
         // var (x, y) = board.ConvertMatToSceneCoords(destination);
         // transform.position = new Vector2((float) x, (float) y);
         // 
@@ -77,8 +77,10 @@ public class CharacterMove: MonoBehaviour
     // used for cancelling moves
     public void UndoMoveChar(Coordinate destination){
         MoveCharBoard(destination);                       // new pos
-        var (x, y) = board.ConvertMatToSceneCoords(destination);
+        var (x, y) = board.ConvertMatToSceneCoords(destination);        
         transform.position = new Vector2((float) x, (float) y); // just "teleport back"
+
+        // transform.position = Board.ConvertCoordinateToVector2(destination);
         character.GetComponent<CharacterGameState>().HasMoved = false;
     }
 }

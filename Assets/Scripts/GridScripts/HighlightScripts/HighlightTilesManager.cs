@@ -84,7 +84,7 @@ public class HighlightTilesManager
         Transform targetTransform = tile.transform;
         float xPosition = targetTransform.position.x;
         float yPosition = targetTransform.position.y;
-        Coordinate w = board.ConvertSceneToMatCoords((double)xPosition, (double)yPosition); 
+        Coordinate w =board.ConvertSceneToMatCoords((double)xPosition, (double)yPosition); 
         if (setOfMoves.Contains(w)){
             tileHighlight();
         }   

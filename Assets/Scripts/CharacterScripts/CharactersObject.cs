@@ -22,6 +22,9 @@ public class CharactersObject : MonoBehaviour
         {
             throw new KeyNotFoundException(" bad coordinate " + w + " given.");
         }
+
+        // Vector2 vector = Board.ConvertCoordinateToVector2(w);
+
         GameObject charPrefab = Resources.Load("Prefabs/Characters/" + pfFileName, typeof(GameObject)) as GameObject;            
         GameObject charInstance = Instantiate(charPrefab, new Vector3((float)u, (float)v, 0.0f), Quaternion.identity);
 

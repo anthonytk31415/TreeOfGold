@@ -15,14 +15,27 @@ public class SelectedMovedState : IPlayerMoveControllerState {
         this.playerMoveControllerStateMachine = playerMoveControllerStateMachine; 
     }
 
-    public void Enter(){
+    public delegate void PositionResetChangedEventHandler(bool positionReset);
+    // Define the event based on the delegate
+    public static event PositionResetChangedEventHandler OnPositionResetChanged;
+    private bool positionReset;
+    public bool PositionReset {
+        get { return positionReset; }
+        set {
+            OnPositionResetChanged?.Invoke(positionReset);
+            positionReset = false; 
+        }
+    }
 
+
+    public void Enter(){
+        this.positionReset = false; 
     }
     public void Update(){
 
     }
     public void Exit(){
-
+        this.positionReset = false; 
     }
 
     // give the coordinate, its nature, and you're in selected phase, go to the 
@@ -33,12 +46,14 @@ public class SelectedMovedState : IPlayerMoveControllerState {
             moveController.UndoMove();
             moveController.ResetSelected();
             playerMoveControllerStateMachine.TransitionTo(playerMoveControllerStateMachine.unselectedState);
+            PositionReset = true;
             return;        
         }
         int targetUnit = instance.board.Get(w); 
         if (moveController.GetClickTarget(w) == ClickTarget.friend)
         {
             moveController.UndoMove();
+            PositionReset = true;
             if (moveController.SelectedId == targetUnit){
                 moveController.ResetSelected();
                 playerMoveControllerStateMachine.TransitionTo(playerMoveControllerStateMachine.unselectedState);

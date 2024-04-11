@@ -132,17 +132,24 @@ public class MoveController : MonoBehaviour
         }
     }
 
-    // once you attack the stack gets reset
+    /// <summary>
+    /// Clear the move stack once you attack the stack gets reset.
+    /// </summary>
     public void ClearMoveStack(){
         moveStack.Clear();
     }
 
+    /// <summary>
+    /// Use this to Unselect unit, unselect enemy unit, clear movestack, and reset tiles. Used
+    /// for resetting selected status. 
+    /// </summary>
     public void ResetSelected(){
         UnselectUnit();
         UnselectEnemyUnit(); 
         ClearMoveStack();
         instance.highlightTilesManager.ResetTiles();
     }
+
 
     public Boolean SelectedIdHasMoved(){
         return selectedId != -1 && instance.charArray[selectedId].GetComponent<CharacterGameState>().HasMoved;

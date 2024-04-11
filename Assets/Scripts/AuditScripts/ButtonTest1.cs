@@ -34,7 +34,7 @@ public class ButtonTest1 : MonoBehaviour
         // Instantiate();
         GameManager instance = GameObject.FindObjectOfType<GameManager>(); 
         GameObject character = instance.charArray[0];
-        character.GetComponent<CharacterAnimateController>().InstantiateTraversal(Direction.left);
+        // character.GetComponent<CharacterAnimateController>().InstantiateTraversal(Direction.left);
     }
 
     // public bool traversal; 

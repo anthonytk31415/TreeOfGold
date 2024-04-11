@@ -6,8 +6,6 @@ Highlight mechanics
 - when moved, show trail of move
 
 
-
-
 Battle
 - add archer style attacks
 
@@ -22,15 +20,13 @@ Battle
 
 ** Phase Banner
 - change banner priority to upper level for correct screening
-
-
 - Enemy phase highlights; Screen
 
 
 movement: 
 - control movement to show characters moving from selected unmoved to moved
 - when selected, "walk"
-- build attack sequence 
+
 
 
 build special moves 
@@ -39,13 +35,31 @@ build special moves
 - celes, magic absorb, ice attack, ice mage
 - shadow: mirror image, damage, utility
 
+** to do important: 
+- build other chars (locke, celes built)
+- build and test attacking: 
+    - player flash > attack > enemy flash; will need to adjust it as battles are based off of coroutines 
+- adjust locke and other char's sword position
+- after unselecting, resume to idleDown
+- character cleanup: delete probably character animation controllers and animation clips
+- when buildng other characters, standardize perhaps left and right images
+
+Visuals
+- lefthanded versus righthanded
 
 
-Patch Log: 
+Patch Log
+
+** 4/10/24
+Completed v1 of the baseCharacter model that all other chars will be built off of. 
+- built attack sequence 
+- built movement
+- char animation clips now solely based off of baseCharacter
+
 
 ** 4/7/24
--- added a bunch of functionality with character instatiation, animation controllers, and 
-    coroutnies to control movement
+-- added a bunch of functionality with character instantiation, animation controllers, and 
+    coroutines to control movement
 
 ** Phase Banner (3/29/24)
 - consolidate phase banner scripts with a factory. lots of duplicated methods

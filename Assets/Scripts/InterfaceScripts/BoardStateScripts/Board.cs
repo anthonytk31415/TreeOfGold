@@ -128,7 +128,7 @@ public class Board
         }
     }
 
-    // given matrix entries, converts to coordinates on the scene for position to use with Vector3
+    /// given matrix entries, converts to coordinates on the scene for position to use with Vector3
     public (Double, Double) ConvertMatToSceneCoords(Coordinate w) {
         try {
             return (w.GetX(), w.GetY() + 1); 
@@ -138,6 +138,10 @@ public class Board
         }
         return (-1, -1);
     }
+
+    // public static Vector2 ConvertCoordinateToVector2(Coordinate w){
+    //     return new Vector2(w.GetX(), w.GetY() + 1); 
+    // }
 
     public Coordinate ConvertSceneToMatCoords(Double x, Double y){
         return new Coordinate((int)x, (int) y -1); 
