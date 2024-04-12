@@ -6,5 +6,5 @@ using System;
 public enum CharacterAnimateType{
     idle, 
     walk, 
-    attack
+    attackSword
 }

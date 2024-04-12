@@ -9,8 +9,8 @@ public class ButtonTest : MonoBehaviour
     public void OnButtonClick(){
         GameManager instance = GameObject.FindObjectOfType<GameManager>();
         GameObject character = instance.charArray[1];
-        // character.GetComponent<CharacterAnimateController>().AnimateAttackSword(Direction.down);
-        Debug.Log(Direction.down);
+        character.GetComponent<CharacterAnimateController>().AnimateAttackSword(Direction.down);
+        Debug.Log("attacking: " + Direction.down);
     }
         
 

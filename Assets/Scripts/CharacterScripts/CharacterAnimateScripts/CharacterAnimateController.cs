@@ -43,7 +43,7 @@ public class CharacterAnimateController : MonoBehaviour
 
     public CharacterAnimateCommandIdle characterAnimateCommandIdle; 
     public CharacterAnimateCommandWalk characterAnimateCommandWalk;
-
+    public CharacterAnimateCommandAttackSword characterAnimateCommandAttackSword;
     public void Start(){
         // SelectedMovedState.OnPositionResetChanged += HandlePositionResetChange;
     }
@@ -87,6 +87,7 @@ public class CharacterAnimateController : MonoBehaviour
 
         this.characterAnimateCommandIdle = new CharacterAnimateCommandIdle(this.instance, this.character, this);
         this.characterAnimateCommandWalk = new CharacterAnimateCommandWalk(this.instance, this.character, this);
+        this.characterAnimateCommandAttackSword = new CharacterAnimateCommandAttackSword(this.instance, this.character, this);
             // yes
 
         ApplyInitialState();
@@ -117,6 +118,9 @@ public class CharacterAnimateController : MonoBehaviour
         // Debug.Log("current stance of idleDownBOol: " + animator.GetBool("idleDownBool"));
     }
 
+
+    // for the series of "animate" commands, do we want to put them as an abstract class method 
+    // within the CharacterAnimateCommandXXXX class?
     public void AnimateIdle(Direction direction){
         CharacterAnimateCommandData idleData = new CharacterAnimateCommandData(
                 0.0f, 
@@ -127,6 +131,19 @@ public class CharacterAnimateController : MonoBehaviour
         animateQueue.Enqueue(idleData); 
     }
 
+    public void AnimateAttackSword(Direction direction){
+        Debug.Log("activating attack sword");
+        CharacterAnimateCommandData attackSwordData = new CharacterAnimateCommandData(
+                0.333f, 
+                CharacterAnimateType.attackSword, 
+                direction, 
+                new Vector2(-99, -99), 
+                false);
+        animateQueue.Enqueue(attackSwordData); 
+
+    }
+
+
     // having trouble with coordinates 
     /// <summary>
     ///  ** need to clean up code below and also deal with isseu where 
@@ -136,15 +153,11 @@ public class CharacterAnimateController : MonoBehaviour
     /// <param name="destination"></param>
     public void AnimateMoveChar(Coordinate destination) {
         Coordinate start = instance.board.FindCharId(charId);
-        // (double x, double y) = instance.board.ConvertMatToSceneCoords(start);
         List<Coordinate> pathList = CharInteraction.PathBetweenUnits(instance, start, destination);
         foreach (Coordinate nextCoordinate in pathList) {
             Direction nextDir = Coordinate.DirectionFromAdjacentCoordinates(start, nextCoordinate); 
             (double x, double y ) = instance.board.ConvertMatToSceneCoords(start);
-            // Debug.Log("vector of start: " + x + "; " + y);
-            // Debug.
             Vector2 finalVector = new Vector2((float)x, (float)y) + DirectionUtility.DirectionToVector(nextDir);
-            // Debug.Log("start " + start + "; final vector: " + finalVector);
             CharacterAnimateCommandData moveData = new CharacterAnimateCommandData(
                     .12f, 
                     CharacterAnimateType.walk, 
@@ -154,34 +167,8 @@ public class CharacterAnimateController : MonoBehaviour
             animateQueue.Enqueue(moveData);
             start = nextCoordinate; 
         }     
-        // Debug.Log("pathlist: " );
-        // AuditDebug.DebugIter(pathList); 
-        // Debug.Log("animateQueue: " );
-        // AuditDebug.DebugIter(animateQueue);
     }
 
-    // public void AnimateMoveCharOLD(int charId, Coordinate destination) {
-    //     Coordinate start = instance.board.FindCharId(charId);
-    //     List<Coordinate> pathList = CharInteraction.PathBetweenUnits(instance, start, destination);
-    //     foreach (Coordinate nextCoordinate in pathList) {
-    //         Direction nextDir = Coordinate.DirectionFromAdjacentCoordinates(start, nextCoordinate); 
-    //         moveQueue.Enqueue(nextDir);
-    //         start = nextCoordinate; 
-    //     }             
-    // }
-    
-
-    // public void InstantiateTraversal(Direction direction)
-    // {
-    //     this.traversal = true;
-    //     startPos = character.transform.position;
-    //     endPos = startPos + DirectionUtility.DirectionToVector(direction); 
-    //     // curTime = 0.0f;
-    //     endTime = .12f;
-    //     animator.SetBool(DirectionUtility.DirectionToIdleBool(this.direction), false);
-    //     this.direction = direction;
-    //     animator.SetBool(DirectionUtility.DirectionToWalkBool(direction), true);
-    // }
 
     /// <summary>
     /// The main update method. 
@@ -190,7 +177,7 @@ public class CharacterAnimateController : MonoBehaviour
         
         if (!this.wip && animateQueue.Count > 0){
             this.characterAnimateCommandData = animateQueue.Dequeue();
-            // Debug.Log("charanimateCommand: " + characterAnimateCommandData);
+            Debug.Log("charanimateCommand: " + characterAnimateCommandData);
             this.wip = true; 
             this.characterAnimateCommand = GetCharacterAnimateCommand(this.characterAnimateCommandData.characterAnimateType); 
             // Debug.Log(this.characterAnimateCommand);
@@ -214,11 +201,18 @@ public class CharacterAnimateController : MonoBehaviour
         }
     } 
 
+    /// <summary>
+    /// looksup the proper characterAnimateCommand to apply based on type
+    ///  (Outstanding: whats the best way to add new commands as time goes on? )
+    /// </summary>
+    /// <param name="characterAnimateType"></param>
+    /// <returns></returns>
     public CharacterAnimateCommand GetCharacterAnimateCommand(CharacterAnimateType characterAnimateType)
     {
         Dictionary<CharacterAnimateType,CharacterAnimateCommand> lookup = new () {
             {CharacterAnimateType.idle, this.characterAnimateCommandIdle}, 
             {CharacterAnimateType.walk, this.characterAnimateCommandWalk}, 
+            {CharacterAnimateType.attackSword, this.characterAnimateCommandAttackSword}, 
         };
         if (lookup.ContainsKey(characterAnimateType)){
             return lookup[characterAnimateType];
@@ -226,22 +220,10 @@ public class CharacterAnimateController : MonoBehaviour
         return characterAnimateCommandIdle; 
     }
 
-    // public void InstantiateCommand(CharacterAnimateCommand curCommand){
-    //     this.wip = true; 
-    //     // this.characterAnimateCommand = curCommand;
-    //     // apply bindings to the properties         
-    // }
-
-    // public void ApplyQueueDefaultState(){
-        // this.wip = false; 
-        // this.curTime = 0.0f; 
-        // animator.SetBool(DirectionUtility.DirectionToWalkBool(direction), false);
-    // }
-
 
 
     // assumes one unit away and destination is a valid entry
-    public void AnimateAttackSword(Direction direction){
+    public void AnimateAttackSwordOld(Direction direction){
         GameObject player = character; 
         // Debug.Log(direction);
         GameObject sword = player.transform.Find("").gameObject;
@@ -294,4 +276,44 @@ public class CharacterAnimateController : MonoBehaviour
     //         }
     //     }
     // }
+
+
+
+    // public void AnimateMoveCharOLD(int charId, Coordinate destination) {
+    //     Coordinate start = instance.board.FindCharId(charId);
+    //     List<Coordinate> pathList = CharInteraction.PathBetweenUnits(instance, start, destination);
+    //     foreach (Coordinate nextCoordinate in pathList) {
+    //         Direction nextDir = Coordinate.DirectionFromAdjacentCoordinates(start, nextCoordinate); 
+    //         moveQueue.Enqueue(nextDir);
+    //         start = nextCoordinate; 
+    //     }             
+    // }
+    
+
+    // public void InstantiateTraversal(Direction direction)
+    // {
+    //     this.traversal = true;
+    //     startPos = character.transform.position;
+    //     endPos = startPos + DirectionUtility.DirectionToVector(direction); 
+    //     // curTime = 0.0f;
+    //     endTime = .12f;
+    //     animator.SetBool(DirectionUtility.DirectionToIdleBool(this.direction), false);
+    //     this.direction = direction;
+    //     animator.SetBool(DirectionUtility.DirectionToWalkBool(direction), true);
+    // }
+
+
+
+    // public void InstantiateCommand(CharacterAnimateCommand curCommand){
+    //     this.wip = true; 
+    //     // this.characterAnimateCommand = curCommand;
+    //     // apply bindings to the properties         
+    // }
+
+    // public void ApplyQueueDefaultState(){
+        // this.wip = false; 
+        // this.curTime = 0.0f; 
+        // animator.SetBool(DirectionUtility.DirectionToWalkBool(direction), false);
+    // }
+
 }
