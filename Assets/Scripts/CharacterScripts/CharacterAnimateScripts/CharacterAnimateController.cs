@@ -141,10 +141,10 @@ public class CharacterAnimateController : MonoBehaviour
         foreach (Coordinate nextCoordinate in pathList) {
             Direction nextDir = Coordinate.DirectionFromAdjacentCoordinates(start, nextCoordinate); 
             (double x, double y ) = instance.board.ConvertMatToSceneCoords(start);
-            Debug.Log("vector of start: " + x + "; " + y);
+            // Debug.Log("vector of start: " + x + "; " + y);
             // Debug.
             Vector2 finalVector = new Vector2((float)x, (float)y) + DirectionUtility.DirectionToVector(nextDir);
-            Debug.Log("start " + start + "; final vector: " + finalVector);
+            // Debug.Log("start " + start + "; final vector: " + finalVector);
             CharacterAnimateCommandData moveData = new CharacterAnimateCommandData(
                     .12f, 
                     CharacterAnimateType.walk, 
@@ -154,10 +154,10 @@ public class CharacterAnimateController : MonoBehaviour
             animateQueue.Enqueue(moveData);
             start = nextCoordinate; 
         }     
-        Debug.Log("pathlist: " );
-        AuditDebug.DebugIter(pathList); 
-        Debug.Log("animateQueue: " );
-        AuditDebug.DebugIter(animateQueue);
+        // Debug.Log("pathlist: " );
+        // AuditDebug.DebugIter(pathList); 
+        // Debug.Log("animateQueue: " );
+        // AuditDebug.DebugIter(animateQueue);
     }
 
     // public void AnimateMoveCharOLD(int charId, Coordinate destination) {
@@ -205,9 +205,12 @@ public class CharacterAnimateController : MonoBehaviour
             else {
                 this.wip = false;
                 this.characterAnimateCommand.TerminateCommand();
-                ApplyAnimationDefaultState();     
                 // ApplyQueueDefaultState();
             }
+        }
+        if (animateQueue.Count == 0){
+            ApplyAnimationDefaultState();     
+            animator.SetBool(DirectionUtility.DirectionToIdleBool(Direction.down), true);
         }
     } 
 

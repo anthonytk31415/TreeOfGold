@@ -51,7 +51,6 @@ public class CharacterAnimateCommandWalk : CharacterAnimateCommand {
 
     public bool Processing(){
         bool res = this.curTime < this.endTime;
-        // Debug.Log("processing fn: " + res);
         return res; 
     }
     public void TerminateCommand(){
@@ -59,7 +58,7 @@ public class CharacterAnimateCommandWalk : CharacterAnimateCommand {
         character.transform.position = this.endPos; 
         this.curTime = 0.0f; 
         this.characterAnimateController.ApplyAnimationDefaultState();
-        animator.SetBool(DirectionUtility.DirectionToIdleBool(Direction.down), true);
+        animator.SetBool(DirectionUtility.DirectionToIdleBool(direction), true);
 
     }
 }
