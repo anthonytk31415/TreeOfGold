@@ -123,18 +123,22 @@ public static class CharInteraction
     }
 
 
+// you cant move to the final char2. 
+
+
     /// <summary>
     /// Returns the shortest path the the char2 from char1 with rules on being
     /// able to not occupy a friendly cell before the char2, but being able to 
     /// walk through a friendly (but not through an enemy). 
     /// Note ** the last element of the list is the unit itself. 
     /// Testing whether we can use char2 as a generic moving cell
+    /// Update: will rename this P
     /// </summary>
     /// <param name="gameManager"> the singleton instance gameManager</param>
     /// <param name="char1">starting point w, typically the player unit </param>
     /// <param name="char2">ending point v, sometimes the target enemy unit</param>
     /// <returns></returns>
-    public static List<Coordinate> PathBetweenUnits(GameManager gameManager, Coordinate char1, Coordinate char2){
+    public static List<Coordinate> ShortestPathBetweenCoordinates(GameManager gameManager, Coordinate char1, Coordinate char2){
         Dictionary<Coordinate, Coordinate> parent = new();          // parents of (-1, -1) have no parent
         Queue<Coordinate> queue = new();
         HashSet<Coordinate> visited = new();
@@ -143,36 +147,45 @@ public static class CharInteraction
         parent.Add(char1, new Coordinate(-1, -1));
         (int, int)[] positions = {(1,0), (-1, 0), (0, 1), (0, -1)}; 
 
+        bool foundPath = false; 
+
         // use BFS to get shortest path to char2 from char1 using the queue
+        // we adjust this so that if we dont find a path, we return an empty queue
         while (queue.Count > 0){
             Coordinate curPos = queue.Dequeue();
-            if (curPos.Equals(char2)){                
+            if (curPos.Equals(char2)){          
+                foundPath = true;       
                 break;
             }
-            foreach ((int dx, int dy) in positions) {
-                Coordinate w  = new Coordinate(curPos.GetX() + dx, curPos.GetY() + dy);
+            foreach ((int dx, int dy) in positions) 
+            {
+                Coordinate newPos = new Coordinate(curPos.GetX() + dx, curPos.GetY() + dy);
                 // not in visited, within board, not enemy, and if friend, not adjacent to target
                 // you cannot go to char2 if you are currently on a friendly unit that's not you yourself
                 // but you can go to a friendly unit
-                if (gameManager.board.IsWithinBoard(w) && 
-                        !visited.Contains(w) &&
-                        (gameManager.moveControllerObject.GetComponent<MoveController>().IsNotEnemy(char1, w) || 
-                                w.Equals(char2)
+                if (gameManager.board.IsWithinBoard(newPos) && 
+                        !visited.Contains(newPos) &&
+                        (gameManager.moveControllerObject.GetComponent<MoveController>().IsNotEnemy(char1, newPos) || 
+                                newPos.Equals(char2)
                     ))                                        
                 {
-                    // if cur move is friend and next move is char2: 
-                    if (!(gameManager.moveControllerObject.GetComponent<MoveController>().IsSameTeam(char1, curPos) && !char1.Equals(curPos) && w.Equals(char2)))
-                    {
-                        visited.Add(w);
-                        parent.Add(w, curPos); 
-                        queue.Enqueue(w);
-                    }
+                    // if cur move is friend and next move is char2:                     
+                    visited.Add(newPos);
+                    parent.Add(newPos, curPos); 
+                    queue.Enqueue(newPos);
+                    
                 }
             }
         }
 
+
+
         List<Coordinate> res = new();
         // we got to char2 position; now trace back using parent
+        if (!foundPath){
+            return res; 
+        } 
+
         Coordinate tracePos = char2; 
         while (!tracePos.Equals(char1))
         {
@@ -182,6 +195,43 @@ public static class CharInteraction
         res.Reverse();
         return res; 
     }
+
+    /// <summary>
+    /// Given two units, we return the shortest path on the top, left, right, or down cell of unit2. 
+    /// If the path is infinite, i.e. its blocked completely? then we return an empty list. 
+    /// </summary>
+    /// <param name="gameManager"></param>
+    /// <param name="unit1"></param>
+    /// <param name="unit2"></param>
+    /// <returns></returns>    
+    public static List<Coordinate> ShortestPathBetweenUnits(GameManager gameManager, Coordinate unit1, Coordinate unit2){
+        List<Coordinate> candidates = new();
+        List<List<Coordinate>> candidatesPaths = new();
+        (int, int)[] positions = {(1,0), (-1, 0), (0, 1), (0, -1)}; 
+
+        foreach ((int dx, int dy) in positions) 
+        {
+            Coordinate possibleCandidate = new Coordinate(unit2.GetX() + dx, unit2.GetY() + dy);
+            // not in visited, within board, not enemy, and if friend, not adjacent to target
+            // you cannot go to char2 if you are currently on a friendly unit that's not you yourself
+            // but you can go to a friendly unit
+            if (gameManager.board.IsWithinBoard(possibleCandidate) && gameManager.board.IsEmpty(possibleCandidate))
+            {
+                candidates.Add(possibleCandidate);
+                List<Coordinate> possibleCandidatePath = ShortestPathBetweenCoordinates(gameManager, unit1, possibleCandidate); 
+                if (possibleCandidatePath.Count > 0){
+                    candidatesPaths.Add(ShortestPathBetweenCoordinates(gameManager, unit1, possibleCandidate));
+                }
+            }
+        }
+        candidatesPaths.Sort((x, y) => x.Count.CompareTo(y.Count));
+        if (candidatesPaths.Count > 0){
+            return candidatesPaths[0];
+        }
+        return new List<Coordinate>(); 
+    }
+
+
 
 
     /// <summary>
@@ -203,8 +253,10 @@ public static class CharInteraction
                     !curUnit.Equals(unit) && 
                     gameManager.moveControllerObject.GetComponent<MoveController>().IsEnemy(unit, curUnit))
             {
-                List<Coordinate> curPath = PathBetweenUnits(gameManager, unit, curUnit); 
-                opponentCandidates.Add((curPath.Count, curPath));
+                List<Coordinate> curPath = ShortestPathBetweenCoordinates(gameManager, unit, curUnit); 
+                if (curPath.Count > 0){
+                    opponentCandidates.Add((curPath.Count, curPath));
+                }
             }
         }
         opponentCandidates.Sort((x, y) => x.Item1.CompareTo(y.Item1));

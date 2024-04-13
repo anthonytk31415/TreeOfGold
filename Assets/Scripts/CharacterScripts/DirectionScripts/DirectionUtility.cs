@@ -69,5 +69,14 @@ public static class DirectionUtility {
         return directions[direction];
     }
 
-
+    public static Direction OppositeDirection(Direction direction){
+        Dictionary<Direction, Direction> directions  = new()
+        {
+            {Direction.up, Direction.down },
+            {Direction.down, Direction.up},
+            {Direction.left, Direction.right},
+            {Direction.right, Direction.left}
+        };
+        return directions[direction];
+    }
 }

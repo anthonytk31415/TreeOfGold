@@ -49,12 +49,12 @@ public class UnselectedState : IPlayerMoveControllerState {
     }
 
 
-    public void MyTest(){
-        Coordinate w = instance.board.FindCharId(0);
-        Coordinate v = instance.board.FindCharId(2);
-        List<Coordinate> path = CharInteraction.PathBetweenUnits(instance, w, v);
-        Debug.Log("Audit MYTEST from UnselectedState; length of path: " + path.Count);
-    }
+    // public void MyTest(){
+    //     Coordinate w = instance.board.FindCharId(0);
+    //     Coordinate v = instance.board.FindCharId(2);
+    //     List<Coordinate> path = CharInteraction.PathBetweenUnits(instance, w, v);
+    //     Debug.Log("Audit MYTEST from UnselectedState; length of path: " + path.Count);
+    // }
 
 
 }

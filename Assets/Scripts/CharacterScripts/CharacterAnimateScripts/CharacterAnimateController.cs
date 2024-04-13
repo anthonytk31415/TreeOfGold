@@ -153,7 +153,9 @@ public class CharacterAnimateController : MonoBehaviour
     /// <param name="destination"></param>
     public void AnimateMoveChar(Coordinate destination) {
         Coordinate start = instance.board.FindCharId(charId);
-        List<Coordinate> pathList = CharInteraction.PathBetweenUnits(instance, start, destination);
+        List<Coordinate> pathList = CharInteraction.ShortestPathBetweenCoordinates(instance, start, destination);
+        Debug.Log("path to go to: ");
+        AuditDebug.DebugIter(pathList);
         foreach (Coordinate nextCoordinate in pathList) {
             Direction nextDir = Coordinate.DirectionFromAdjacentCoordinates(start, nextCoordinate); 
             (double x, double y ) = instance.board.ConvertMatToSceneCoords(start);

@@ -1,5 +1,8 @@
 Todo: 
 
+- need to fix a bug on movement when a player moves through another player and it animates
+
+
 Highlight mechanics
 - consolidate into the unselectedState manager
 - clicking on enemy unit in unselected phase shows enemies movement
@@ -43,6 +46,12 @@ build special moves
 - after unselecting, resume to idleDown
 - character cleanup: delete probably character animation controllers and animation clips
 - when buildng other characters, standardize perhaps left and right images
+- implement walls
+
+- start making levels
+- think about how characters will power up
+- what does the menu look like? 
+
 
 Visuals
 - lefthanded versus righthanded
