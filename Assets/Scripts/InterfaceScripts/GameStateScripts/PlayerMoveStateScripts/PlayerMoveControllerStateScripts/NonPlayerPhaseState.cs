@@ -36,7 +36,7 @@ public class NonPlayerPhaseState : IPlayerMoveControllerState {
     }
     public void Update(){
         // when you're back in player phase, transition to unselected
-        // when endturn is clicked
+        // when endTurn is clicked
     }
     public void Exit(){
         // transition to unselected

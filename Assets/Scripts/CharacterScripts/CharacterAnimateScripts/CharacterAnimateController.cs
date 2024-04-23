@@ -36,14 +36,17 @@ public class CharacterAnimateController : MonoBehaviour
     public bool wip; 
     private Queue<Direction> moveQueue; 
 
-    private Queue<CharacterAnimateCommandData> animateQueue;
+    public Queue<CharacterAnimateCommandData> animateQueue;
 
     public CharacterAnimateCommandData characterAnimateCommandData; 
-    private CharacterAnimateCommand characterAnimateCommand;
 
     public CharacterAnimateCommandIdle characterAnimateCommandIdle; 
     public CharacterAnimateCommandWalk characterAnimateCommandWalk;
     public CharacterAnimateCommandAttackSword characterAnimateCommandAttackSword;
+    public CharacterAnimateCommandBlinkBlack characterAnimateCommandBlinkBlack;
+    
+    public CharacterAnimateCommandBlinkRed characterAnimateCommandBlinkRed;
+    public ICharacterAnimateCommand characterAnimateCommand; 
     public void Start(){
         // SelectedMovedState.OnPositionResetChanged += HandlePositionResetChange;
     }
@@ -64,7 +67,8 @@ public class CharacterAnimateController : MonoBehaviour
     }
 
     /// <summary>
-    /// Call this after you add component to the character object during startup. 
+    /// Call this after you add component to the character object during startup. Be sure to add all 
+    /// AnimateCommands here. 
     /// </summary>
     /// <param name="instance"></param>
     /// <param name="charId"></param>
@@ -76,100 +80,106 @@ public class CharacterAnimateController : MonoBehaviour
         this.character = character;
         this.charName = character.GetComponent<CharacterStats>().name; 
         this.animator = character.GetComponent<Animator>();
-        this.animatorParameterNames = new HashSet<string>();
-        foreach (var parameter in this.animator.parameters){
-            this.animatorParameterNames.Add(parameter.name); 
-        };
+        // this.animatorParameterNames = new HashSet<string>();
+        // foreach (var parameter in this.animator.parameters){
+        //     this.animatorParameterNames.Add(parameter.name); 
+        // };
         this.direction = Direction.down;
         this.moveQueue = new();
         this.animateQueue = new();
         this.wip = false; 
 
+        //  put all AnimateCommands here
         this.characterAnimateCommandIdle = new CharacterAnimateCommandIdle(this.instance, this.character, this);
         this.characterAnimateCommandWalk = new CharacterAnimateCommandWalk(this.instance, this.character, this);
         this.characterAnimateCommandAttackSword = new CharacterAnimateCommandAttackSword(this.instance, this.character, this);
-            // yes
+        this.characterAnimateCommandBlinkBlack = new CharacterAnimateCommandBlinkBlack(this.instance, this.character, this);
+        this.characterAnimateCommandBlinkRed = new CharacterAnimateCommandBlinkRed(this.instance, this.character, this);
+        Debug.Log("initialize called for controller");
 
-        ApplyInitialState();
+        // ApplyInitialState();
         // ApplyQueueDefaultState();
     }
 
     /// <summary>
     ///  Make all parameters false. 
     /// </summary>
-    public void ApplyAnimationDefaultState()
-    {
-        if (animator == null){ return;}
-        foreach (var param in animator.parameters)
-        {
-            if (param.name.Contains("Bool")){
-                animator.SetBool(param.name, false);
-            }
-        }
-    }
+    // public void ApplyAnimationDefaultState()
+    // {
+    //     if (animator == null){ return;}
+    //     foreach (var param in animator.parameters)
+    //     {
+    //         if (param.name.Contains("Bool")){
+    //             animator.SetBool(param.name, false);
+    //         }
+    //     }
+    // }
 
     /// <summary>
     /// Make all parameters false and set to default state -> idleDownBool = false.  
     /// </summary>
-    public void ApplyInitialState()
-    {
-        ApplyAnimationDefaultState();
-        animator.SetBool("idleDownBool", true);
-        // Debug.Log("current stance of idleDownBOol: " + animator.GetBool("idleDownBool"));
-    }
+    // public void ApplyInitialState()
+    // {
+    //     // ApplyAnimationDefaultState();
+    //     // character.GetComponent<Animator>().SetTrigger("idleDownTrigger");
+    //     // animator.SetBool("idleDownBool", true);
+    //     // Debug.Log("current stance of idleDownBOol: " + animator.GetBool("idleDownBool"));
+    // }
 
 
-    // for the series of "animate" commands, do we want to put them as an abstract class method 
-    // within the CharacterAnimateCommandXXXX class?
-    public void AnimateIdle(Direction direction){
-        CharacterAnimateCommandData idleData = new CharacterAnimateCommandData(
-                0.0f, 
-                CharacterAnimateType.idle, 
-                direction, 
-                new Vector2(-99, -99), 
-                false);
-        animateQueue.Enqueue(idleData); 
-    }
+    // // for the series of "animate" commands, do we want to put them as an abstract class method 
+    // // within the CharacterAnimateCommandXXXX class?
+    // public void AnimateIdle(Direction direction){
+    //     CharacterAnimateCommandData idleData = new CharacterAnimateCommandData(
+    //             0.0f, 
+    //             characterAnimateCommandIdle, 
+    //             direction, 
+    //             new Vector2(-99, -99), 
+    //             false);
+    //     animateQueue.Enqueue(idleData); 
+    // }
 
-    public void AnimateAttackSword(Direction direction){
-        Debug.Log("activating attack sword");
-        CharacterAnimateCommandData attackSwordData = new CharacterAnimateCommandData(
-                0.333f, 
-                CharacterAnimateType.attackSword, 
-                direction, 
-                new Vector2(-99, -99), 
-                false);
-        animateQueue.Enqueue(attackSwordData); 
+    // public void AnimateAttackSword(Direction direction){
+    //     Debug.Log("activating attack sword");
+    //     CharacterAnimateCommandData attackSwordData = new CharacterAnimateCommandData(
+    //             0.333f, 
+    //             characterAnimateCommandAttackSword, 
+    //             direction, 
+    //             new Vector2(-99, -99), 
+    //             false);
+    //     animateQueue.Enqueue(attackSwordData); 
 
-    }
+    // }
 
 
-    // having trouble with coordinates 
     /// <summary>
-    ///  ** need to clean up code below and also deal with isseu where 
-    ///  you dont go back to "idledown" after the move is completed. 
-    ///  I think the queue i s working. 
+    /// 
     /// </summary>
     /// <param name="destination"></param>
-    public void AnimateMoveChar(Coordinate destination) {
-        Coordinate start = instance.board.FindCharId(charId);
-        List<Coordinate> pathList = CharInteraction.ShortestPathBetweenCoordinates(instance, start, destination);
-        Debug.Log("path to go to: ");
-        AuditDebug.DebugIter(pathList);
-        foreach (Coordinate nextCoordinate in pathList) {
-            Direction nextDir = Coordinate.DirectionFromAdjacentCoordinates(start, nextCoordinate); 
-            (double x, double y ) = instance.board.ConvertMatToSceneCoords(start);
-            Vector2 finalVector = new Vector2((float)x, (float)y) + DirectionUtility.DirectionToVector(nextDir);
-            CharacterAnimateCommandData moveData = new CharacterAnimateCommandData(
-                    .12f, 
-                    CharacterAnimateType.walk, 
-                    nextDir, 
-                    finalVector, 
-                    true);
-            animateQueue.Enqueue(moveData);
-            start = nextCoordinate; 
-        }     
-    }
+    // public void AnimateMoveChar(Coordinate destination) {
+    //     Coordinate start = instance.board.FindCharId(charId);
+    //     List<Coordinate> pathList = CharInteraction.ShortestPathBetweenCoordinates(instance, start, destination);
+    //     Debug.Log("path to go to: ");
+    //     AuditDebug.DebugIter(pathList);
+    //     foreach (Coordinate nextCoordinate in pathList) {
+    //         Direction nextDir = Coordinate.DirectionFromAdjacentCoordinates(start, nextCoordinate); 
+    //         (double x, double y ) = instance.board.ConvertMatToSceneCoords(start);
+    //         Vector2 finalVector = new Vector2((float)x, (float)y) + DirectionUtility.DirectionToVector(nextDir);
+    //         CharacterAnimateCommandData moveData = new CharacterAnimateCommandData(
+    //                 .12f, 
+    //                 characterAnimateCommandWalk, 
+    //                 nextDir, 
+    //                 finalVector, 
+    //                 true);
+    //         animateQueue.Enqueue(moveData);
+    //         start = nextCoordinate; 
+    //     }     
+    // }
+
+    // public void AddAnimateCommand(CharacterAnimateCommandData characterAnimateCommandData){
+    //     CharacterAnimateCommand characterAnimateCommand = characterAnimateCommandData.characterAnimateCommand; 
+
+    // }
 
 
     /// <summary>
@@ -179,9 +189,9 @@ public class CharacterAnimateController : MonoBehaviour
         
         if (!this.wip && animateQueue.Count > 0){
             this.characterAnimateCommandData = animateQueue.Dequeue();
-            Debug.Log("charanimateCommand: " + characterAnimateCommandData);
+            // Debug.Log("charanimateCommand: " + characterAnimateCommandData);
             this.wip = true; 
-            this.characterAnimateCommand = GetCharacterAnimateCommand(this.characterAnimateCommandData.characterAnimateType); 
+            this.characterAnimateCommand = characterAnimateCommandData.characterAnimateCommand; 
             // Debug.Log(this.characterAnimateCommand);
             this.characterAnimateCommand.InstantiateCommand();
         }
@@ -197,10 +207,10 @@ public class CharacterAnimateController : MonoBehaviour
                 // ApplyQueueDefaultState();
             }
         }
-        if (animateQueue.Count == 0){
-            ApplyAnimationDefaultState();     
-            animator.SetBool(DirectionUtility.DirectionToIdleBool(Direction.down), true);
-        }
+        // if (animateQueue.Count == 0){
+        //     ApplyAnimationDefaultState();     
+        //     animator.SetBool(DirectionUtility.DirectionToIdleBool(Direction.down), true);
+        // }
     } 
 
     /// <summary>
@@ -209,38 +219,38 @@ public class CharacterAnimateController : MonoBehaviour
     /// </summary>
     /// <param name="characterAnimateType"></param>
     /// <returns></returns>
-    public CharacterAnimateCommand GetCharacterAnimateCommand(CharacterAnimateType characterAnimateType)
-    {
-        Dictionary<CharacterAnimateType,CharacterAnimateCommand> lookup = new () {
-            {CharacterAnimateType.idle, this.characterAnimateCommandIdle}, 
-            {CharacterAnimateType.walk, this.characterAnimateCommandWalk}, 
-            {CharacterAnimateType.attackSword, this.characterAnimateCommandAttackSword}, 
-        };
-        if (lookup.ContainsKey(characterAnimateType)){
-            return lookup[characterAnimateType];
-        }         
-        return characterAnimateCommandIdle; 
-    }
+    // public CharacterAnimateCommand GetCharacterAnimateCommand(CharacterAnimateType characterAnimateType)
+    // {
+    //     Dictionary<CharacterAnimateType,CharacterAnimateCommand> lookup = new () {
+    //         {CharacterAnimateType.idle, this.characterAnimateCommandIdle}, 
+    //         {CharacterAnimateType.walk, this.characterAnimateCommandWalk}, 
+    //         {CharacterAnimateType.attackSword, this.characterAnimateCommandAttackSword}, 
+    //     };
+    //     if (lookup.ContainsKey(characterAnimateType)){
+    //         return lookup[characterAnimateType];
+    //     }         
+    //     return characterAnimateCommandIdle; 
+    // }
 
 
 
     // assumes one unit away and destination is a valid entry
-    public void AnimateAttackSwordOld(Direction direction){
-        GameObject player = character; 
-        // Debug.Log(direction);
-        GameObject sword = player.transform.Find("").gameObject;
-        Coordinate playerCoordinate = instance.board.FindCharId(charId); 
-        Coordinate enemyCoordinate = Coordinate.Add(playerCoordinate, DirectionUtility.DirectionToCoordinate(direction));
-        GameObject enemy = instance.charArray[instance.board.Get(enemyCoordinate)];
+    // public void AnimateAttackSwordOld(Direction direction){
+    //     GameObject player = character; 
+    //     // Debug.Log(direction);
+    //     GameObject sword = player.transform.Find("").gameObject;
+    //     Coordinate playerCoordinate = instance.board.FindCharId(charId); 
+    //     Coordinate enemyCoordinate = Coordinate.Add(playerCoordinate, DirectionUtility.DirectionToCoordinate(direction));
+    //     GameObject enemy = instance.charArray[instance.board.Get(enemyCoordinate)];
 
 
-        string attackCommand = DirectionUtility.DirectionToAttackSwordTrigger(direction); 
-        if (this.animatorParameterNames.Contains(attackCommand)){
-            this.animator.ResetTrigger(attackCommand);
-            // update orders 
-            this.animator.SetTrigger(attackCommand);
-        }
-    }
+    //     string attackCommand = DirectionUtility.DirectionToAttackSwordTrigger(direction); 
+    //     if (this.animatorParameterNames.Contains(attackCommand)){
+    //         this.animator.ResetTrigger(attackCommand);
+    //         // update orders 
+    //         this.animator.SetTrigger(attackCommand);
+    //     }
+    // }
 
 
     // need to do appropriate character ordering layers: 

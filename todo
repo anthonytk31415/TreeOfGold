@@ -1,5 +1,12 @@
 Todo: 
 
+what to build for animation
+- states
+- transitions to each pair of states (idle > something else)
+- booleans (for idle), triggers (for others)
+- 
+
+
 - need to fix a bug on movement when a player moves through another player and it animates
 
 

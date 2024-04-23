@@ -37,12 +37,25 @@ public class EditorMenu : EditorWindow
         EditorBuildAnimatorSettings.CreateChar("locke");
     }
 
+    [MenuItem("Window / Custom Controls / Testing ")]
+    public static void MyTest()
+    {
+        EditorBuildAnimatorStateHelpers.ApplyChangesToAnimatorController("baseCharacter");
+    }
+
+
+
     [MenuItem("Window / Custom Controls / Test: UpdateAnimator ")]
     public static void InitiateUpdateAnimator()
     {
         EditorBuildAnimatorSettings.UpdateAnimator("baseCharacter");
     }
 
+    [MenuItem("Window / Custom Controls / Test: UpdateTransitionsLogic ")]
+    public static void UpdateTransitionsLogic()
+    {
+        EditorBuildAnimatorStateHelpers.ApplyTransitionProperties("baseCharacter");
+    }
 
 
     // the menu with settings
@@ -59,8 +72,8 @@ public class EditorMenu : EditorWindow
         {
             Debug.Log("pressing the button!" + animatorName);
 
-            // List<string> chars = new List<string> {"celes", "sabin", "shadow", "terra", "gerad", "locke"};
-            List<string> chars = new List<string> {"sabin", "shadow", "gerad", "terra"};
+            List<string> chars = new List<string> {"celes", "sabin", "shadow", "terra", "gerad", "locke"};
+            // List<string> chars = new List<string> {"sabin", "shadow", "gerad", "terra"};
             foreach (string charName in chars){
                 // EditorBuildAnimatorSettings.NewCharPrefabWithAnimator(charName);
 
@@ -71,6 +84,9 @@ public class EditorMenu : EditorWindow
         }
         EditorGUILayout.EndHorizontal();
     }
+
+
+
 
 
 }

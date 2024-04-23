@@ -25,8 +25,17 @@ public class BattleEffectsManager: MonoBehaviour
 
     }
 
+    // some weird things happen here, but it works 
+
     public IEnumerator TriggerBlackThenRed(GameObject obj1, GameObject obj2){
         yield return StartCoroutine(TriggerBlinkBlack(obj1));
+        // Coordinate coordinateObj1 = instance.board.FindCharId(instance.GetCharId(obj1));
+        // Coordinate coordinateObj2 = instance.board.FindCharId(instance.GetCharId(obj2));
+        // Direction attackDir = Coordinate.DirectionFromAdjacentCoordinates(coordinateObj1, coordinateObj2); 
+        // obj1.GetComponent<CharacterAnimateController>().characterAnimateCommandAttackSword.DoMove(attackDir); 
+        // yield return new WaitForSeconds(.2f);
+
+        // # find direction
         yield return StartCoroutine(TriggerBlinkRed(obj2));
     }
 

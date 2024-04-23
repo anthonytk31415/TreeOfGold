@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 
 public class ButtonTest : MonoBehaviour
 {
@@ -9,8 +10,10 @@ public class ButtonTest : MonoBehaviour
     public void OnButtonClick(){
         GameManager instance = GameObject.FindObjectOfType<GameManager>();
         GameObject character = instance.charArray[1];
-        character.GetComponent<CharacterAnimateController>().AnimateAttackSword(Direction.down);
-        Debug.Log("attacking: " + Direction.down);
+        // character.GetComponent<Animator>().SetTrigger("idleBlinkBlackDownTrigger");
+        character.GetComponent<CharacterAnimateController>().characterAnimateCommandBlinkBlack.DoMove(Direction.down);
+
+
     }
         
 

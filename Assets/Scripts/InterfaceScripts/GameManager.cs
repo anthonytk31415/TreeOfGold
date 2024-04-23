@@ -105,8 +105,29 @@ public class GameManager : MonoBehaviour
     // Eventually do we move them in separate classes? 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /// <summary>
+    /// Find the character based on the id. 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public GameObject GetCharacter(int id) {
         return charArray[id]; 
+    }
+
+    /// <summary>
+    /// Find the character Id based on the character game object. 
+    /// Perhaps move it into the charArray's own class
+    /// </summary>
+    /// <param name="character"></param>
+    /// <returns></returns>
+    public int GetCharId(GameObject character){
+        for (int i = 0; i < charArray.Length; i ++){
+            GameObject characterCandidate = charArray[i];
+            if (characterCandidate.Equals(character)){
+                return i; 
+            }
+        }
+        return -1;
     }
 
 

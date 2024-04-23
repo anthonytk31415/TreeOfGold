@@ -262,6 +262,9 @@ public class EditorBuildAnimatorSettings
 
 
 
+
+
+
 /// <summary>
 /// Applies proper StateTransitions for character movement transition. 
 /// </summary>
@@ -278,7 +281,7 @@ public class EditorBuildAnimatorSettings
 
 
 /// <summary>
-/// creates a sprite and a prefab with the proper settings like sprite renderer, 
+/// Creates a sprite and a prefab with the proper settings like sprite renderer, 
 /// animator, attaches the appropriate runtimeAnimatorController to the sprite
 /// and saves it to the characters folder in resources. 
 /// This is a completely new character. 
@@ -306,7 +309,7 @@ public class EditorBuildAnimatorSettings
 
 
     /// <summary>
-    /// save the gameObject as a prefab in the prefab/character folder  
+    /// Save the gameObject as a prefab in the prefab/character folder  
     /// </summary>
     /// <param name="gameObject">gameObject to save</param>
     /// <param name="charName">name of char</param>
@@ -360,6 +363,14 @@ public class EditorBuildAnimatorSettings
             };    
         List<string> attackSwordStates = new List<string> {
             "attackSwordUp", "attackSwordDown", "attackSwordLeft", "attackSwordRight", 
+            }; 
+
+        List<string> idleBlinkRedStates = new List<string> {
+            "idleBlinkRedUp", "idleBlinkRedDown", "idleBlinkRedLeft", "idleBlinkRedRight", 
+            }; 
+
+        List<string> idleBlinkBlackStates = new List<string> {
+            "idleBlinkBlackUp", "idleBlinkBlackDown", "idleBlinkBlackLeft", "idleBlinkBlackRight", 
             }; 
 
         List<List<string>> allListStates = new List<List<string>>() {idleStates, walkStates, attackSwordStates};

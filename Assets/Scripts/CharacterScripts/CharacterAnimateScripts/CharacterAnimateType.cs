@@ -1,10 +1,10 @@
-using System; 
+// using System; 
 
-/// <summary>
-/// Use this to define the CharacterAnimateCommand
-/// </summary>
-public enum CharacterAnimateType{
-    idle, 
-    walk, 
-    attackSword
-}
+// /// <summary>
+// /// Use this to define the CharacterAnimateCommand
+// /// </summary>
+// public enum CharacterAnimateType{
+//     idle, 
+//     walk, 
+//     attackSword
+// }

@@ -69,6 +69,29 @@ public static class DirectionUtility {
         return directions[direction];
     }
 
+    public static string DirectionToBlinkBlack(Direction direction){
+        Dictionary<Direction, string> directions  = new()
+        {
+            {Direction.up, "idleBlinkBlackUpTrigger" },
+            {Direction.down, "idleBlinkBlackDownTrigger"},
+            {Direction.left, "idleBlinkBlackLeftTrigger"},
+            {Direction.right, "idleBlinkBlackRightTrigger"}
+        };
+        return directions[direction];
+    }
+
+    public static string DirectionToBlinkRed(Direction direction){
+        Dictionary<Direction, string> directions  = new()
+        {
+            {Direction.up, "idleBlinkRedUpTrigger" },
+            {Direction.down, "idleBlinkRedDownTrigger"},
+            {Direction.left, "idleBlinkRedLeftTrigger"},
+            {Direction.right, "idleBlinkRedRightTrigger"}
+        };
+        return directions[direction];
+    }
+
+
     public static Direction OppositeDirection(Direction direction){
         Dictionary<Direction, Direction> directions  = new()
         {

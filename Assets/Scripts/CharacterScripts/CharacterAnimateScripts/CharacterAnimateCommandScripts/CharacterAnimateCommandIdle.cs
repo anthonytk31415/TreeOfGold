@@ -5,13 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public class CharacterAnimateCommandIdle : CharacterAnimateCommand {
+public class CharacterAnimateCommandIdle : ICharacterAnimateCommand {
 
     GameManager instance; 
     GameObject character; 
     Animator animator;
     CharacterAnimateCommandData characterAnimateCommandData;     
-    CharacterAnimateType characterAnimateType;
+    // CharacterAnimateType characterAnimateType;
     CharacterAnimateController characterAnimateController ;
 
     public CharacterAnimateCommandIdle (GameManager instance, GameObject character, 
@@ -41,4 +41,15 @@ public class CharacterAnimateCommandIdle : CharacterAnimateCommand {
     public void TerminateCommand(){
 
     }
+
+    public void DoMove(Direction direction){
+        CharacterAnimateCommandData idleData = new CharacterAnimateCommandData(
+                0.0f, 
+                characterAnimateController.characterAnimateCommandIdle, 
+                direction, 
+                new Vector2(-99, -99), 
+                false); 
+        characterAnimateController.animateQueue.Enqueue(idleData); 
+    }
+
 }

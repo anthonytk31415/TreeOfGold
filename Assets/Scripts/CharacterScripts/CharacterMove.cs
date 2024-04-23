@@ -47,7 +47,7 @@ public class CharacterMove: MonoBehaviour
     // if playerSelected and mouse clicked on entry in its path/ move 
     public void MoveChar(Coordinate destination){
         // move on board
-        GetComponent<CharacterAnimateController>().AnimateMoveChar(destination); 
+        GetComponent<CharacterAnimateController>().characterAnimateCommandWalk.DoMove(destination); 
         MoveCharBoard(destination);                       // new pos
         // move visually; need coordinate to scene function here
         // var (x, y) = board.ConvertMatToSceneCoords(destination);
